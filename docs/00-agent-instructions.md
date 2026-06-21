@@ -40,6 +40,7 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
    - `/code {ID}`: Ativa o [Mini Agente de Implementação](agent-code-instructions.md). O agente deve:
      - Ler a especificação e o plano correspondente.
      - Revalidar os Guardrails em `docs/07-guardrails.md`.
+     - **Bloqueio de Integridade**: É TERMINANTEMENTE PROIBIDO realizar `git push` se os testes locais (`/test local`) estiverem falhando. O agente deve reportar o erro e corrigir localmente primeiro.
      - Proceder com a implementação, garantindo que os critérios de aceite sejam atendidos.
    - `/doc {TÓPICO}`: Ativa o fluxo de atualização de documentação/arquitetura. O agente deve:
      - Localizar o documento pertinente ao tópico (especificações, modelo de dados, requisitos, etc.).

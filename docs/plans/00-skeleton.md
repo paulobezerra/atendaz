@@ -5,16 +5,17 @@ Este plano atende aos critérios de **DOR (Definition of Ready)**. A execução 
 ## ⏳ Cronograma Passo a Passo
 
 ### Fase A: Preparação Local (DOR - Ready)
-1. **Docker**: Criar `docker-compose.yml` (Mongo 7 + Mongo Express).
-2. **Setup Next.js (Ambiente Limpo)**: 
-    - Garantir uso de **Node LTS** (criar `.nvmrc`).
-    - Criar `package.json` com versões estáveis e recentes: Next 15, React 19 (versão estável), Mongoose 8.x.
-3. **Setup de Testes Profissionais**:
-    - Instalar **Jest**, **Supertest** e **Cypress** com versões compatíveis com as dependências principais.
-    - Configurar `jest.config.js`, `tests/setup.ts` e `cypress.config.ts`.
+1. **Docker**: Criar `docker-compose.yml` (Apenas para desenvolvimento manual e persistente).
+2. **Ambiente de Teste (Padrão Testcontainers)**:
+    - Instalar `mongodb-memory-server`.
+    - Configurar `tests/setup.ts` para levantar um MongoDB em memória em porta aleatória e isolada.
+    - Isso garante que o `npm run test:local` rode de forma 100% autônoma, sem conflito de portas ou necessidade de banco externo.
+3. **Setup Next.js & Husky**:
+    - Garantir Node LTS.
+    - Configurar Husky com pre-push hook rodando `/test local`.
 4. **Implementação de Testes de Integração (OBRIGATÓRIO)**:
-    - Criar `tests/integration/health.test.ts`.
-    - Criar `tests/integration/seed.test.ts`.
+    - `tests/integration/health.test.ts` (Usando banco em memória).
+    - `tests/integration/seed.test.ts` (Usando banco em memória).
 5. **Estrutura de Pastas**: `src/app`, `src/lib`, `src/models`, `tests/integration`, `cypress/e2e`.
 6. **Singleton MongoDB**: Implementar `src/lib/mongodb.ts`.
 7. **Modelo de Dados**: Implementar `src/models/Plano.ts`.
@@ -23,8 +24,10 @@ Este plano atende aos critérios de **DOR (Definition of Ready)**. A execução 
     - `GET /api/admin/seed`: População inicial (idempotente).
 
 ### Fase B: Sincronização & Deploy Inicial
-8. **Git**: Commit e Push para o repositório remoto.
-9. **Ação do Usuário**: Conectar repositório na Vercel.
+8. **Validação Verde**: Executar `npm run test:local` e garantir 100% de sucesso.
+9. **Git**: Commit (apenas se os testes passarem).
+10. **Bloqueio de Segurança**: O agente só fará o `git push` após comprovar o sucesso local.
+11. **Ação do Usuário**: Conectar repositório na Vercel.
 
 ### Fase C: Infraestrutura Produtiva (Ação do Usuário)
 10. No painel da Vercel: Adicionar **MongoDB Atlas** (Tier M0 Free).
