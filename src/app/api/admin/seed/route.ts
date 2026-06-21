@@ -48,7 +48,6 @@ export async function GET() {
       },
     ];
 
-    // Limpa e reinsere para garantir idempotência do seed
     await Plano.deleteMany({});
     await Plano.insertMany(planos);
 

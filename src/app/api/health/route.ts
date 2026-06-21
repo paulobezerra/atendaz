@@ -5,9 +5,7 @@ import mongoose from "mongoose";
 export async function GET() {
   try {
     await dbConnect();
-    
     const dbStatus = mongoose.connection.readyState;
-    // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
     
     return NextResponse.json({
       status: "ok",

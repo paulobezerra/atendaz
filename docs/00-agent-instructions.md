@@ -45,7 +45,10 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
      - Localizar o documento pertinente ao tópico (especificações, modelo de dados, requisitos, etc.).
      - Refletir a nova decisão, garantindo que não quebre a consistência com os outros documentos.
      - Atualizar o `README.md` ou `docs/02-architecture-principles.md` se for uma decisão transversal.
-   - `/test {local|prod}`: Executa a bateria de testes automatizados apontando para o ambiente especificado. O agente deve reportar o sucesso/falha como evidência para o DOD.
+   - `/test {local|prod}`: Executa a bateria de testes automatizados. 
+     - `local`: Roda testes de integração via Jest/Supertest contra o ambiente de desenvolvimento.
+     - `prod`: Roda testes E2E via Cypress (headless) contra a URL de produção.
+     - O agente deve reportar os resultados detalhados como evidência para o DOD.
    - `/done {ID}`: Comando exclusivo do usuário. O agente deve:
      - Marcar a especificação `docs/spec/F{ID}` e o Roadmap `docs/06` como **[CONCLUÍDO]**.
      - Arquivar o plano em `docs/plans/archive/`.
