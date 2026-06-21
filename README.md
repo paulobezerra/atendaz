@@ -38,8 +38,8 @@ Após o plano ser aprovado, inicia-se a codificação.
 
 ## 💎 Golden Stack (Referência de Estabilidade)
 Para evitar loops de dependências, utilize sempre:
-- **Node.js**: 20 (LTS)
-- **Next.js**: 15.1.4+ (Sem vulnerabilidades)
+- **Node.js**: 24 (Latest/Vercel Recommended)
+- **Next.js**: 16.3.0-preview.3 (Vanguarda/Sem vulnerabilidades da linha 15)
 - **React**: 19.0.0
 - **Mongoose**: 8.9.0+
 - **Tailwind**: 3.4+

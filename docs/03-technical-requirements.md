@@ -11,7 +11,7 @@
 - **Deploy**: Vercel (`vercel --prod`).
 
 ## Regras de Engenharia
-1. **Ambiente de Execução**: SEMPRE utilizar a versão **Node.js LTS** mais recente.
+1. **Ambiente de Execução**: SEMPRE utilizar a versão **Node.js 24.x** (conforme recomendado pela Vercel).
 2. **Tolerância Zero a Vulnerabilidades**: O sistema não aceita dependências com falhas de segurança conhecidas. O comando `npm audit` deve retornar zero falhas.
 3. **Dependências de Ponta**: Utilizar sempre as versões estáveis mais recentes de frameworks e bibliotecas (ex: Next.js, React, Mongoose).
 4. **TDD em Áreas Críticas**: Idempotência de webhooks, payloads de NFS-e, cálculo de slots, transições de assinatura, recálculo de valor por agenda e resolução de billing config.
