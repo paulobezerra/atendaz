@@ -44,3 +44,8 @@ Este documento centraliza as regras críticas que garantem a integridade, segura
 - **Dados Sensíveis**: Proibido armazenar dados clínicos, prontuários ou informações de saúde. O sistema é de gestão de agenda e financeira.
 - **WhatsApp**: Não utilizar WhatsApp Business API. Todas as comunicações de confirmação devem usar links `wa.me`.
 - **E-mails**: Notificações transacionais via Resend devem ser automáticas e registradas em `notification_log`.
+
+## 8. Segurança de Dependências (Tolerância Zero)
+- **Vulnerabilidades**: É proibido realizar push de código com vulnerabilidades conhecidas (reportadas pelo `npm audit`).
+- **Atualização**: O sistema deve utilizar as versões estáveis e patcheadas mais recentes das dependências críticas (Next.js, React, Mongoose).
+- **Bloqueio**: O pipeline de CI local (Husky) deve validar a ausência de vulnerabilidades antes de permitir o push.

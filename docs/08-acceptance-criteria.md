@@ -1,9 +1,11 @@
 # Critérios de Aceite (DoD - Definition of Done)
 
-Para este projeto, uma feature só é considerada concluída (**DONE**) quando atende ao seguinte critério soberano:
+Para este projeto, uma feature só é considerada concluída (**DONE**) quando atende aos seguintes critérios soberanos:
 
-### 🏁 Critério Soberano
-- **Validação em Produção**: A funcionalidade deve estar implantada no ambiente da Vercel e funcionando conforme o esperado. Testes em `localhost` são apenas marcos intermediários.
+### 🏁 Critérios Soberanos
+1. **Validação em Produção**: A funcionalidade deve estar implantada na Vercel e funcionando conforme o esperado.
+2. **Build Limpo**: O processo de deploy na Vercel deve ser concluído sem avisos de segurança ou vulnerabilidades de dependências.
+3. **Zero Vulnerabilidades**: O comando `npm audit` deve estar limpo em ambiente local e produção.
 
 ## MVP
 1. Plano Agenda Simples funciona sem cobrança.

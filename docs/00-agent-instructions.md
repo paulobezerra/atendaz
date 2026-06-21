@@ -19,19 +19,22 @@ Para evitar confusão de contexto, o agente deve SEMPRE distinguir as três cama
 Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
 1. **Leitura Obrigatória**: No início de cada sessão, ler `docs/00-agent-instructions.md`, `docs/06-implementation-roadmap.md` e o `README.md`.
 2. **Sincronização de Estado**: Antes de qualquer ação, verificar o último plano executado em `docs/plans/` e o estado atual das especificações.
-3. **Persistência de Decisões**: Decisões arquiteturais tomadas durante a sessão devem ser registradas em `docs/02-architecture-principles.md` ou no `README.md` antes do encerramento.
+3. **Protocolo Warm-up (Sessão Limpa)**: Antes de iniciar o `/code`, o agente deve validar se o `package.json` está alinhado com a **Golden Stack** do README e se não há vulnerabilidades (`npm audit`).
+4. **Persistência de Decisões**: Decisões arquiteturais tomadas durante a sessão devem ser registradas em `docs/02-architecture-principles.md` ou no `README.md` antes do encerramento.
 
 ## Fluxo de Trabalho Obrigatório
 
-0. **Separação de Comandos**: O agente deve respeitar estritamente a intenção do usuário.
-   - `/plan`: Estágio de análise, validação de spec e checklist. **PROIBIDO** criar ou editar arquivos de código (exceto arquivos em `docs/plans/`).
-   - `/code`: Estágio de implementação. O agente deve ter um plano aprovado antes de começar.
+0. **Separação Estrita de Comandos**: O agente deve respeitar o comando recebido como um limite físico de ação.
+   - `/plan`: **PROIBIDO** criar, editar, deletar arquivos de código ou realizar `git commit/push`. Sua única função é gerar documentação em `docs/plans/`. Se o agente detectar necessidade de correção de código durante um plano, deve APENAS listar isso como uma tarefa no plano e nunca executar a correção.
+   - `/code`: **ÚNICA** porta de entrada para modificação do código-fonte.
+   - `/doc`: **ÚNICA** porta de entrada para modificação de documentação base (specs, requisitos, guardrails).
 
 1. **Documentação Antes do Código**: Nenhuma funcionalidade deve ser implementada sem que sua especificação (`docs/spec`) e seu plano de execução (`docs/plans`) estejam alinhados.
 2. **Registro de Mudanças**: Qualquer alteração na lógica de negócio ou arquitetura deve ser refletida primeiro nos arquivos em `docs/` antes de tocar no código.
 3. **Comandos de Mini Agentes**:
    - `/plan {ID}`: Ativa o [Mini Agente de Planejamento](agent-plan-instructions.md). O agente deve:
      - **Validar a Spec**: Antes de planejar, o agente deve analisar a especificação `docs/spec/F{ID}-...` contra toda a documentação base (`docs/01` a `docs/09`). Se houver ambiguidades, conflitos com os Guardrails ou falta de detalhes técnicos, o agente deve interromper e solicitar clarificação via `/doc`.
+     - **Auditoria de Segurança (DOR)**: O agente deve verificar se a stack proposta utiliza as versões estáveis mais recentes. É obrigatório planejar a execução do `npm audit` para garantir **vulnerabilidade zero** antes da implementação.
      - **Check de Envs**: O agente deve verificar se as variáveis de ambiente necessárias para a fase (conforme `docs/05-environment-variables.md`) estão presentes. O plano deve conter instruções passo a passo de onde e como inserir as variáveis faltantes, tanto para **Desenvolvimento Local** (`.env.local`) quanto para **Produção** (Painel da Vercel).
      - **Check de Infraestrutura**: Para a Fase 0, o plano deve orientar sobre a conexão do repositório GitHub com o projeto na Vercel e o provisionamento do MongoDB.
      - Ler **toda a documentação de suporte** para garantir alinhamento total.

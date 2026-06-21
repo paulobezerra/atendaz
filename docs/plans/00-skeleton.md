@@ -33,10 +33,19 @@ Este plano atende aos critérios de **DOR (Definition of Ready)**. A execução 
 10. No painel da Vercel: Adicionar **MongoDB Atlas** (Tier M0 Free).
 
 ### Fase D: Validação do DOD (Definition of Done)
-11. **Teste Local (`/test local`)**: Executar Jest para validar APIs e conexão com Docker.
-12. **Teste de Produção (`/test prod`)**: Executar Cypress (headless) contra a URL da Vercel para validar o Health Check real.
-13. **Evidência**: O agente deve anexar o report resumido dos testes.
-14. **Ação do Usuário**: Digitar `/done 0`.
+11. **Purificação de Dependências (Tolerância Zero)**:
+    - Tarefa (via /code): Remover `node_modules` e `package-lock.json`.
+    - Tarefa (via /code): Atualizar `package.json` para **Next.js 15.1.3** (patch de segurança) e **React 19.0.0**.
+    - Tarefa (via /code): Executar `npm install` e garantir `npm audit` limpo.
+    - Tarefa (via /code): Commitar e realizar Push do estado purificado.
+12. **Bloqueio de Infraestrutura (Ação do Usuário - OBRIGATÓRIO)**:
+    - Antes do próximo passo, você **DEVE** garantir que o MongoDB Atlas foi adicionado no painel da Vercel (Fase C). Sem isso, as APIs continuarão retornando erro 500 mesmo com build sucesso.
+13. **Redeploy Limpo**:
+    - Ação do Usuário: No painel da Vercel, selecione "Redeploy" com a opção "Clear Build Cache" marcada.
+14. **Teste Local (`/test local`)**: Executar Jest para validar APIs e conexão com Docker.
+15. **Teste de Produção (`/test prod`)**: Executar Cypress (headless) contra a URL da Vercel.
+15. **Evidência**: O agente deve anexar o report resumido dos testes.
+16. **Ação do Usuário**: Digitar `/done 0`.
 
 ---
 

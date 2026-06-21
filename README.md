@@ -36,5 +36,19 @@ Após o plano ser aprovado, inicia-se a codificação.
 - [Modelo de Dados](docs/04-data-model.md)
 - [Requisitos Técnicos](docs/03-technical-requirements.md)
 
+## 💎 Golden Stack (Referência de Estabilidade)
+Para evitar loops de dependências, utilize sempre:
+- **Node.js**: 20 (LTS)
+- **Next.js**: 15.1.4+ (Sem vulnerabilidades)
+- **React**: 19.0.0
+- **Mongoose**: 8.9.0+
+- **Tailwind**: 3.4+
+
+## ⚡ Fluxo Acelerado (Vapt-Vupt)
+1. **DOR**: `/plan {ID}` -> Auditoria automática de segurança + Check de Envs.
+2. **Warm-up**: No início do `/code`, o agente limpa caches e garante a Golden Stack.
+3. **Execução**: Implementação TDD + `/test local`.
+4. **DOD**: `/test prod` -> Build limpo na Vercel + Sucesso em produção.
+
 ---
 *Nota: Não é necessário prefixar com @nome-do-agente se você já estiver em um chat direto com ele. Apenas o comando `/plan` ou `/code` é suficiente.*
