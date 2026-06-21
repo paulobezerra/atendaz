@@ -4,8 +4,10 @@ import Plano from "@/models/Plano";
 
 export async function GET() {
   try {
+    // 1. Garantir conexão
     await dbConnect();
 
+    // 2. Definir planos base (Fonte da Verdade Comercial)
     const planos = [
       {
         slug: "agenda-simples",
@@ -48,14 +50,23 @@ export async function GET() {
       },
     ];
 
-    await Plano.deleteMany({});
-    await Plano.insertMany(planos);
+    // 3. Upsert inteligente (idempotente)
+    const results = await Promise.all(
+      planos.map((plano) =>
+        Plano.findOneAndUpdate({ slug: plano.slug }, plano, {
+          upsert: true,
+          new: true,
+        })
+      )
+    );
 
     return NextResponse.json({
-      message: "Seed finalizado com sucesso",
-      planosInseridos: planos.length,
+      message: "Seed finalizado com sucesso (Idempotente)",
+      count: results.length,
+      planos: results.map((r) => r.slug),
     });
   } catch (error: any) {
+    console.error("Seed error:", error);
     return NextResponse.json(
       { status: "error", message: error.message },
       { status: 500 }

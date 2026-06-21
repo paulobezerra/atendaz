@@ -55,6 +55,8 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
 
 ## Diretrizes Gerais
 
+- **Node.js**: Utilizar sempre a versão **LTS**.
+- **Versões**: Priorizar versões estáveis e recentes das bibliotecas.
 - **Ordem**: Seguir rigorosamente a ordem do `docs/06-implementation-roadmap.md`.
 - **Qualidade**: Cada fase só termina com o critério de aceite passando (em produção, conforme especificado).
 - **API Asaas**: Nunca inventar campos ou endpoints. Em dúvida, consultar a documentação oficial ou perguntar ao usuário.

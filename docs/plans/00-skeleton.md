@@ -6,15 +6,19 @@ Este plano atende aos critérios de **DOR (Definition of Ready)**. A execução 
 
 ### Fase A: Preparação Local (DOR - Ready)
 1. **Docker**: Criar `docker-compose.yml` (Mongo 7 + Mongo Express).
-2. **Setup Next.js**: Manter/Ajustar `package.json` e arquivos de config.
+2. **Setup Next.js (Ambiente Limpo)**: 
+    - Garantir uso de **Node LTS** (criar `.nvmrc`).
+    - Criar `package.json` com versões estáveis e recentes: Next 15, React 19 (versão estável), Mongoose 8.x.
 3. **Setup de Testes Profissionais**:
-    - Instalar **Jest** e **Supertest** para testes de API/Integração.
-    - Instalar **Cypress** para testes E2E de Produção.
-    - Configurar `jest.config.js` e `cypress.config.ts`.
-4. **Estrutura de Pastas**: `src/app`, `src/lib`, `src/models`, `tests/integration`, `cypress/e2e`.
-5. **Singleton MongoDB**: Implementar `src/lib/mongodb.ts`.
-6. **Modelo de Dados**: Implementar `src/models/Plano.ts`.
-7. **API Endpoints**:
+    - Instalar **Jest**, **Supertest** e **Cypress** com versões compatíveis com as dependências principais.
+    - Configurar `jest.config.js`, `tests/setup.ts` e `cypress.config.ts`.
+4. **Implementação de Testes de Integração (OBRIGATÓRIO)**:
+    - Criar `tests/integration/health.test.ts`.
+    - Criar `tests/integration/seed.test.ts`.
+5. **Estrutura de Pastas**: `src/app`, `src/lib`, `src/models`, `tests/integration`, `cypress/e2e`.
+6. **Singleton MongoDB**: Implementar `src/lib/mongodb.ts`.
+7. **Modelo de Dados**: Implementar `src/models/Plano.ts`.
+8. **API Endpoints**:
     - `GET /api/health`: Status do banco.
     - `GET /api/admin/seed`: População inicial (idempotente).
 

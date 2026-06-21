@@ -11,7 +11,9 @@
 - **Deploy**: Vercel (`vercel --prod`).
 
 ## Regras de Engenharia
-1. **TDD em Áreas Críticas**: Idempotência de webhooks, payloads de NFS-e, cálculo de slots, transições de assinatura, recálculo de valor por agenda e resolução de billing config.
+1. **Ambiente de Execução**: SEMPRE utilizar a versão **Node.js LTS** mais recente. Recomenda-se o uso de `nvm use --lts` antes de qualquer instalação ou build.
+2. **Dependências**: Utilizar as versões estáveis mais recentes das dependências para evitar vulnerabilidades e garantir compatibilidade (ex: Next.js 15 exige versões específicas de React).
+3. **TDD em Áreas Críticas**: Idempotência de webhooks, payloads de NFS-e, cálculo de slots, transições de assinatura, recálculo de valor por agenda e resolução de billing config.
 2. **API Asaas**: Nunca inventar endpoints ou campos. Em dúvida, consultar documentação ou suporte.
 3. **Build**: Commit e deploy apenas com `npm run build` bem-sucedido.
 4. **Segurança**: Variáveis de ambiente para segredos. Chaves Asaas criptografadas com AES-256-GCM antes de persistir.
