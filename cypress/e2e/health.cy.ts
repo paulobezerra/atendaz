@@ -8,10 +8,11 @@ describe("F0 - Health Check E2E", () => {
   });
 
   it("Deve garantir que os planos iniciais existem no banco", () => {
-    // Primeiro garante que o seed foi rodado
+    // O Seed é idempotente, deve retornar count: 3 independente de quantas vezes rodar
     cy.request("/api/admin/seed").then((seedRes) => {
       expect(seedRes.status).to.eq(200);
-      expect(seedRes.body.planosInseridos).to.eq(3);
+      expect(seedRes.body.count).to.eq(3);
+      expect(seedRes.body.message).to.contain("sucesso");
     });
   });
 });
