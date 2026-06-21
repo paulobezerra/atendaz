@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Plano from "@/models/Plano";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     // 1. Garantir conexão
