@@ -2,7 +2,7 @@
 
 Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Produção → Próxima Feature.**
 
-## Fase 0: Esqueleto (Estrutura Base)
+## [CONCLUÍDO] Fase 0: Esqueleto (Estrutura Base)
 - Configuração inicial do Next.js, Tailwind, MongoDB.
 - Seed de planos no banco de produção.
 - Detalhes em: [docs/spec/F0-skeleton.md](spec/F0-skeleton.md)

@@ -25,9 +25,9 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
 ## Fluxo de Trabalho Obrigatório
 
 0. **Separação Estrita de Comandos**: O agente deve respeitar o comando recebido como um limite físico de ação.
-   - `/plan`: **PROIBIDO** criar, editar, deletar arquivos de código ou realizar `git commit/push`. Sua única função é gerar documentação em `docs/plans/`. Se o agente detectar necessidade de correção de código durante um plano, deve APENAS listar isso como uma tarefa no plano e nunca executar a correção.
-   - `/code`: **ÚNICA** porta de entrada para modificação do código-fonte.
-   - `/doc`: **ÚNICA** porta de entrada para modificação de documentação base (specs, requisitos, guardrails).
+   - `/plan`: **PROIBIDO** criar, editar, deletar arquivos de código, executar testes que alterem estado do banco local (exceto via mocks) ou realizar `git commit/push`. Sua única função é gerar documentação em `docs/plans/`. O agente **não deve** tentar corrigir erros de código encontrados durante a análise do plano; deve apenas reportá-los como débitos técnicos no arquivo de plano.
+   - `/code`: **ÚNICA** porta de entrada para modificação do código-fonte e execução de correções técnicas.
+   - `/test`: **ÚNICA** porta de entrada para execução de baterias de testes (Jest/Cypress). O comando `/plan` não deve disparar testes reais.
 
 1. **Documentação Antes do Código**: Nenhuma funcionalidade deve ser implementada sem que sua especificação (`docs/spec`) e seu plano de execução (`docs/plans`) estejam alinhados.
 2. **Registro de Mudanças**: Qualquer alteração na lógica de negócio ou arquitetura deve ser refletida primeiro nos arquivos em `docs/` antes de tocar no código.
