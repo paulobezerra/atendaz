@@ -1,6 +1,6 @@
-# Especificação: F1 — Login Google + Onboarding
+# [CONCLUÍDO] Especificação: F1 — Login Google + Onboarding
 
-> **Status:** a baseline **funcional** da F1 está concluída e **em produção** (validada no `/ssd-done 1`). Este documento incorpora o **redesign de UX (Split Layout)** — é o **novo escopo a implementar** (`/ssd-plan 1` → `/ssd-code 1`), pois o UX inicial ficou abaixo do esperado no gate de revisão.
+> **Status:** F1 concluída e **em produção**, incluindo o **redesign de UX (Split Layout)** — validado no `/ssd-done 1`.
 
 ## Escopo
 - Autenticação de usuários donos de `business` via Google.

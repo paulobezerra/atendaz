@@ -8,8 +8,9 @@ Esta pasta contém os planos de execução detalhados para cada funcionalidade (
 - O plano é um contrato de implementação: o que está no plano é o que será codado.
 
 ## Índice de Planos
-- [01 — Onboarding: redesign de UX (Split Layout)](01-onboarding.md)
+*(Nenhum plano ativo no momento.)*
 
 Arquivados:
+- [01 — Onboarding: redesign de UX (Split Layout)](archive/01-onboarding-ux-redesign.md)
 - [01 — Login Google + Onboarding (baseline funcional)](archive/01-onboarding.md)
 - [00 — Esqueleto](archive/00-skeleton.md)
