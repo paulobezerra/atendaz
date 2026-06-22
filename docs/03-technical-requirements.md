@@ -12,8 +12,8 @@
 
 ## Regras de Engenharia
 1. **Ambiente de Execução**: SEMPRE utilizar a versão **Node.js 24.x** (conforme recomendado pela Vercel).
-2. **Tolerância Zero a Vulnerabilidades**: O sistema não aceita dependências com falhas de segurança conhecidas. O comando `npm audit` deve retornar zero falhas.
-3. **Dependências de Ponta**: Utilizar sempre as versões estáveis mais recentes de frameworks e bibliotecas (ex: Next.js, React, Mongoose).
+2. **Tolerância Zero a Vulnerabilidades (Produção)**: O gate é `npm audit --omit=dev` (script `audit:prod`), que deve retornar zero falhas nas dependências de produção. Vulnerabilidades exclusivas de devDependencies sem fix são débito conhecido (ver Guardrail 8 em `docs/07`).
+3. **Apenas Releases Estáveis**: Utilizar somente versões **estáveis** (dist-tag `latest`), próximas de LTS. **Proibido** `beta`/`preview`/`rc`/`alpha`/`canary`/prerelease — considerado pior que uma vulnerabilidade (ver Guardrail 8 em `docs/07` e a Golden Stack no `README.md`).
 4. **TDD em Áreas Críticas**: Idempotência de webhooks, payloads de NFS-e, cálculo de slots, transições de assinatura, recálculo de valor por agenda e resolução de billing config.
 2. **API Asaas**: Nunca inventar endpoints ou campos. Em dúvida, consultar documentação ou suporte.
 3. **Build**: Commit e deploy apenas com `npm run build` bem-sucedido.

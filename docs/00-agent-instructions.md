@@ -80,7 +80,7 @@ As telas são definidas no **spec** (fonte da verdade, revisado **antes** do có
 ## Diretrizes Gerais
 
 - **Node.js**: Utilizar sempre a versão **LTS**.
-- **Versões**: Priorizar versões estáveis e recentes das bibliotecas.
+- **Versões**: Usar **apenas** releases estáveis (`latest`), próximas de LTS. PROIBIDO `beta`/`preview`/`rc`/`alpha`/`canary`/prerelease (ver Guardrail 8 em `docs/07` e a Golden Stack no `README.md`).
 - **Ordem**: Seguir rigorosamente a ordem do `docs/06-implementation-roadmap.md`.
 - **Qualidade**: Cada fase só termina com o critério de aceite passando (em produção, conforme especificado).
 - **API Asaas**: Nunca inventar campos ou endpoints. Em dúvida, consultar a documentação oficial ou perguntar ao usuário.

@@ -20,6 +20,11 @@ Chaves Asaas só são solicitadas quando o plano tem `cobranca` ou `nfse`, e sã
 - Rodar `npm audit` → **zero vulnerabilidades** antes do push (Guardrail 8 / Requisito Técnico 2).
 - Confirmar Golden Stack: Node 24, Next 16+, React 19.
 
+### ✅ Débito Técnico de DOR (T0) — RESOLVIDO no `/ssd-code` (2026-06-22)
+O `npm audit` reportava vulns moderadas via `cypress` (uuid) e, ao tentar `--force`, a cadeia do Jest (`babel-plugin-istanbul → @istanbuljs/load-nyc-config → js-yaml 3.x`, *unmaintained*). Resolução:
+- **Cypress 13→15** e **Jest 29→30** (+ ts-jest/jest-environment-node/@types) por upgrade dirigido (nunca `--force`, que rebaixa ts-jest). Testes seguem verdes.
+- As ~18 moderadas remanescentes são **exclusivas de devDependencies de teste**, sem patch upstream. Decisão do usuário (registrada): **gate de produção** — `npm audit --omit=dev` = **0**. Guardrail 8 (`docs/07`) e Requisito Técnico 2 (`docs/03`) ajustados; script `audit:prod` adicionado.
+
 ## Tarefas Técnicas
 
 ### Infra de auth e libs
@@ -49,7 +54,7 @@ Chaves Asaas só são solicitadas quando o plano tem `cobranca` ou `nfse`, e sã
 - `npm audit` limpo após adicionar `next-auth@beta`; push bloqueado se houver vulnerabilidade (o hook Husky pre-push já roda os testes; manter tolerância zero).
 - Chaves Asaas nunca trafegam nem são persistidas em texto plano (Guardrail 3).
 
-## Check de Envs (Ação do Usuário — antes do `/code 1`)
+## Check de Envs (Ação do Usuário — antes do `/ssd-code 1`)
 Preencher em `.env.local` (local) **e** no painel da Vercel (Settings → Environment Variables):
 
 | Variável | Origem |
@@ -61,26 +66,29 @@ Preencher em `.env.local` (local) **e** no painel da Vercel (Settings → Enviro
 | `AUTH_URL` / `NEXTAUTH_URL` | URL base (se exigido pelo Auth.js v5 em produção) |
 
 ## Cronograma de Ações Manuais (ordenado)
-1. **Antes do `/code 1`**: criar credenciais OAuth no Google Cloud Console com redirect URIs autorizados para `http://localhost:3000/api/auth/callback/google` **e** o domínio da Vercel. Gerar `AUTH_SECRET` e `CRYPTO_MASTER_KEY`. Obter uma chave Asaas **sandbox** para teste. Preencher `.env.local` e o painel da Vercel.
-2. **Durante o `/code 1`**: implementação TDD → `/test local` verde (pré-requisito para qualquer push).
-3. **Após push e deploy**: confirmar/atualizar o redirect URI do Google com a URL final da Vercel.
-4. **DOD**: `/test prod` (Cypress) → validação funcional na URL da Vercel → usuário digita `/done 1`.
+1. **Antes do `/ssd-code 1`**: criar credenciais OAuth no Google Cloud Console. Em **URIs de redirecionamento autorizados** cadastrar três: `http://localhost:3000/api/auth/callback/google`, o alias de **Preview** da branch (`https://atendaz-git-feature-1-onboarding-<scope>.vercel.app/api/auth/callback/google`) e o domínio de **Produção**. Gerar `AUTH_SECRET` e `CRYPTO_MASTER_KEY`. Obter uma chave Asaas **sandbox** para teste. Preencher `.env.local` e o painel da Vercel.
+2. **Durante o `/ssd-code 1`**: implementação TDD → `/ssd-test local` verde (pré-requisito para qualquer push da branch).
+3. **Homologação (`stage`)**: cada push da branch gera um Preview → `/ssd-test stage` contra a URL do Preview.
+4. **DOD (`/ssd-done 1`)**: merge na `master` → deploy de produção → `/ssd-test prod` verde → validação funcional → marca `[CONCLUÍDO]`.
 
 ## Verificação e Testes
 
-### Local (Jest, banco em memória via `tests/setup.ts`)
+### `local` (Jest, banco em memória via `tests/setup.ts`)
 - [ ] `crypto`: roundtrip encrypt→decrypt; ciphertext diferente do plaintext no banco.
 - [ ] `slug`: rejeita reservados (`admin`, `api`, …) e duplicados; aceita válidos.
 - [ ] `onboarding`: cria Business + Professional + PlatformSubscription corretos; copia `modulos`; criptografa Asaas somente quando o módulo está ativo; idempotência em re-submit do mesmo `googleId`.
 - [ ] `asaas`: validação de chave (mockada) — caminho válido e inválido.
 
-### Produção (Cypress, contra a URL da Vercel)
+### `stage` (Cypress contra a URL de Preview da Vercel) — homologação
 - [ ] Onboarding completo com plano gratuito (sem Asaas).
 - [ ] Onboarding completo com plano pago (validando chave Asaas em sandbox).
 - [ ] Redirecionamento correto pós-login.
 
+### `prod` (Cypress contra a Produção, no `/ssd-done`)
+- [ ] Smoke dos mesmos fluxos acima na URL de produção (evidência soberana do DOD).
+
 ### Critério Soberano (DOD — `docs/08`)
-Build limpo na Vercel + `npm audit` zero + aprovação funcional do usuário (`/done 1`).
+Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação funcional do usuário (`/ssd-done 1`).
 
 ## Arquivos Afetados
 **Novos**: `src/lib/{auth,crypto,slug,asaas}.ts`, `src/lib/schemas/onboarding.ts`, `src/app/api/auth/[...nextauth]/route.ts`, `src/app/api/onboarding/route.ts`, `src/app/api/onboarding/validate-slug/route.ts`, `src/models/{Business,Professional,PlatformSubscription}.ts`, `src/app/{login,onboarding,dashboard}/page.tsx`, `src/middleware.ts`, testes em `tests/integration/` e `cypress/e2e/`.
@@ -90,3 +98,70 @@ Build limpo na Vercel + `npm audit` zero + aprovação funcional do usuário (`/
 - `resolveBillingConfig` e override de billing por profissional → **F2**.
 - Recálculo da assinatura por agenda adicional → **F11**.
 - Gating 404 de rotas de módulo aplica-se plenamente nas features de Agenda/Cobrança (F3+); na F1 o gating se manifesta no passo condicional de Asaas.
+
+## Status de Implementação (`/ssd-code 1` — 2026-06-22)
+**Concluído e verde**: T0–T15 implementados; `npm test` = 19/19; `npm run build` OK (Next 16 + next-auth v5); `npm run audit:prod` = 0.
+- Libs: `crypto` (AES-256-GCM), `slug` (reservados), `asaas` (validação `/myAccount`) — todas com testes unitários.
+- Models: `Business`, `Professional`, `PlatformSubscription` (+ `Plano` existente).
+- Auth.js v5 JWT (`src/lib/auth.ts`) + rota + augmentação de tipos.
+- Rotas: `POST /api/onboarding` (idempotente, gating Asaas, cria Business+Professional+PlatformSubscription TRIAL) e `GET /api/onboarding/validate-slug`; teste de integração cobre idempotência, gating e criptografia.
+- UI: `/login`, wizard `/onboarding` (4 passos, billing condicional), `/dashboard`; `middleware.ts`.
+
+**Desvios/decisões em relação ao plano (registrados para revisão)**:
+- **Middleware**: faz apenas o *gate de login* (edge-safe — `auth` não importa mongoose). O redirect fino PENDING↔COMPLETE ficou nas server components (`/dashboard`, `/onboarding`), que podem consultar o banco. Motivo: mongoose não roda no runtime Edge.
+- **Sem transação MongoDB**: criação sequencial protegida pelo índice único `googleId` (mongodb-memory-server standalone não suporta transações). Débito: possível estado parcial em falha intermediária — endereçar com replica-set/transação ou cleanup em F2+.
+- **Auth**: migrada para **next-auth v4 estável** (ver "Migração para stack estável" abaixo). O hack `.npmrc legacy-peer-deps` foi removido; não há mais conflito de peers.
+
+**✅ Migração para stack estável — CONCLUÍDA (`/ssd-code`, 2026-06-22)** (política "somente estável", Guardrail 8):
+- `next` 16.3.0-preview.3 → **16.2.9**; `react`/`react-dom` → **19.2.7** (todas estáveis `latest`).
+- `next-auth` 5-beta → **4.24.14** (estável). Auth reescrita para a API v4: `authOptions` + `getServerSession` (helper `getSession()`), rota `NextAuth(authOptions)`, `middleware.ts` com `withAuth`, `login` e `SignOutButton` client (`next-auth/react`).
+- **`.npmrc` removido** (sem conflito de peer/prerelease).
+- `overrides` adicionados em `package.json` (`postcss ^8.5.10`, `uuid ^11.1.1`) para zerar 4 moderadas transitivas (do Next e do next-auth v4) **sem downgrade** → `audit:prod` = **0**.
+- Revalidado: `npm test` 19/19, `npm run build` OK, `audit:prod` 0.
+- **Ação do usuário**: o NextAuth v4 usa `NEXTAUTH_URL` para montar a callback — garantir `NEXTAUTH_URL` (Preview e Produção) no painel da Vercel, além de `AUTH_SECRET` (reusado via `authOptions.secret`).
+
+**Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.
+
+## Refinamento do gate de revisão (2026-06-22): Segmento controlado (sem campo aberto)
+**Requisito (usuário):** no wizard, `segmento` é hoje um **input de texto livre** — inadmissível. Deve ser uma **seleção (dropdown)** a partir de uma **lista controlada vinda do banco**. A plataforma controla os segmentos atendidos. A versão final da F1 **não pode** ter campo aberto de segmento. *Futuro (F12):* ligar segmentos aos hotsites por nicho — fora do escopo agora.
+
+**Lacuna de documentação a formalizar via `/ssd-doc` (antes/junto do `/ssd-code`):**
+- `docs/04-data-model.md`: adicionar a coleção **`segmento`** (`slug` único, `nome`, `ativo`, `ordem`).
+- `docs/spec/F1-onboarding.md`: registrar que o segmento é **selecionado de lista controlada** (sem texto livre).
+
+**Decisões de design:**
+- Novo model `Segmento` `{ slug (único), nome, ativo, ordem }`. Campos de hotsite (hero, features…) ficam em `marketing_page` (F12), **não** aqui.
+- `business.segmento` passa a guardar o **slug** validado (alinha com `marketing_page.segmento` para o vínculo futuro da F12).
+- A lista é carregada no **server component** `onboarding/page.tsx` (`Segmento.find({ ativo: true }).sort({ ordem })`) e passada ao wizard — sem endpoint novo (um `GET /api/segmentos` é opcional/futuro).
+- `segmento` torna-se **obrigatório**; a rota `POST /api/onboarding` valida que o slug **existe e está ativo** (400 caso contrário). UI vira `<select>`.
+- **Seed idempotente** de segmentos (lista curada, ~40–60, expansível para 100–200): estender `/api/admin/seed` ou seed dedicado. Ex.: barbearia, salão de beleza, estética, clínica médica, odontologia, fisioterapia, psicologia, nutrição, personal trainer, pilates, academia, petshop, veterinária, advocacia, contabilidade, consultoria, fotografia, design, etc.
+
+**Tarefas técnicas — ✅ CONCLUÍDAS (`/ssd-code`, 2026-06-22):**
+- [x] **T16** — `src/models/Segmento.ts` (índice único em `slug`).
+- [x] **T17** — Seed idempotente de ~38 segmentos (curada/expansível) no `/api/admin/seed`.
+- [x] **T18** — `onboarding/page.tsx` carrega `Segmento.find({ativo:true}).sort(ordem)` e passa ao wizard.
+- [x] **T19** — Passo 1 do wizard: `<select>` de segmento (obrigatório), com tokens do design system.
+- [x] **T20** — `schema/onboarding.ts` (`segmento` obrigatório) + rota valida `slug ∈ segmentos ativos` (400 se inválido).
+- [x] **T21** — Testes: onboarding rejeita segmento fora da lista (400) e aceita válido; seed idempotente de segmentos. `npm test` 21/21, build OK, `audit:prod` 0.
+
+> Aplicados também os tokens do Design System (`docs/10`): cor `primary` centralizada no `tailwind.config.ts` (default indigo, ajustável) usada em login e wizard.
+
+**Fora do escopo agora:** vínculo segmento ↔ hotsite/marketing_page (F12).
+
+## Refinamento do gate de revisão (2026-06-22): Seed automático no deploy
+**Problema:** em homologação o `<select>` de segmento aparece **vazio** — o seed (planos + segmentos) não roda sozinho, exige chamar `/api/admin/seed` na mão. Os dados de referência precisam existir **automaticamente** em qualquer ambiente logo após o deploy.
+
+**Decisão (recomendada): self-healing idempotente (`ensureSeed`).**
+- Extrair as listas (planos, segmentos) para `src/lib/seedData.ts`.
+- Criar `src/lib/seed.ts` → `ensureSeed()`: upserts **idempotentes** de planos+segmentos, **guardado por flag em memória** (roda 1x por instância/cold start) e **pulado em teste** (`NODE_ENV === "test"`) para não interferir no Jest.
+- `/api/admin/seed` passa a reutilizar `ensureSeed()` (fonte única).
+- Chamar `ensureSeed()` nos pontos de entrada que dependem dos dados (no mínimo `onboarding/page.tsx`; extensível a `dashboard`/layout). Após um deploy, a 1ª request já popula o banco.
+- *Vantagens:* funciona em local/stage/prod sem orquestração externa; idempotente; sem custo nos testes.
+- *Alternativa (se quiser desacoplar da request):* passo pós-deploy no CI (GitHub Action/Deploy Hook) com `curl /api/admin/seed` + bypass — mais "imediato", porém exige montar CI. Não agora.
+
+**Tarefa — ✅ CONCLUÍDA (`/ssd-code`, 2026-06-22):**
+- [x] **T22** — `src/lib/seedData.ts` + `src/lib/seed.ts` (`ensureSeed()` idempotente, guard em memória, skip em teste); `/api/admin/seed` refatorado para usar; `ensureSeed()` chamado em `onboarding/page.tsx`. `npm test` 21/21, build OK, `audit:prod` 0.
+
+**Correção adicional (detectada no `/ssd-test stage`): robustez da conexão Mongo.**
+- O `/api/health` reportava `disconnected` na 1ª request (cold start). Causa: `src/lib/mongodb.ts` devolvia `cached.conn` sem checar `readyState` — em serverless o socket cai por idle e o mongoose fica reconectando (`readyState=2`).
+- Fix: `dbConnect` só reusa o cache se `readyState===1`; se `2` aguarda o evento `connected`; se `0` reconecta. Elimina o falso negativo no health.
