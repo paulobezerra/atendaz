@@ -147,3 +147,17 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 > Aplicados também os tokens do Design System (`docs/10`): cor `primary` centralizada no `tailwind.config.ts` (default indigo, ajustável) usada em login e wizard.
 
 **Fora do escopo agora:** vínculo segmento ↔ hotsite/marketing_page (F12).
+
+## Refinamento do gate de revisão (2026-06-22): Seed automático no deploy
+**Problema:** em homologação o `<select>` de segmento aparece **vazio** — o seed (planos + segmentos) não roda sozinho, exige chamar `/api/admin/seed` na mão. Os dados de referência precisam existir **automaticamente** em qualquer ambiente logo após o deploy.
+
+**Decisão (recomendada): self-healing idempotente (`ensureSeed`).**
+- Extrair as listas (planos, segmentos) para `src/lib/seedData.ts`.
+- Criar `src/lib/seed.ts` → `ensureSeed()`: upserts **idempotentes** de planos+segmentos, **guardado por flag em memória** (roda 1x por instância/cold start) e **pulado em teste** (`NODE_ENV === "test"`) para não interferir no Jest.
+- `/api/admin/seed` passa a reutilizar `ensureSeed()` (fonte única).
+- Chamar `ensureSeed()` nos pontos de entrada que dependem dos dados (no mínimo `onboarding/page.tsx`; extensível a `dashboard`/layout). Após um deploy, a 1ª request já popula o banco.
+- *Vantagens:* funciona em local/stage/prod sem orquestração externa; idempotente; sem custo nos testes.
+- *Alternativa (se quiser desacoplar da request):* passo pós-deploy no CI (GitHub Action/Deploy Hook) com `curl /api/admin/seed` + bypass — mais "imediato", porém exige montar CI. Não agora.
+
+**Tarefa:**
+- [ ] **T22** — `src/lib/seedData.ts` + `src/lib/seed.ts` (`ensureSeed()` idempotente, guard em memória, skip em teste); refatorar `/api/admin/seed` para usar; chamar em `onboarding/page.tsx`. Revalidar `npm test`/build/`audit:prod` (não devem ser afetados).
