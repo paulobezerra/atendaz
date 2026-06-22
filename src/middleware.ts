@@ -1,16 +1,13 @@
-import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { withAuth } from "next-auth/middleware";
 
 /**
- * Gate de autenticação (edge-safe — `auth` não acessa o banco).
- * Apenas exige login nas rotas protegidas. O redirecionamento fino
- * entre /onboarding e /dashboard (PENDING vs COMPLETE) é feito nas
- * server components, que podem consultar o MongoDB.
+ * Gate de autenticação (edge-safe). Exige token válido nas rotas
+ * protegidas e redireciona para `/login` caso contrário. O redirect
+ * fino PENDING↔COMPLETE fica nas server components (runtime Node).
  */
-export default auth((req) => {
-  if (!req.auth) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
-  }
+export default withAuth({
+  secret: process.env.AUTH_SECRET,
+  pages: { signIn: "/login" },
 });
 
 export const config = {

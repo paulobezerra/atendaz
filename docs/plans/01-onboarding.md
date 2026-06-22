@@ -110,13 +110,14 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 **Desvios/decisões em relação ao plano (registrados para revisão)**:
 - **Middleware**: faz apenas o *gate de login* (edge-safe — `auth` não importa mongoose). O redirect fino PENDING↔COMPLETE ficou nas server components (`/dashboard`, `/onboarding`), que podem consultar o banco. Motivo: mongoose não roda no runtime Edge.
 - **Sem transação MongoDB**: criação sequencial protegida pelo índice único `googleId` (mongodb-memory-server standalone não suporta transações). Débito: possível estado parcial em falha intermediária — endereçar com replica-set/transação ou cleanup em F2+.
-- **next-auth** exige resolução tolerante de peers (peer `next ^14||^15||^16.0.0` não casa com o prerelease `16.3.0-preview.3`). Fixado via **`.npmrc` (`legacy-peer-deps=true`)** para que local e Vercel usem a mesma resolução — sem isso o deploy de stage quebrava com ERESOLVE no `npm install`. Revisar quando next-auth suportar Next 16 estável.
+- **Auth**: migrada para **next-auth v4 estável** (ver "Migração para stack estável" abaixo). O hack `.npmrc legacy-peer-deps` foi removido; não há mais conflito de peers.
 
-**⚠️ Correção de versões pendente (`/ssd-code`) — política "somente estável" (Guardrail 8)**:
-A implementação usa **Next 16.3.0-preview.3 (preview)** e **next-auth 5-beta** — ambos prerelease, vetados pela política. Migrar para stack estável:
-- `next` → **16.2.9** (estável `latest`); `react`/`react-dom` → **19.2.x**.
-- `next-auth` → **4.24.x** (estável; peer aceita `next ^16`). Implica **rework da auth para a API v4** (`getServerSession`/`authOptions` no lugar de `auth()`/`handlers`; ajustar `middleware.ts`, rota `[...nextauth]`, `login`/`dashboard`/`onboarding`).
-- Com Next estável + next-auth v4, **remover o `.npmrc legacy-peer-deps`** (não há mais conflito de peer/prerelease).
-- Revalidar `npm test`, `npm run build` e `audit:prod` após a migração.
+**✅ Migração para stack estável — CONCLUÍDA (`/ssd-code`, 2026-06-22)** (política "somente estável", Guardrail 8):
+- `next` 16.3.0-preview.3 → **16.2.9**; `react`/`react-dom` → **19.2.7** (todas estáveis `latest`).
+- `next-auth` 5-beta → **4.24.14** (estável). Auth reescrita para a API v4: `authOptions` + `getServerSession` (helper `getSession()`), rota `NextAuth(authOptions)`, `middleware.ts` com `withAuth`, `login` e `SignOutButton` client (`next-auth/react`).
+- **`.npmrc` removido** (sem conflito de peer/prerelease).
+- `overrides` adicionados em `package.json` (`postcss ^8.5.10`, `uuid ^11.1.1`) para zerar 4 moderadas transitivas (do Next e do next-auth v4) **sem downgrade** → `audit:prod` = **0**.
+- Revalidado: `npm test` 19/19, `npm run build` OK, `audit:prod` 0.
+- **Ação do usuário**: o NextAuth v4 usa `NEXTAUTH_URL` para montar a callback — garantir `NEXTAUTH_URL` (Preview e Produção) no painel da Vercel, além de `AUTH_SECRET` (reusado via `authOptions.secret`).
 
 **Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.

@@ -1,4 +1,6 @@
-import { signIn } from "@/lib/auth";
+"use client";
+
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   return (
@@ -8,20 +10,12 @@ export default function LoginPage() {
         <p className="mt-2 text-sm text-gray-500">
           Agenda + Cobrança + NFS-e. Entre para configurar seu negócio.
         </p>
-        <form
-          action={async () => {
-            "use server";
-            await signIn("google", { redirectTo: "/" });
-          }}
-          className="mt-8"
+        <button
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+          className="mt-8 w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700"
         >
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700"
-          >
-            Entrar com Google
-          </button>
-        </form>
+          Entrar com Google
+        </button>
       </div>
     </main>
   );

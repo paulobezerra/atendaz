@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Business from "@/models/Business";
 import Plano from "@/models/Plano";
@@ -8,7 +8,7 @@ import OnboardingWizard, { type PlanoDTO } from "./OnboardingWizard";
 export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.googleId) redirect("/login");
 
   await dbConnect();

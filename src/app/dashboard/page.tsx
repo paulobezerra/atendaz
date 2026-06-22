@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Business from "@/models/Business";
+import SignOutButton from "./SignOutButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.googleId) redirect("/login");
 
   await dbConnect();
@@ -25,16 +26,7 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900">
           {business.nomeFantasia}
         </h1>
-        <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/login" });
-          }}
-        >
-          <button className="text-sm text-gray-500 hover:text-gray-900">
-            Sair
-          </button>
-        </form>
+        <SignOutButton />
       </div>
       <p className="mt-1 text-sm text-gray-500">/agendar/{business.slug}</p>
 

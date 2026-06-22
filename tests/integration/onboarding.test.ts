@@ -6,13 +6,13 @@ import Professional from "@/models/Professional";
 import PlatformSubscription from "@/models/PlatformSubscription";
 import { decrypt } from "@/lib/crypto";
 
-jest.mock("@/lib/auth", () => ({ auth: jest.fn() }));
+jest.mock("@/lib/auth", () => ({ getSession: jest.fn() }));
 jest.mock("@/lib/asaas", () => ({
   validateAsaasKey: jest.fn().mockResolvedValue({ valid: true }),
 }));
 
-import { auth } from "@/lib/auth";
-const mockedAuth = auth as jest.Mock;
+import { getSession } from "@/lib/auth";
+const mockedAuth = getSession as jest.Mock;
 
 function makeReq(body: unknown) {
   return new Request("http://localhost/api/onboarding", {

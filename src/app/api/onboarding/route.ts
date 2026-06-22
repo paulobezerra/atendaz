@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import Plano from "@/models/Plano";
 import Business, { IBillingConfig } from "@/models/Business";
 import Professional from "@/models/Professional";
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 const TRIAL_DAYS = 30;
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getSession();
   const googleId = session?.user?.googleId;
   if (!googleId) {
     return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
