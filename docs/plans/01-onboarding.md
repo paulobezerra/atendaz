@@ -121,3 +121,27 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 - **Ação do usuário**: o NextAuth v4 usa `NEXTAUTH_URL` para montar a callback — garantir `NEXTAUTH_URL` (Preview e Produção) no painel da Vercel, além de `AUTH_SECRET` (reusado via `authOptions.secret`).
 
 **Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.
+
+## Refinamento do gate de revisão (2026-06-22): Segmento controlado (sem campo aberto)
+**Requisito (usuário):** no wizard, `segmento` é hoje um **input de texto livre** — inadmissível. Deve ser uma **seleção (dropdown)** a partir de uma **lista controlada vinda do banco**. A plataforma controla os segmentos atendidos. A versão final da F1 **não pode** ter campo aberto de segmento. *Futuro (F12):* ligar segmentos aos hotsites por nicho — fora do escopo agora.
+
+**Lacuna de documentação a formalizar via `/ssd-doc` (antes/junto do `/ssd-code`):**
+- `docs/04-data-model.md`: adicionar a coleção **`segmento`** (`slug` único, `nome`, `ativo`, `ordem`).
+- `docs/spec/F1-onboarding.md`: registrar que o segmento é **selecionado de lista controlada** (sem texto livre).
+
+**Decisões de design:**
+- Novo model `Segmento` `{ slug (único), nome, ativo, ordem }`. Campos de hotsite (hero, features…) ficam em `marketing_page` (F12), **não** aqui.
+- `business.segmento` passa a guardar o **slug** validado (alinha com `marketing_page.segmento` para o vínculo futuro da F12).
+- A lista é carregada no **server component** `onboarding/page.tsx` (`Segmento.find({ ativo: true }).sort({ ordem })`) e passada ao wizard — sem endpoint novo (um `GET /api/segmentos` é opcional/futuro).
+- `segmento` torna-se **obrigatório**; a rota `POST /api/onboarding` valida que o slug **existe e está ativo** (400 caso contrário). UI vira `<select>`.
+- **Seed idempotente** de segmentos (lista curada, ~40–60, expansível para 100–200): estender `/api/admin/seed` ou seed dedicado. Ex.: barbearia, salão de beleza, estética, clínica médica, odontologia, fisioterapia, psicologia, nutrição, personal trainer, pilates, academia, petshop, veterinária, advocacia, contabilidade, consultoria, fotografia, design, etc.
+
+**Tarefas técnicas (para o `/ssd-code`):**
+- [ ] **T16** — `src/models/Segmento.ts` (índice único em `slug`).
+- [ ] **T17** — Seed idempotente de segmentos (curada/expansível).
+- [ ] **T18** — Carregar segmentos ativos em `onboarding/page.tsx` e passar ao `OnboardingWizard`.
+- [ ] **T19** — Passo 1 do wizard: trocar o `<input>` de segmento por `<select>` (obrigatório).
+- [ ] **T20** — `schema/onboarding.ts` + rota: `segmento` obrigatório e validado contra segmentos ativos (slug ∈ lista).
+- [ ] **T21** — Testes: rota rejeita segmento inválido/inativo (400) e aceita válido; (opcional) E2E smoke do `<select>`.
+
+**Fora do escopo agora:** vínculo segmento ↔ hotsite/marketing_page (F12).
