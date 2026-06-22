@@ -20,6 +20,11 @@ Chaves Asaas só são solicitadas quando o plano tem `cobranca` ou `nfse`, e sã
 - Rodar `npm audit` → **zero vulnerabilidades** antes do push (Guardrail 8 / Requisito Técnico 2).
 - Confirmar Golden Stack: Node 24, Next 16+, React 19.
 
+### ⚠️ Débito Técnico de DOR (detectado no `/ssd-plan`)
+`npm audit` em 2026-06-22 reportou **23 vulnerabilidades moderadas**, originadas em `uuid <11.1.1` (cadeia do `cypress`, devDependency). Viola o Guardrail 8 (tolerância zero).
+- **T0 (warm-up do `/ssd-code`, ANTES das demais tarefas)**: zerar o `npm audit`. Caminho provável: subir o Cypress (`npm audit fix --force` instala `cypress@15`, breaking apenas em devDependency de testes E2E) e revalidar os testes `stage`. Confirmar que produção/build não são afetados (Cypress não vai para o bundle).
+- Não corrigido no `/ssd-plan` por regra de separação de comandos — apenas registrado aqui.
+
 ## Tarefas Técnicas
 
 ### Infra de auth e libs
@@ -49,7 +54,7 @@ Chaves Asaas só são solicitadas quando o plano tem `cobranca` ou `nfse`, e sã
 - `npm audit` limpo após adicionar `next-auth@beta`; push bloqueado se houver vulnerabilidade (o hook Husky pre-push já roda os testes; manter tolerância zero).
 - Chaves Asaas nunca trafegam nem são persistidas em texto plano (Guardrail 3).
 
-## Check de Envs (Ação do Usuário — antes do `/code 1`)
+## Check de Envs (Ação do Usuário — antes do `/ssd-code 1`)
 Preencher em `.env.local` (local) **e** no painel da Vercel (Settings → Environment Variables):
 
 | Variável | Origem |
@@ -61,26 +66,29 @@ Preencher em `.env.local` (local) **e** no painel da Vercel (Settings → Enviro
 | `AUTH_URL` / `NEXTAUTH_URL` | URL base (se exigido pelo Auth.js v5 em produção) |
 
 ## Cronograma de Ações Manuais (ordenado)
-1. **Antes do `/code 1`**: criar credenciais OAuth no Google Cloud Console com redirect URIs autorizados para `http://localhost:3000/api/auth/callback/google` **e** o domínio da Vercel. Gerar `AUTH_SECRET` e `CRYPTO_MASTER_KEY`. Obter uma chave Asaas **sandbox** para teste. Preencher `.env.local` e o painel da Vercel.
-2. **Durante o `/code 1`**: implementação TDD → `/test local` verde (pré-requisito para qualquer push).
-3. **Após push e deploy**: confirmar/atualizar o redirect URI do Google com a URL final da Vercel.
-4. **DOD**: `/test prod` (Cypress) → validação funcional na URL da Vercel → usuário digita `/done 1`.
+1. **Antes do `/ssd-code 1`**: criar credenciais OAuth no Google Cloud Console. Em **URIs de redirecionamento autorizados** cadastrar três: `http://localhost:3000/api/auth/callback/google`, o alias de **Preview** da branch (`https://atendaz-git-feature-1-onboarding-<scope>.vercel.app/api/auth/callback/google`) e o domínio de **Produção**. Gerar `AUTH_SECRET` e `CRYPTO_MASTER_KEY`. Obter uma chave Asaas **sandbox** para teste. Preencher `.env.local` e o painel da Vercel.
+2. **Durante o `/ssd-code 1`**: implementação TDD → `/ssd-test local` verde (pré-requisito para qualquer push da branch).
+3. **Homologação (`stage`)**: cada push da branch gera um Preview → `/ssd-test stage` contra a URL do Preview.
+4. **DOD (`/ssd-done 1`)**: merge na `master` → deploy de produção → `/ssd-test prod` verde → validação funcional → marca `[CONCLUÍDO]`.
 
 ## Verificação e Testes
 
-### Local (Jest, banco em memória via `tests/setup.ts`)
+### `local` (Jest, banco em memória via `tests/setup.ts`)
 - [ ] `crypto`: roundtrip encrypt→decrypt; ciphertext diferente do plaintext no banco.
 - [ ] `slug`: rejeita reservados (`admin`, `api`, …) e duplicados; aceita válidos.
 - [ ] `onboarding`: cria Business + Professional + PlatformSubscription corretos; copia `modulos`; criptografa Asaas somente quando o módulo está ativo; idempotência em re-submit do mesmo `googleId`.
 - [ ] `asaas`: validação de chave (mockada) — caminho válido e inválido.
 
-### Produção (Cypress, contra a URL da Vercel)
+### `stage` (Cypress contra a URL de Preview da Vercel) — homologação
 - [ ] Onboarding completo com plano gratuito (sem Asaas).
 - [ ] Onboarding completo com plano pago (validando chave Asaas em sandbox).
 - [ ] Redirecionamento correto pós-login.
 
+### `prod` (Cypress contra a Produção, no `/ssd-done`)
+- [ ] Smoke dos mesmos fluxos acima na URL de produção (evidência soberana do DOD).
+
 ### Critério Soberano (DOD — `docs/08`)
-Build limpo na Vercel + `npm audit` zero + aprovação funcional do usuário (`/done 1`).
+Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação funcional do usuário (`/ssd-done 1`).
 
 ## Arquivos Afetados
 **Novos**: `src/lib/{auth,crypto,slug,asaas}.ts`, `src/lib/schemas/onboarding.ts`, `src/app/api/auth/[...nextauth]/route.ts`, `src/app/api/onboarding/route.ts`, `src/app/api/onboarding/validate-slug/route.ts`, `src/models/{Business,Professional,PlatformSubscription}.ts`, `src/app/{login,onboarding,dashboard}/page.tsx`, `src/middleware.ts`, testes em `tests/integration/` e `cypress/e2e/`.
