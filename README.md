@@ -39,13 +39,15 @@ Após o plano aprovado, codifica-se **na branch da feature**; cada `push` public
 - [Modelo de Dados](docs/04-data-model.md)
 - [Requisitos Técnicos](docs/03-technical-requirements.md)
 
-## 💎 Golden Stack (Referência de Estabilidade)
-Para evitar loops de dependências, utilize sempre:
-- **Node.js**: 24 (Latest/Vercel Recommended)
-- **Next.js**: 16.3.0-preview.3 (Vanguarda/Sem vulnerabilidades da linha 15)
-- **React**: 19.0.0
-- **Mongoose**: 8.9.0+
-- **Tailwind**: 3.4+
+## 💎 Golden Stack (Estável — nunca beta/preview)
+**Regra dura (Guardrail 8)**: usar apenas releases **estáveis** (dist-tag `latest`), nunca `beta`, `preview`, `rc`, `alpha`, `canary` ou prerelease. **Beta/preview é pior que uma vulnerabilidade conhecida.** Preferir a linha estável mais recente, próxima de LTS.
+- **Node.js**: 24.x (linha LTS)
+- **Next.js**: 16.2.9 (estável `latest` — **não** usar `16.3.0-preview`)
+- **React / React-DOM**: 19.2.x (estável)
+- **next-auth**: 4.24.x (estável; o peer aceita Next 16 — v5 ainda é beta)
+- **Mongoose**: 8.x (estável)
+- **Tailwind**: 3.4.x (LTS)
+- **Zod**: 3.x (estável)
 
 ## ⚡ Fluxo Acelerado (Vapt-Vupt)
 1. **DOR**: `/ssd-plan {ID}` -> cria a branch + auditoria de segurança + check de envs.

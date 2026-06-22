@@ -112,4 +112,11 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 - **Sem transação MongoDB**: criação sequencial protegida pelo índice único `googleId` (mongodb-memory-server standalone não suporta transações). Débito: possível estado parcial em falha intermediária — endereçar com replica-set/transação ou cleanup em F2+.
 - **next-auth** exige resolução tolerante de peers (peer `next ^14||^15||^16.0.0` não casa com o prerelease `16.3.0-preview.3`). Fixado via **`.npmrc` (`legacy-peer-deps=true`)** para que local e Vercel usem a mesma resolução — sem isso o deploy de stage quebrava com ERESOLVE no `npm install`. Revisar quando next-auth suportar Next 16 estável.
 
+**⚠️ Correção de versões pendente (`/ssd-code`) — política "somente estável" (Guardrail 8)**:
+A implementação usa **Next 16.3.0-preview.3 (preview)** e **next-auth 5-beta** — ambos prerelease, vetados pela política. Migrar para stack estável:
+- `next` → **16.2.9** (estável `latest`); `react`/`react-dom` → **19.2.x**.
+- `next-auth` → **4.24.x** (estável; peer aceita `next ^16`). Implica **rework da auth para a API v4** (`getServerSession`/`authOptions` no lugar de `auth()`/`handlers`; ajustar `middleware.ts`, rota `[...nextauth]`, `login`/`dashboard`/`onboarding`).
+- Com Next estável + next-auth v4, **remover o `.npmrc legacy-peer-deps`** (não há mais conflito de peer/prerelease).
+- Revalidar `npm test`, `npm run build` e `audit:prod` após a migração.
+
 **Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.

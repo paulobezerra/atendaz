@@ -46,6 +46,7 @@ Este documento centraliza as regras críticas que garantem a integridade, segura
 - **E-mails**: Notificações transacionais via Resend devem ser automáticas e registradas em `notification_log`.
 
 ## 8. Segurança de Dependências (Tolerância Zero em Produção)
+- **Somente releases estáveis (inegociável)**: É **proibido** usar versões `beta`, `preview`, `rc`, `alpha`, `canary` ou qualquer prerelease — tanto em produção quanto em dev. Usar prerelease é considerado **pior que uma vulnerabilidade conhecida**. Sempre a linha **estável** mais recente (dist-tag `latest`), próxima de LTS. Ver a Golden Stack no `README.md`.
 - **Gate de Produção (inegociável)**: É proibido fazer push com vulnerabilidades em **dependências de produção** — o gate é `npm audit --omit=dev`, que **deve** reportar zero. É o que efetivamente vai para o bundle/deploy.
 - **devDependencies**: Vulnerabilidades exclusivas de ferramentas de desenvolvimento/teste (ex.: cadeia de coverage do Jest), **sem fix sem rebaixar/quebrar** e que **não** vão para produção, são registradas como **débito conhecido** e não bloqueiam o push. Devem ser reavaliadas quando houver patch upstream.
 - **Atualização**: Utilizar as versões estáveis e patcheadas mais recentes das dependências críticas (Next.js, React, Mongoose). Nunca "resolver" audit via downgrade (ex.: `npm audit fix --force` que rebaixa `ts-jest`/`jest`).
