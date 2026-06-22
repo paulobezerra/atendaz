@@ -9,9 +9,15 @@ Configuração comercial (seed manual via Mongo).
 - `ativo`: boolean.
 - *Exemplos*: "Agenda Simples", "Cobrança + Nota", "Completo".
 
+## segmento
+Lista **controlada** de segmentos de atuação (seed administrativo). Alimenta o `<select>` do onboarding — **nunca** texto livre.
+- `slug` (único), `nome`, `ativo`, `ordem` (ordenação no select).
+- *Regra*: `business.segmento` referencia o `slug` de um `segmento` **ativo** (validado na criação).
+- *Futuro (F12)*: vínculo com `marketing_page`/hotsites por nicho (via `slug`).
+
 ## business
 Conta/tenant principal.
-- `googleId`, `nomeFantasia`, `slug` (único, `/agendar/{slug}`), `email`, `segmento`.
+- `googleId`, `nomeFantasia`, `slug` (único, `/agendar/{slug}`), `email`, `segmento` (slug de um `segmento` ativo — lista controlada, sem texto livre).
 - `planoId`, `modulos` (copiado do plano na assinatura).
 - `cpfCnpj` (nullable).
 - `billingConfigPadrao` (nullable): 
