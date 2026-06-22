@@ -41,6 +41,7 @@ Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o 
 - [Roadmap de Implementação](docs/06-implementation-roadmap.md)
 - [Modelo de Dados](docs/04-data-model.md)
 - [Requisitos Técnicos](docs/03-technical-requirements.md)
+- [Design System & UX](docs/10-design-system.md)
 
 ## 💎 Golden Stack (Referência de Estabilidade)
 Para evitar loops de dependências, utilize sempre:

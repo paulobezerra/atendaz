@@ -39,10 +39,10 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
    - `/ssd-doc` e `/ssd-spec`: editam documentação base; commit direto na `master` (sem deploy — ver Ignored Build Step).
    - `/ssd-done`: **ÚNICO** comando que altera a `master` (merge da feature) e finaliza a feature.
 
-1. **Documentação Antes do Código**: Nenhuma funcionalidade deve ser implementada sem que sua especificação (`docs/spec`) e seu plano de execução (`docs/plans`) estejam alinhados.
+1. **Documentação Antes do Código**: Nenhuma funcionalidade deve ser implementada sem que sua especificação (`docs/spec`) e seu plano de execução (`docs/plans`) estejam alinhados. A **UX** (fluxos + telas) faz parte da spec, sobre a fundação do Design System (`docs/10`) — ver [UX e Design System](#ux-e-design-system).
 2. **Registro de Mudanças**: Qualquer alteração na lógica de negócio ou arquitetura deve ser refletida primeiro nos arquivos em `docs/` antes de tocar no código.
 3. **Comandos de Mini Agentes**: Os comandos do fluxo têm o prefixo `ssd-`. Os arquivos em `.claude/commands/` (ou configs de outros agentes) são **apenas atalhos/redirecionamentos** para as regras abaixo — ver [Fonte da Verdade dos Comandos](#fonte-da-verdade-dos-comandos). O comportamento de Git/branch/deploy de cada comando está em [Fluxo de Branches, Ambientes e Deploy](#fluxo-de-branches-ambientes-e-deploy).
-   - `/ssd-spec {ID} {tema}`: Cria/edita a especificação `docs/spec/F{ID}-...`, alinhada aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`). Commit direto na `master` (sem deploy).
+   - `/ssd-spec {ID} {tema}`: Cria/edita a especificação `docs/spec/F{ID}-...`, alinhada aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`). **Deve incluir a seção `## UX`** (fluxos + telas em ASCII) referenciando o Design System (`docs/10`). Commit direto na `master` (sem deploy).
    - `/ssd-plan {ID}`: Ativa o [Mini Agente de Planejamento](agent-plan-instructions.md). O agente deve:
      - Criar a branch `feature/{ID}-{slug}` e, ao final, commitar **apenas** o plano `docs/plans/{ID}-*` nela (nunca tocar código).
      - **Validar a Spec**: analisar `docs/spec/F{ID}-...` contra toda a base (`docs/01` a `docs/09`). Em caso de ambiguidade/conflito com Guardrails, interromper e pedir clarificação via `/ssd-doc`.
@@ -65,6 +65,17 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
    - `/ssd-done {ID}`: Comando exclusivo do usuário; único que altera a `master`. O agente deve:
      - Exigir verde em `local` e `stage`; fazer `merge --no-ff` na `master` (mantendo a branch) e validar com `/ssd-test prod`.
      - **Só se passar em prod**: marcar `docs/spec/F{ID}` e o Roadmap `docs/06` como **[CONCLUÍDO]** e arquivar o plano em `docs/plans/archive/`. Se falhar, retornar ao ciclo de correção.
+
+## UX e Design System
+
+A UX é definida em **texto (Markdown)** — sem Figma — em duas camadas, para garantir consistência e evitar retrabalho visual:
+
+1. **Fundação (global, uma vez)** — [`docs/10-design-system.md`](10-design-system.md): design tokens (cores, tipografia, espaçamento, radius), componentes base e padrões de UX globais (validação inline, estados loading/empty/error, toasts, listas controladas, mobile-first, acessibilidade). Reusada por todas as features.
+2. **Por feature (na spec)** — cada `docs/spec/F{ID}` contém a seção **`## UX`** com:
+   - **Fluxos**: happy path, validações e erros (comportamento).
+   - **Telas**: layout em **ASCII** + comportamento, referenciando os tokens da fundação.
+
+As telas são definidas no **spec** (fonte da verdade, revisado **antes** do código). O `/ssd-plan` transforma a UX do spec em tarefas; o `/ssd-code` implementa; o **gate de revisão humana valida a implementação contra a UX do spec**. Decisões visuais muito específicas (ícones, ilustrações, microanimações) vão em prosa na seção `## UX` ou ficam a critério razoável do agente.
 
 ## Diretrizes Gerais
 
