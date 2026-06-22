@@ -7,8 +7,8 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Seed de planos no banco de produção.
 - Detalhes em: [docs/spec/F0-skeleton.md](spec/F0-skeleton.md)
 
-## [CONCLUÍDO] Fase 1: Onboarding e Planos
-- Login Google e seleção de plano modular.
+## [CONCLUÍDO (funcional) · redesign de UX em andamento] Fase 1: Onboarding e Planos
+- Login Google e seleção de plano modular. Baseline funcional em produção; redesign de UX (Split Layout) a implementar.
 - Detalhes em: [docs/spec/F1-onboarding.md](spec/F1-onboarding.md)
 
 ## Fase 2: Profissionais e Billing Override
