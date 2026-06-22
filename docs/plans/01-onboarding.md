@@ -20,10 +20,10 @@ Chaves Asaas só são solicitadas quando o plano tem `cobranca` ou `nfse`, e sã
 - Rodar `npm audit` → **zero vulnerabilidades** antes do push (Guardrail 8 / Requisito Técnico 2).
 - Confirmar Golden Stack: Node 24, Next 16+, React 19.
 
-### ⚠️ Débito Técnico de DOR (detectado no `/ssd-plan`)
-`npm audit` em 2026-06-22 reportou **23 vulnerabilidades moderadas**, originadas em `uuid <11.1.1` (cadeia do `cypress`, devDependency). Viola o Guardrail 8 (tolerância zero).
-- **T0 (warm-up do `/ssd-code`, ANTES das demais tarefas)**: zerar o `npm audit`. Caminho provável: subir o Cypress (`npm audit fix --force` instala `cypress@15`, breaking apenas em devDependency de testes E2E) e revalidar os testes `stage`. Confirmar que produção/build não são afetados (Cypress não vai para o bundle).
-- Não corrigido no `/ssd-plan` por regra de separação de comandos — apenas registrado aqui.
+### ✅ Débito Técnico de DOR (T0) — RESOLVIDO no `/ssd-code` (2026-06-22)
+O `npm audit` reportava vulns moderadas via `cypress` (uuid) e, ao tentar `--force`, a cadeia do Jest (`babel-plugin-istanbul → @istanbuljs/load-nyc-config → js-yaml 3.x`, *unmaintained*). Resolução:
+- **Cypress 13→15** e **Jest 29→30** (+ ts-jest/jest-environment-node/@types) por upgrade dirigido (nunca `--force`, que rebaixa ts-jest). Testes seguem verdes.
+- As ~18 moderadas remanescentes são **exclusivas de devDependencies de teste**, sem patch upstream. Decisão do usuário (registrada): **gate de produção** — `npm audit --omit=dev` = **0**. Guardrail 8 (`docs/07`) e Requisito Técnico 2 (`docs/03`) ajustados; script `audit:prod` adicionado.
 
 ## Tarefas Técnicas
 
@@ -98,3 +98,18 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 - `resolveBillingConfig` e override de billing por profissional → **F2**.
 - Recálculo da assinatura por agenda adicional → **F11**.
 - Gating 404 de rotas de módulo aplica-se plenamente nas features de Agenda/Cobrança (F3+); na F1 o gating se manifesta no passo condicional de Asaas.
+
+## Status de Implementação (`/ssd-code 1` — 2026-06-22)
+**Concluído e verde**: T0–T15 implementados; `npm test` = 19/19; `npm run build` OK (Next 16 + next-auth v5); `npm run audit:prod` = 0.
+- Libs: `crypto` (AES-256-GCM), `slug` (reservados), `asaas` (validação `/myAccount`) — todas com testes unitários.
+- Models: `Business`, `Professional`, `PlatformSubscription` (+ `Plano` existente).
+- Auth.js v5 JWT (`src/lib/auth.ts`) + rota + augmentação de tipos.
+- Rotas: `POST /api/onboarding` (idempotente, gating Asaas, cria Business+Professional+PlatformSubscription TRIAL) e `GET /api/onboarding/validate-slug`; teste de integração cobre idempotência, gating e criptografia.
+- UI: `/login`, wizard `/onboarding` (4 passos, billing condicional), `/dashboard`; `middleware.ts`.
+
+**Desvios/decisões em relação ao plano (registrados para revisão)**:
+- **Middleware**: faz apenas o *gate de login* (edge-safe — `auth` não importa mongoose). O redirect fino PENDING↔COMPLETE ficou nas server components (`/dashboard`, `/onboarding`), que podem consultar o banco. Motivo: mongoose não roda no runtime Edge.
+- **Sem transação MongoDB**: criação sequencial protegida pelo índice único `googleId` (mongodb-memory-server standalone não suporta transações). Débito: possível estado parcial em falha intermediária — endereçar com replica-set/transação ou cleanup em F2+.
+- **next-auth** instalado com `--legacy-peer-deps` (peer declara Next 14/15; rodando Next 16 preview da Golden Stack). Build/test OK.
+
+**Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.

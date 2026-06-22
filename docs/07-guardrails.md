@@ -45,7 +45,10 @@ Este documento centraliza as regras críticas que garantem a integridade, segura
 - **WhatsApp**: Não utilizar WhatsApp Business API. Todas as comunicações de confirmação devem usar links `wa.me`.
 - **E-mails**: Notificações transacionais via Resend devem ser automáticas e registradas em `notification_log`.
 
-## 8. Segurança de Dependências (Tolerância Zero)
-- **Vulnerabilidades**: É proibido realizar push de código com vulnerabilidades conhecidas (reportadas pelo `npm audit`).
-- **Atualização**: O sistema deve utilizar as versões estáveis e patcheadas mais recentes das dependências críticas (Next.js, React, Mongoose).
-- **Bloqueio**: O pipeline de CI local (Husky) deve validar a ausência de vulnerabilidades antes de permitir o push.
+## 8. Segurança de Dependências (Tolerância Zero em Produção)
+- **Gate de Produção (inegociável)**: É proibido fazer push com vulnerabilidades em **dependências de produção** — o gate é `npm audit --omit=dev`, que **deve** reportar zero. É o que efetivamente vai para o bundle/deploy.
+- **devDependencies**: Vulnerabilidades exclusivas de ferramentas de desenvolvimento/teste (ex.: cadeia de coverage do Jest), **sem fix sem rebaixar/quebrar** e que **não** vão para produção, são registradas como **débito conhecido** e não bloqueiam o push. Devem ser reavaliadas quando houver patch upstream.
+- **Atualização**: Utilizar as versões estáveis e patcheadas mais recentes das dependências críticas (Next.js, React, Mongoose). Nunca "resolver" audit via downgrade (ex.: `npm audit fix --force` que rebaixa `ts-jest`/`jest`).
+- **Bloqueio**: O CI local (Husky) valida `npm audit --omit=dev` limpo antes do push.
+
+> **Débito conhecido (2026-06-22)**: ~18 vulns *moderate* em devDependencies de teste, originadas em `@istanbuljs/load-nyc-config` (unmaintained, fixa `js-yaml` 3.x) via `babel-plugin-istanbul`/`babel-jest`. Sem patch disponível; não afetam produção (`npm audit --omit=dev` = 0).
