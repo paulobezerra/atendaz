@@ -17,7 +17,10 @@ Antes de codar, o agente gera um plano técnico e **cria a branch `feature/{ID}-
 Após o plano aprovado, codifica-se **na branch da feature**; cada `push` publica em **homologação (stage/Preview)** da Vercel.
 - **Ação**: relê spec, plano e **Guardrails (`docs/07`)**, implementando com fidelidade total e TDD nas áreas críticas.
 
-### 4. Finalização (`/ssd-done {ID}`)
+### 4. Revisão Humana (gate antes do done)
+Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o código** — é o ponto onde o rumo é conferido e corrigido (o agente pode ter divergido da spec). Só após aprovação se avança; senão, volta ao ciclo de correção. Detalhes em [docs/00](docs/00-agent-instructions.md#fluxo-de-branches-ambientes-e-deploy).
+
+### 5. Finalização (`/ssd-done {ID}`)
 Único comando que altera a `master`: merge `--no-ff` (mantém a branch) → deploy de **produção** → `/ssd-test prod`. Só marca `[CONCLUÍDO]` se passar em prod; caso contrário, volta ao ciclo de correção.
 
 ## 🛠 Comandos Rápidos

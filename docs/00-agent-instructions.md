@@ -114,6 +114,21 @@ Os comandos `ssd-*` têm **autorização permanente** para versionar: ao final d
 
 Isso **não** afasta os bloqueios de integridade: o `push` do `/ssd-code` só ocorre com `/ssd-test local` verde, e o merge do `/ssd-done` só com `local` e `stage` verdes. Quando o portão passa, o agente prossegue com commit/push direto, sem perguntar.
 
+### Gate de Revisão Humana (entre `/ssd-code` e `/ssd-done`)
+Depois que o `/ssd-code` publica em **stage (Preview)** e **antes** de qualquer `/ssd-done`, existe um checkpoint **obrigatório e manual do usuário**. É o ponto onde o trabalho do agente é conferido e o rumo é corrigido — **o agente pode ter implementado errado, divergido da spec ou "viajado"**, e é aqui que isso é pego.
+
+O usuário, neste momento:
+1. **Testa manualmente** no Preview, comparando o comportamento com a spec e a expectativa real.
+2. **Revisa o código** (diff da branch) — corretude, fidelidade à spec, qualidade, e os desvios/decisões que o agente registrou.
+3. **Decide**:
+   - **Aprovar** → segue para `/ssd-done`.
+   - **Reprovar/ajustar** → volta ao ciclo de correção (`/ssd-code`, ou `/ssd-doc`/`/ssd-spec` se for lacuna de documentação), na mesma branch.
+
+Regras para o agente:
+- **Nunca** rodar `/ssd-done` por conta própria — é decisão exclusiva do usuário, tomada após esta revisão. Nada vai para produção sem ela.
+- Ao concluir o `/ssd-code`, **apresentar um resumo** do que foi feito, dos desvios/decisões e do que precisa ser validado, para facilitar a revisão.
+- Tratar este gate como a salvaguarda principal contra implementação fora do rumo — não presumir que "passou nos testes" significa "está correto conforme o esperado".
+
 ### Portão do DOD e Ciclo de Correção
 - O `/ssd-done` **só** marca `docs/spec/F{ID}` e `docs/06` como `[CONCLUÍDO]` (e arquiva o plano) **se o `/ssd-test prod` passar**.
 - **Se falhar em produção**, a feature **não** é concluída: retorna-se ao ciclo de correção `/ssd-code → /ssd-test → /ssd-done` (ou `/ssd-spec`/`/ssd-doc` se o erro revelar lacuna na spec), **na mesma branch**, até ficar verde. Como o `stage` já foi validado, falhas em `prod` tendem a ser específicas de ambiente e corrigidas por *fix-forward*.
