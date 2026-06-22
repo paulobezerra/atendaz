@@ -11,6 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // Token de identidade (default indigo — ajustável; ver docs/10).
+        primary: "#4F46E5",
+        "primary-hover": "#4338CA",
       },
     },
   },

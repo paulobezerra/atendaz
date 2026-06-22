@@ -3,7 +3,8 @@ import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Business from "@/models/Business";
 import Plano from "@/models/Plano";
-import OnboardingWizard, { type PlanoDTO } from "./OnboardingWizard";
+import Segmento from "@/models/Segmento";
+import OnboardingWizard, { type PlanoDTO, type SegmentoDTO } from "./OnboardingWizard";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,16 @@ export default async function OnboardingPage() {
     },
   }));
 
+  const segmentosRaw = await Segmento.find({ ativo: true }).sort({ ordem: 1 }).lean();
+  const segmentos: SegmentoDTO[] = segmentosRaw.map((s) => ({
+    slug: s.slug,
+    nome: s.nome,
+  }));
+
   return (
     <OnboardingWizard
       planos={planos}
+      segmentos={segmentos}
       defaultProfissional={session.user.name ?? ""}
     />
   );

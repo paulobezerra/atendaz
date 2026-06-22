@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { getSession } from "@/lib/auth";
 import Plano from "@/models/Plano";
+import Segmento from "@/models/Segmento";
 import Business, { IBillingConfig } from "@/models/Business";
 import Professional from "@/models/Professional";
 import PlatformSubscription from "@/models/PlatformSubscription";
@@ -56,6 +57,11 @@ export async function POST(req: Request) {
   // Unicidade do slug
   if (await Business.exists({ slug })) {
     return NextResponse.json({ error: "Slug já está em uso." }, { status: 409 });
+  }
+
+  // Segmento deve pertencer à lista controlada (sem texto livre)
+  if (!(await Segmento.exists({ slug: data.segmento, ativo: true }))) {
+    return NextResponse.json({ error: "Segmento inválido." }, { status: 400 });
   }
 
   // Plano + cópia de módulos

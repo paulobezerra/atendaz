@@ -136,12 +136,14 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 - `segmento` torna-se **obrigatório**; a rota `POST /api/onboarding` valida que o slug **existe e está ativo** (400 caso contrário). UI vira `<select>`.
 - **Seed idempotente** de segmentos (lista curada, ~40–60, expansível para 100–200): estender `/api/admin/seed` ou seed dedicado. Ex.: barbearia, salão de beleza, estética, clínica médica, odontologia, fisioterapia, psicologia, nutrição, personal trainer, pilates, academia, petshop, veterinária, advocacia, contabilidade, consultoria, fotografia, design, etc.
 
-**Tarefas técnicas (para o `/ssd-code`):**
-- [ ] **T16** — `src/models/Segmento.ts` (índice único em `slug`).
-- [ ] **T17** — Seed idempotente de segmentos (curada/expansível).
-- [ ] **T18** — Carregar segmentos ativos em `onboarding/page.tsx` e passar ao `OnboardingWizard`.
-- [ ] **T19** — Passo 1 do wizard: trocar o `<input>` de segmento por `<select>` (obrigatório).
-- [ ] **T20** — `schema/onboarding.ts` + rota: `segmento` obrigatório e validado contra segmentos ativos (slug ∈ lista).
-- [ ] **T21** — Testes: rota rejeita segmento inválido/inativo (400) e aceita válido; (opcional) E2E smoke do `<select>`.
+**Tarefas técnicas — ✅ CONCLUÍDAS (`/ssd-code`, 2026-06-22):**
+- [x] **T16** — `src/models/Segmento.ts` (índice único em `slug`).
+- [x] **T17** — Seed idempotente de ~38 segmentos (curada/expansível) no `/api/admin/seed`.
+- [x] **T18** — `onboarding/page.tsx` carrega `Segmento.find({ativo:true}).sort(ordem)` e passa ao wizard.
+- [x] **T19** — Passo 1 do wizard: `<select>` de segmento (obrigatório), com tokens do design system.
+- [x] **T20** — `schema/onboarding.ts` (`segmento` obrigatório) + rota valida `slug ∈ segmentos ativos` (400 se inválido).
+- [x] **T21** — Testes: onboarding rejeita segmento fora da lista (400) e aceita válido; seed idempotente de segmentos. `npm test` 21/21, build OK, `audit:prod` 0.
+
+> Aplicados também os tokens do Design System (`docs/10`): cor `primary` centralizada no `tailwind.config.ts` (default indigo, ajustável) usada em login e wizard.
 
 **Fora do escopo agora:** vínculo segmento ↔ hotsite/marketing_page (F12).

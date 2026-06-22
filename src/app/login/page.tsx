@@ -12,7 +12,7 @@ export default function LoginPage() {
         </p>
         <button
           onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="mt-8 w-full rounded-lg bg-gray-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-gray-700"
+          className="mt-8 w-full rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition hover:bg-primary-hover"
         >
           Entrar com Google
         </button>

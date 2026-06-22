@@ -16,11 +16,18 @@ export interface PlanoDTO {
   };
 }
 
+export interface SegmentoDTO {
+  slug: string;
+  nome: string;
+}
+
 export default function OnboardingWizard({
   planos,
+  segmentos,
   defaultProfissional,
 }: {
   planos: PlanoDTO[];
+  segmentos: SegmentoDTO[];
   defaultProfissional: string;
 }) {
   const router = useRouter();
@@ -66,6 +73,7 @@ export default function OnboardingWizard({
     setError(null);
     if (step === 1) {
       if (form.nomeFantasia.trim().length < 2) return setError("Informe o nome fantasia.");
+      if (!form.segmento) return setError("Selecione um segmento.");
       if (!(await checkSlug())) return;
     }
     if (step === 2 && !form.planoId) return setError("Selecione um plano.");
@@ -93,7 +101,7 @@ export default function OnboardingWizard({
         body: JSON.stringify({
           nomeFantasia: form.nomeFantasia,
           slug: form.slug,
-          segmento: form.segmento || undefined,
+          segmento: form.segmento,
           planoId: form.planoId,
           asaasApiKey: precisaBilling ? form.asaasApiKey : undefined,
           nfseStrategy:
@@ -115,18 +123,22 @@ export default function OnboardingWizard({
   }
 
   const input =
-    "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none";
+    "mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+  const totalPassos = precisaBilling ? 4 : 3;
+  const passoAtual = precisaBilling ? step : step > 2 ? step - 1 : step;
 
   return (
-    <main className="mx-auto max-w-lg p-8">
+    <main className="mx-auto max-w-lg p-6 sm:p-8">
       <h1 className="text-2xl font-bold text-gray-900">Bem-vindo ao Atendaz</h1>
-      <p className="mt-1 text-sm text-gray-500">Passo {precisaBilling ? step : step > 2 ? step - 1 : step} — configure seu negócio</p>
+      <p className="mt-1 text-sm text-gray-500">
+        Passo {passoAtual} de {totalPassos} — configure seu negócio
+      </p>
 
       <div className="mt-8 space-y-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         {step === 1 && (
           <>
             <div>
-              <label className="text-sm font-medium text-gray-700">Nome fantasia</label>
+              <label className="text-sm font-medium text-gray-700">Nome fantasia *</label>
               <input
                 className={input}
                 value={form.nomeFantasia}
@@ -135,23 +147,30 @@ export default function OnboardingWizard({
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Slug público (/agendar/...)</label>
+              <label className="text-sm font-medium text-gray-700">Slug público (/agendar/...) *</label>
               <input
                 className={input}
                 value={form.slug}
                 onChange={(e) => set("slug", e.target.value)}
+                onBlur={() => form.slug && checkSlug()}
                 placeholder="barbearia-do-ze"
               />
               {slugStatus && <p className="mt-1 text-xs text-red-600">{slugStatus}</p>}
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Segmento (opcional)</label>
-              <input
+              <label className="text-sm font-medium text-gray-700">Segmento *</label>
+              <select
                 className={input}
                 value={form.segmento}
                 onChange={(e) => set("segmento", e.target.value)}
-                placeholder="Barbearia, Clínica, ..."
-              />
+              >
+                <option value="">Selecione…</option>
+                {segmentos.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.nome}
+                  </option>
+                ))}
+              </select>
             </div>
           </>
         )}
@@ -163,7 +182,9 @@ export default function OnboardingWizard({
               <label
                 key={p.id}
                 className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
-                  form.planoId === p.id ? "border-gray-900 ring-1 ring-gray-900" : "border-gray-300"
+                  form.planoId === p.id
+                    ? "border-primary ring-1 ring-primary"
+                    : "border-gray-300"
                 }`}
               >
                 <span>
@@ -191,7 +212,7 @@ export default function OnboardingWizard({
         {step === 3 && precisaBilling && (
           <>
             <div>
-              <label className="text-sm font-medium text-gray-700">Chave de API do Asaas</label>
+              <label className="text-sm font-medium text-gray-700">Chave de API do Asaas *</label>
               <input
                 className={input}
                 value={form.asaasApiKey}
@@ -219,7 +240,7 @@ export default function OnboardingWizard({
 
         {step === 4 && (
           <div>
-            <label className="text-sm font-medium text-gray-700">Nome do profissional inicial</label>
+            <label className="text-sm font-medium text-gray-700">Nome do profissional inicial *</label>
             <input
               className={input}
               value={form.profissionalNome}
@@ -243,7 +264,7 @@ export default function OnboardingWizard({
           {step < 4 ? (
             <button
               onClick={next}
-              className="rounded-lg bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-700"
+              className="rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white hover:bg-primary-hover"
             >
               Continuar
             </button>
@@ -251,7 +272,7 @@ export default function OnboardingWizard({
             <button
               onClick={submit}
               disabled={submitting}
-              className="rounded-lg bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-60"
+              className="rounded-lg bg-primary px-5 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-60"
             >
               {submitting ? "Concluindo..." : "Concluir"}
             </button>
