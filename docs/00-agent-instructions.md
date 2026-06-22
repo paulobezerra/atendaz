@@ -104,6 +104,16 @@ Os planos devem ser numerados de acordo com a especificação e conter:
 | `/ssd-test {alvo}` | `local` (Jest) · `stage` (Cypress no Preview) · `prod` (Cypress na Produção). Não altera git. |
 | `/ssd-done {ID}` | Exige verde em `local` **e** `stage`. Faz `merge --no-ff` na `master` (mantém a branch) → deploy de **prod** → roda `/ssd-test prod`. |
 
+### Commit e Push Automáticos
+Os comandos `ssd-*` têm **autorização permanente** para versionar: ao final de cada comando que produz alterações, o agente **DEVE** fazer `git commit` **e** `git push` automaticamente, **sem pausar para pedir confirmação**.
+- `/ssd-spec`, `/ssd-doc`: commit + push na `master`.
+- `/ssd-plan`: commit + push do plano na branch da feature.
+- `/ssd-code`: commit(s) + push na branch da feature (publica em stage).
+- `/ssd-done`: merge + push na `master`.
+- `/ssd-test` não versiona (apenas executa testes).
+
+Isso **não** afasta os bloqueios de integridade: o `push` do `/ssd-code` só ocorre com `/ssd-test local` verde, e o merge do `/ssd-done` só com `local` e `stage` verdes. Quando o portão passa, o agente prossegue com commit/push direto, sem perguntar.
+
 ### Portão do DOD e Ciclo de Correção
 - O `/ssd-done` **só** marca `docs/spec/F{ID}` e `docs/06` como `[CONCLUÍDO]` (e arquiva o plano) **se o `/ssd-test prod` passar**.
 - **Se falhar em produção**, a feature **não** é concluída: retorna-se ao ciclo de correção `/ssd-code → /ssd-test → /ssd-done` (ou `/ssd-spec`/`/ssd-doc` se o erro revelar lacuna na spec), **na mesma branch**, até ficar verde. Como o `stage` já foi validado, falhas em `prod` tendem a ser específicas de ambiente e corrigidas por *fix-forward*.
