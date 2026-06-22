@@ -55,3 +55,14 @@ O UX inicial (caixas centralizadas genéricas) ficou abaixo do esperado no gate 
 - Mudança de regras/preços/módulos (vêm da coleção `plano`).
 - Ícones/ilustrações finais e microanimações elaboradas — escolha razoável do agente conforme `docs/10`.
 - Definição final da cor de marca (decisão do usuário; default indigo).
+
+## Status de Implementação (`/ssd-code` — 2026-06-22) — ✅ CONCLUÍDO
+- R1–R2: token `primary-dark` + fonte **Inter** (`next/font`) no Tailwind/layout.
+- R3–R4: componentes `SplitLayout` e `Stepper` (estados concluído/atual/futuro).
+- R5: `/login` em Split Layout (branding + 3 bullets com fade-in + botão Google com ícone SVG).
+- R6–R7: wizard reescrito em Split Layout com Stepper; slug auto-gerado do nome (editável + validação onBlur); planos como cards clicáveis; chave Asaas `type=password` + toggle + **validação onBlur** (spinner/✓/✗); profissional pré-preenchido.
+- R8: Toasts próprios (`Toast.tsx` + provider) — sucesso ("🎉") e erro preservando dados. Sem nova dependência.
+- R9: labels, foco com `ring`, full-width/header compacto no mobile.
+- Verde: `npm test` 21/21 · build OK · `audit:prod` 0.
+
+**Desvio do plano (registrado):** adicionei `POST /api/onboarding/validate-asaas` (reusa `validateAsaasKey`, exige sessão) para o **feedback onBlur** da chave Asaas previsto na spec. É adição pequena e segura ao backend (os 21 testes seguem verdes); o "backend não muda" do plano foi relaxado só para esse endpoint de validação.

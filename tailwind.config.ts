@@ -14,6 +14,10 @@ const config: Config = {
         // Token de identidade (default indigo — ajustável; ver docs/10).
         primary: "#4F46E5",
         "primary-hover": "#4338CA",
+        "primary-dark": "#3730A3",
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
     },
   },
