@@ -110,6 +110,6 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 **Desvios/decisões em relação ao plano (registrados para revisão)**:
 - **Middleware**: faz apenas o *gate de login* (edge-safe — `auth` não importa mongoose). O redirect fino PENDING↔COMPLETE ficou nas server components (`/dashboard`, `/onboarding`), que podem consultar o banco. Motivo: mongoose não roda no runtime Edge.
 - **Sem transação MongoDB**: criação sequencial protegida pelo índice único `googleId` (mongodb-memory-server standalone não suporta transações). Débito: possível estado parcial em falha intermediária — endereçar com replica-set/transação ou cleanup em F2+.
-- **next-auth** instalado com `--legacy-peer-deps` (peer declara Next 14/15; rodando Next 16 preview da Golden Stack). Build/test OK.
+- **next-auth** exige resolução tolerante de peers (peer `next ^14||^15||^16.0.0` não casa com o prerelease `16.3.0-preview.3`). Fixado via **`.npmrc` (`legacy-peer-deps=true`)** para que local e Vercel usem a mesma resolução — sem isso o deploy de stage quebrava com ERESOLVE no `npm install`. Revisar quando next-auth suportar Next 16 estável.
 
 **Pendente (ação do usuário, fluxo `stage`/`prod`)**: validar o fluxo de onboarding no Preview (`/ssd-test stage`) e, no `/ssd-done 1`, em produção.
