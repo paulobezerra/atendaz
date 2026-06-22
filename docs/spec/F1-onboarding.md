@@ -1,4 +1,4 @@
-# Especificação: F1 — Login Google + Onboarding
+# [CONCLUÍDO] Especificação: F1 — Login Google + Onboarding
 
 ## Escopo
 - Autenticação de usuários donos de `business` via Google.

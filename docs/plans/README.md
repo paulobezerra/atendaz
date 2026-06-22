@@ -8,5 +8,8 @@ Esta pasta contém os planos de execução detalhados para cada funcionalidade (
 - O plano é um contrato de implementação: o que está no plano é o que será codado.
 
 ## Índice de Planos
-- [01 — Login Google + Onboarding](01-onboarding.md)
-- Arquivados: [00 — Esqueleto](archive/00-skeleton.md)
+*(Nenhum plano ativo no momento.)*
+
+Arquivados:
+- [01 — Login Google + Onboarding](archive/01-onboarding.md)
+- [00 — Esqueleto](archive/00-skeleton.md)

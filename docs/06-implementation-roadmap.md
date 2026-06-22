@@ -7,7 +7,7 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Seed de planos no banco de produção.
 - Detalhes em: [docs/spec/F0-skeleton.md](spec/F0-skeleton.md)
 
-## Fase 1: Onboarding e Planos
+## [CONCLUÍDO] Fase 1: Onboarding e Planos
 - Login Google e seleção de plano modular.
 - Detalhes em: [docs/spec/F1-onboarding.md](spec/F1-onboarding.md)
 
