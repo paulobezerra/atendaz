@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
+import { ensureSeed } from "@/lib/seed";
 import Business from "@/models/Business";
 import Plano from "@/models/Plano";
 import Segmento from "@/models/Segmento";
@@ -13,6 +14,8 @@ export default async function OnboardingPage() {
   if (!session?.user?.googleId) redirect("/login");
 
   await dbConnect();
+  await ensureSeed(); // garante planos + segmentos no banco (1x por instância)
+
   const existing = await Business.findOne({ googleId: session.user.googleId });
   if (existing?.onboardingStatus === "COMPLETE") redirect("/dashboard");
 

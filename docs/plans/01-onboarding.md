@@ -159,5 +159,9 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 - *Vantagens:* funciona em local/stage/prod sem orquestração externa; idempotente; sem custo nos testes.
 - *Alternativa (se quiser desacoplar da request):* passo pós-deploy no CI (GitHub Action/Deploy Hook) com `curl /api/admin/seed` + bypass — mais "imediato", porém exige montar CI. Não agora.
 
-**Tarefa:**
-- [ ] **T22** — `src/lib/seedData.ts` + `src/lib/seed.ts` (`ensureSeed()` idempotente, guard em memória, skip em teste); refatorar `/api/admin/seed` para usar; chamar em `onboarding/page.tsx`. Revalidar `npm test`/build/`audit:prod` (não devem ser afetados).
+**Tarefa — ✅ CONCLUÍDA (`/ssd-code`, 2026-06-22):**
+- [x] **T22** — `src/lib/seedData.ts` + `src/lib/seed.ts` (`ensureSeed()` idempotente, guard em memória, skip em teste); `/api/admin/seed` refatorado para usar; `ensureSeed()` chamado em `onboarding/page.tsx`. `npm test` 21/21, build OK, `audit:prod` 0.
+
+**Correção adicional (detectada no `/ssd-test stage`): robustez da conexão Mongo.**
+- O `/api/health` reportava `disconnected` na 1ª request (cold start). Causa: `src/lib/mongodb.ts` devolvia `cached.conn` sem checar `readyState` — em serverless o socket cai por idle e o mongoose fica reconectando (`readyState=2`).
+- Fix: `dbConnect` só reusa o cache se `readyState===1`; se `2` aguarda o evento `connected`; se `0` reconecta. Elimina o falso negativo no health.

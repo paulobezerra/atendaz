@@ -15,8 +15,27 @@ async function dbConnect() {
     );
   }
 
-  if (cached.conn) {
+  // Só reusa a conexão em cache se ela estiver realmente PRONTA (readyState 1).
+  // Em serverless, o socket do Atlas pode cair por idle e o mongoose ficar
+  // reconectando (readyState 2) — devolver a conexão "crua" aqui gerava
+  // falso negativo no /api/health.
+  if (cached.conn && mongoose.connection.readyState === 1) {
     return cached.conn;
+  }
+
+  // Reconectando: aguarda ficar pronto em vez de devolver conexão não-pronta.
+  if (cached.conn && mongoose.connection.readyState === 2) {
+    await new Promise<void>((resolve, reject) => {
+      mongoose.connection.once("connected", () => resolve());
+      mongoose.connection.once("error", (err) => reject(err));
+    });
+    return cached.conn;
+  }
+
+  // Desconectado/sem cache: (re)inicia a conexão.
+  if (mongoose.connection.readyState === 0) {
+    cached.conn = null;
+    cached.promise = null;
   }
 
   if (!cached.promise) {
