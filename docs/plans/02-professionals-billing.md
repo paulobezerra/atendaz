@@ -29,25 +29,36 @@ Primeira feature **interna** (pós-onboarding). Entrega:
 ## Tarefas Técnicas
 
 ### Backend — libs e modelos
-- [ ] **T1** — `src/lib/billing.ts`: `resolveBillingConfig(professional, business)` (retorna override se preenchido; senão `billingConfigPadrao`; senão `null`). **TDD primeiro**.
-- [ ] **T2** — `src/models/AuditLog.ts`: `{ entidade, entidadeId, acao, payloadResumido, timestamp }` (conforme `docs/04`). Helper `logAudit(...)` (sem dados sensíveis no payload).
-- [ ] **T3** — `src/lib/schemas/professional.ts`: schemas Zod — base (`nome`, `slugInterno`, `whatsapp?`, `bio?`, `ativo`) + billing condicional (`billingMode: "inherit"|"own"`; se `own`: `asaasApiKey` obrigatória, e se `nfse`: `nfseStrategy` + `codigosFiscais` + `cpfCnpj`). Reusa `nfseStrategyEnum`/`codigosFiscaisSchema` de `schemas/onboarding.ts`.
-- [ ] **T4** — `src/models/Professional.ts`: revisar tipagem/índices (provável **no-op**; confirmar `cpfCnpj` no billingConfig e default `ativo:true`).
+- [x] **T1** — `src/lib/billing.ts`: `resolveBillingConfig(professional, business)` (retorna override se preenchido; senão `billingConfigPadrao`; senão `null`). **TDD primeiro**.
+- [x] **T2** — `src/models/AuditLog.ts`: `{ entidade, entidadeId, acao, payloadResumido, timestamp }` (conforme `docs/04`). Helper `logAudit(...)` (sem dados sensíveis no payload).
+- [x] **T3** — `src/lib/schemas/professional.ts`: schemas Zod — base + billing condicional (`billingMode: "inherit"|"own"`). Reusa `nfseStrategyEnum`/`codigosFiscaisSchema` de `schemas/onboarding.ts`.
+- [x] **T4** — `src/models/Professional.ts`: revisado — **no-op** (model já tinha `billingConfig`, `whatsapp`, `bio`, índice único `{businessId, slugInterno}`).
 
 ### Backend — rotas (todas `force-dynamic`, autenticadas, escopadas por `businessId`)
-- [ ] **T5** — `GET/POST /api/professionals`: lista (sem expor chave) / cria. Valida com Zod; **gating** (rejeita `billingConfig` se `!cobranca && !nfse` → 400); se `own`, valida chave no Asaas e **criptografa** antes de salvar; `audit_log` no create.
-- [ ] **T6** — `GET/PATCH/DELETE /api/professionals/[id]`: detalhe (mascara chave) / atualiza (dados, billing, `ativo`) / remove. **Invariante ≥1 ativo**: bloqueia desativar/excluir o último ativo (**409**). Acesso cross-tenant → **404**. `audit_log` em toda escrita.
-- [ ] **T7** — `GET /api/professionals/validate-slug?slug=`: disponibilidade de `slugInterno` **no escopo do business** (reusa `validateSlug` + checa `{ businessId, slugInterno }`).
+- [x] **T5** — `GET/POST /api/professionals`: lista (sem expor chave) / cria. Zod; **gating** (rejeita billing se `!cobranca && !nfse` → 400); se `own`, valida chave no Asaas e **criptografa**; `audit_log` no create.
+- [x] **T6** — `GET/PATCH/DELETE /api/professionals/[id]`: detalhe (mascara chave) / atualiza / remove. **Invariante ≥1 ativo** (409). Cross-tenant → **404**. `audit_log` em toda escrita.
+- [x] **T7** — `GET /api/professionals/validate-slug?slug=`: disponibilidade de `slugInterno` no escopo do business (+ `exceptId` para edição).
 
 ### Frontend — App Shell + telas (Tailwind + tokens `docs/10`)
-- [ ] **T8** — `src/components/AppShell.tsx` (+ `SidebarNav`, `MobileTabBar`): sidebar fixa (desktop) / bottom tab bar (mobile), **só módulos ativos** (progressive disclosure), item ativo destacado, topbar com nome do negócio + conta/Sair.
-- [ ] **T9** — `src/app/dashboard/layout.tsx`: aplica o App Shell a tudo sob `/dashboard`; resolve `business` (server) e passa `modulos` para a navegação. Mantém o gate de onboarding existente.
-- [ ] **T10** — `src/app/dashboard/profissionais/page.tsx`: lista (estados loading/empty improvável/error), badge de modo de faturamento (gated), toggle `ativo` (desabilitado no último), botão **+ Adicionar**.
-- [ ] **T11** — `src/app/dashboard/profissionais/novo/page.tsx` e `.../[id]/page.tsx` (+ `ProfessionalForm.tsx` client): form com dados básicos + seção de faturamento condicional (rádio herdar/próprio; chave Asaas `password`+toggle+validação onBlur; `nfseStrategy`/`codigosFiscais`/`cpfCnpj` se `nfse`); validações inline; toasts; preserva dados em erro.
+- [x] **T8** — `src/components/AppShell.tsx`: sidebar fixa (desktop) / bottom tab bar (mobile), **só módulos ativos**, item ativo destacado, topbar com nome do negócio + Sair.
+- [x] **T9** — `src/app/dashboard/layout.tsx`: aplica o App Shell a tudo sob `/dashboard`; resolve `business` (server) e passa `modulos`. Mantém o gate de onboarding.
+- [x] **T10** — `src/app/dashboard/profissionais/page.tsx` (server) + `ProfessionalsList.tsx` (client): lista, badge de billing (gated), toggle `ativo` (desabilitado no último), **+ Adicionar**.
+- [x] **T11** — `novo/page.tsx` e `[id]/page.tsx` (+ `ProfessionalForm.tsx` client): dados básicos + faturamento condicional (rádio herdar/próprio; chave Asaas `password`+toggle+validação onBlur; `nfseStrategy`/`cpfCnpj` se `nfse`); validações inline; toasts.
 
 ### Testes
-- [ ] **T12** — Integração (Jest) conforme seção de Verificação.
-- [ ] **T13** — E2E (Cypress) `stage`/`prod` conforme spec.
+- [x] **T12** — Integração (Jest): `billing.test.ts` (5) + `professionals.test.ts` (11). Suíte total **37/37**.
+- [ ] **T13** — E2E (Cypress) `stage`/`prod` conforme spec — pendente da validação no Preview.
+
+## Status de Implementação (`/ssd-code 2`)
+**Concluído e verde**: T1–T12. `npm test` = **37/37** (16 novos); `npm run build` OK (rotas `/api/professionals*` e `/dashboard/profissionais*` geradas); `npm run audit:prod` = **0**. Nenhuma dependência nova.
+
+**Decisões/desvios registrados (para o gate de revisão):**
+- **Navegação do App Shell** lista só destinos já implementados (Início, Profissionais) para evitar links mortos; itens por módulo (Serviços/Cobrança/Notas) entram em F3+ (o componente já suporta gating por `module`).
+- **`serializeProfessional`** expõe `asaasKeyLast4` (via `decrypt` server-side) para UX, mas **nunca** a chave completa; teste cobre que a chave em texto plano não vaza no GET.
+- **Helper `src/lib/professionals.ts`** (não previsto explicitamente no plano) centraliza `requireBusiness`/`buildBillingConfig`/`serializeProfessional` — DRY entre as 3 rotas; sem mudança de escopo.
+- **`npm run lint`** falha por quirk do `next lint` no Next 16 (passa `lint` como diretório); o ESLint roda no `build`, que passou.
+
+**Pendente (ação do usuário — gate de revisão):** validar o Preview (`/ssd-test stage`): App Shell desktop/mobile, criar 2º profissional herdando billing, criar com Asaas próprio (sandbox), alternar padrão↔próprio, bloqueio do último ativo.
 
 ## Arquivos Afetados
 **Novos**: `src/lib/billing.ts`, `src/models/AuditLog.ts`, `src/lib/schemas/professional.ts`, `src/app/api/professionals/route.ts`, `src/app/api/professionals/[id]/route.ts`, `src/app/api/professionals/validate-slug/route.ts`, `src/components/AppShell.tsx` (+ sub-componentes), `src/app/dashboard/layout.tsx`, `src/app/dashboard/profissionais/{page,novo/page,[id]/page}.tsx`, `src/app/dashboard/profissionais/ProfessionalForm.tsx`, testes em `tests/integration/` e `cypress/e2e/`.
