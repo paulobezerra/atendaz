@@ -66,6 +66,25 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
      - Exigir verde em `local` e `stage`; fazer `merge --no-ff` na `master` (mantendo a branch) e validar com `/ssd-test prod`.
      - **Só se passar em prod**: marcar `docs/spec/F{ID}` e o Roadmap `docs/06` como **[CONCLUÍDO]** e arquivar o plano em `docs/plans/archive/`. Se falhar, retornar ao ciclo de correção.
 
+### Operação do `/ssd-test stage` (Cypress contra Preview) — Lições aprendidas
+
+Regras operacionais para rodar o Cypress contra o **Preview** da Vercel sem cair nas armadilhas já vividas:
+
+1. **A URL de Preview NÃO é derivável — peça ao usuário.** A Vercel **trunca** hostnames de branch longos e adiciona um **hash**; o resultado não segue o padrão `atendaz-git-<branch>-<scope>` previsível (ex. real: `atendaz-git-feature-2-professiona-69ddc3-<scope>.vercel.app`). Nunca "adivinhe" a URL — solicite a exata (Vercel → Deployments, ou o check de deploy do commit no GitHub).
+2. **Deployment Protection exige bypass.** O Preview é protegido; toda request precisa do header `x-vercel-protection-bypass` com o valor de `VERCEL_AUTOMATION_BYPASS_SECRET` (em `.env.local`). O spec lê de `CYPRESS_VERCEL_BYPASS` → `Cypress.env("VERCEL_BYPASS")`.
+3. **⚠️ Remova as aspas do secret ao carregá-lo.** O valor em `.env.local` está **entre aspas** (`"..."`). Se passar as aspas literais, o secret vira **34 chars** (o correto são **32**) e o bypass é **rejeitado**: a Vercel responde `302 → vercel.com/sso-api` em **tudo**. Como `cy.request` segue redirects e cai na página de SSO (HTTP 200), os testes falham de forma **enganosa** (ex.: `validate-slug` "retorna 200" em vez de 401, e até os smokes de F0/F1 que passavam quebram). Carregue assim:
+   ```bash
+   export CYPRESS_BASE_URL="<preview-origin>"   # sem /login no fim
+   export CYPRESS_VERCEL_BYPASS="$(grep -E '^VERCEL_AUTOMATION_BYPASS_SECRET=' .env.local | cut -d= -f2- | tr -d '\r\"')"
+   npx cypress run
+   ```
+4. **Diagnóstico rápido (1 curl) antes de culpar a aplicação.** Se muitos specs falharem de uma vez, teste o bypass isoladamente:
+   ```bash
+   curl -s -o /dev/null -w '%{http_code}\n' -H "x-vercel-protection-bypass: $SECRET" "$URL/api/health"
+   ```
+   Deve dar **200**. Se der **302** (Location `vercel.com/sso-api`), o problema é o bypass (aspas no secret, secret rotacionado ou ausente) — **não** o código.
+5. **Cobertura do headless é só o contrato público.** O Cypress headless cobre status/redirect/401 (rota protegida → `/login`, APIs internas → 401). **Fluxos autenticados** (login Google, criação de registros, billing) **não** são cobertos automaticamente — ficam para a validação **manual** do usuário no gate de revisão.
+
 ## UX e Design System
 
 A UX é definida em **texto (Markdown)** — sem Figma — em duas camadas, para garantir consistência e evitar retrabalho visual:
