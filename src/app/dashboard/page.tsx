@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Business from "@/models/Business";
-import SignOutButton from "./SignOutButton";
+import Professional from "@/models/Professional";
 
 export const dynamic = "force-dynamic";
 
@@ -19,18 +20,16 @@ export default async function DashboardPage() {
   const modulosAtivos = Object.entries(business.modulos)
     .filter(([, v]) => v)
     .map(([k]) => k);
+  const qtdProfissionais = await Professional.countDocuments({
+    businessId: business._id,
+    ativo: true,
+  });
 
   return (
-    <main className="mx-auto max-w-3xl p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {business.nomeFantasia}
-        </h1>
-        <SignOutButton />
-      </div>
-      <p className="mt-1 text-sm text-gray-500">/agendar/{business.slug}</p>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-gray-900">Início</h1>
 
-      <section className="mt-8 rounded-xl border border-gray-200 p-6">
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-700">Módulos ativos</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {modulosAtivos.map((m) => (
@@ -43,6 +42,15 @@ export default async function DashboardPage() {
           ))}
         </div>
       </section>
-    </main>
+
+      <Link
+        href="/dashboard/profissionais"
+        className="block rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:border-primary"
+      >
+        <h2 className="text-sm font-semibold text-gray-700">Profissionais</h2>
+        <p className="mt-1 text-2xl font-bold text-gray-900">{qtdProfissionais}</p>
+        <p className="mt-1 text-xs text-gray-500">ativo(s) — gerenciar →</p>
+      </Link>
+    </div>
   );
 }

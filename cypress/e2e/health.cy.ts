@@ -1,6 +1,7 @@
 // Header de bypass do Vercel Deployment Protection (Preview), lido de env:
 // CYPRESS_VERCEL_BYPASS -> Cypress.env("VERCEL_BYPASS"). O secret nunca é
 // versionado; em produção (sem proteção) o header simplesmente não é enviado.
+export {}; // isola o escopo do arquivo (evita colisão de globals entre specs)
 const bypass = Cypress.env("VERCEL_BYPASS");
 const headers: Record<string, string> = bypass
   ? { "x-vercel-protection-bypass": bypass }
