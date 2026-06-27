@@ -47,7 +47,7 @@ Primeira feature **interna** (pós-onboarding). Entrega:
 
 ### Testes
 - [x] **T12** — Integração (Jest): `billing.test.ts` (5) + `professionals.test.ts` (11). Suíte total **37/37**.
-- [ ] **T13** — E2E (Cypress) `stage`/`prod` conforme spec — pendente da validação no Preview.
+- [x] **T13** — E2E (Cypress) smoke público em `cypress/e2e/professionals.cy.ts` (rota protegida → /login; `/api/professionals` e `validate-slug` → 401). `/ssd-test stage` = **9/9** verde no Preview. Fluxos autenticados ficam para validação manual no gate de revisão.
 
 ## Status de Implementação (`/ssd-code 2`)
 **Concluído e verde**: T1–T12. `npm test` = **37/37** (16 novos); `npm run build` OK (rotas `/api/professionals*` e `/dashboard/profissionais*` geradas); `npm run audit:prod` = **0**. Nenhuma dependência nova.
