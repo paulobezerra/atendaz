@@ -8,7 +8,7 @@ Esta pasta contém os planos de execução detalhados para cada funcionalidade (
 - O plano é um contrato de implementação: o que está no plano é o que será codado.
 
 ## Índice de Planos
-*(Nenhum plano ativo no momento.)*
+- [02 — Profissionais e Billing Override](02-professionals-billing.md) *(ativo — branch `feature/2-professionals-billing`)*
 
 Arquivados:
 - [01 — Onboarding: redesign de UX (Split Layout)](archive/01-onboarding-ux-redesign.md)
