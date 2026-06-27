@@ -1,6 +1,7 @@
 // Smoke E2E da F2 (nível HTTP). Os fluxos autenticados (criar profissional,
 // billing override) dependem de sessão Google e são validados manualmente no
 // gate de revisão; aqui garantimos o contrato público: proteção de rotas e 401.
+export {}; // isola o escopo do arquivo (evita colisão de globals entre specs)
 const bypass = Cypress.env("VERCEL_BYPASS");
 const headers: Record<string, string> = bypass
   ? { "x-vercel-protection-bypass": bypass }
