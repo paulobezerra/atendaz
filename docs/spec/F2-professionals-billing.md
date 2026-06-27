@@ -1,6 +1,6 @@
-# Especificação: F2 — Profissionais e Billing Override
+# [CONCLUÍDO] Especificação: F2 — Profissionais e Billing Override
 
-> **Status:** Em especificação. É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/10-design-system.md`).
+> **Status:** F2 concluída e **em produção** (validada via `/ssd-done 2` — `/ssd-test prod` 9/9). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/10-design-system.md`).
 
 ## Escopo
 - Gestão (CRUD) de múltiplos `professional` (agendas/identidades) dentro de um `business`.

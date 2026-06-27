@@ -11,8 +11,8 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Login Google e seleção de plano modular, com UX em **Split Layout**. Em produção.
 - Detalhes em: [docs/spec/F1-onboarding.md](spec/F1-onboarding.md)
 
-## Fase 2: Profissionais e Billing Override
-- Gestão de agendas e faturamento próprio por profissional.
+## [CONCLUÍDO] Fase 2: Profissionais e Billing Override
+- Gestão de agendas e faturamento próprio por profissional. Em produção, com App Shell (área autenticada).
 - Detalhes em: [docs/spec/F2-professionals-billing.md](spec/F2-professionals-billing.md)
 
 ## Fase 3: Perfil, Serviços e Disponibilidade
