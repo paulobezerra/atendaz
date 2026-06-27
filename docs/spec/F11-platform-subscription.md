@@ -12,6 +12,7 @@
     - Grace (Carência): +15 dias após o trial (total 45).
 - **Cálculo de Valor**: `plano.precoBase + max(0, qtdAgendas-1) * plano.precoPorAgendaAdicional`.
 - **Sincronização**: Recalcular valor no Asaas sempre que um `professional` for criado ou desativado.
+    - **Origem do gatilho (Guardrail 6)**: a ativação/desativação de profissionais acontece no **F2**, mas por decisão de faseamento o F2 **apenas** altera o estado (`professional.ativo`) — **não** recalcula `valorMensal`/`qtdAgendasAtivas` nem toca o Asaas (a `PLATFORM_ASAAS_API_KEY` só existe nesta fase). Cabe ao **F11** assumir o recálculo e a sincronização: ao ligar a assinatura, recomputar `qtdAgendasAtivas`/`valorMensal` a partir do estado atual dos profissionais e, daí em diante, manter a cobrança proporcional a cada ativação/desativação.
 - **Automação**: Cron diário para transições de status (`TRIAL -> GRACE -> CANCELED`) e bloqueio de acesso ao painel para inadimplentes.
 
 ## Verificação

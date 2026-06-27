@@ -91,6 +91,54 @@ Cada item representa um passo. Estado visual:
 - **< lg**: painel esquerdo colapsa em **header compacto** (logo + nome do passo atual); form ocupa 100% da tela
 - Botões `full-width` no mobile
 
+## Padrão: App Shell (área autenticada)
+
+Usado em **todas as rotas internas** (pós-login): `/dashboard` e tudo sob ele. O Split Layout é **exclusivo** de `/login` e `/onboarding`; a partir do momento em que o usuário tem um `business` configurado, a navegação passa para o **App Shell**.
+
+O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashboard): navegação **persistente e sempre visível** no desktop, com hierarquia rasa e rótulos claros, de modo que o usuário reconheça o que fazer por experiência prévia com outras aplicações — sem precisar de tutorial. Aplica **progressive disclosure**: o menu mostra apenas os módulos ativos do `business`; o que está desabilitado não aparece (alinhado ao Guardrail 2).
+
+### Estrutura (desktop ≥ 1024px)
+```
+┌────────────┬─────────────────────────────────────┐
+│  SIDEBAR   │  TOPBAR (nome do negócio · usuário)  │
+│  (fixa,    ├─────────────────────────────────────┤
+│  240px)    │  Breadcrumb / Título da página      │
+│            │                                     │
+│  ◈ Atendaz │  ┌───────────────────────────────┐  │
+│            │  │                               │  │
+│  Itens de  │  │   Conteúdo (max-w-5xl,        │  │
+│  navegação │  │   scroll independente)        │  │
+│  (só       │  │                               │  │
+│  módulos   │  └───────────────────────────────┘  │
+│  ativos)   │                                     │
+│            │                                     │
+│  ─ Sair    │                                     │
+└────────────┴─────────────────────────────────────┘
+```
+
+### Sidebar (desktop)
+- Largura fixa `~240px`, full-height, `bg-white` com `border-r border-gray-200` (ou Primary Dark se a identidade pedir — manter consistência com o branding do split).
+- Logo no topo; lista vertical de itens de navegação (ícone + label).
+- **Item ativo**: fundo `indigo-50` + texto/ícone `primary` + barra/realce à esquerda. Demais itens: texto Muted, hover escurece.
+- **Apenas módulos ativos** do `business` aparecem (progressive disclosure). Itens sempre presentes: *Profissionais*, *Configurações*. Condicionais: *Serviços*/*Agenda* (se `agenda`), *Cobrança* (se `cobranca`), *Notas* (se `nfse`).
+- Rodapé da sidebar: usuário (foto Google + nome) e ação **Sair**.
+
+### Topbar
+- Faixa superior fina com o **nome fantasia** do negócio à esquerda e o `/agendar/{slug}` em Muted; à direita, conta do usuário.
+- Abaixo da topbar (ou integrado a ela), **título da página atual** e breadcrumb quando houver navegação aninhada (ex.: *Profissionais › Editar*).
+
+### Mobile (< 1024px)
+- Sidebar **colapsa**. Navegação principal vira uma **bottom tab bar** fixa (thumb-reach) com os **3–5 itens principais** (ícone + label curto); item ativo destacado em `primary`. Esse é o padrão mais reconhecível e ergonômico em mobile para apps de uso frequente.
+- Itens excedentes (além de 5) e ações secundárias (Configurações, Sair) ficam atrás de um item **"Mais"** (sheet/drawer) — nunca esconder ações de alta frequência.
+- Topbar compacta (altura ~56px): nome do negócio + menu da conta.
+- Conteúdo ocupa 100% da largura; botões `full-width`; alvos de toque ≥ 44px.
+
+### Princípios (herdados das referências de UX premiadas)
+- **Reconhecimento, não memorização**: rótulos textuais + ícones convencionais; nada de jargão interno.
+- **Sempre saber onde está**: item ativo evidente + breadcrumb nas telas aninhadas.
+- **Hierarquia rasa**: evitar menus aninhados profundos; preferir agrupamento simples.
+- **Estados completos**: toda lista trata loading / empty / error (ver Padrões de UX globais).
+
 ## Padrões de UX (globais)
 - **Validação inline**: validar ao sair do campo (`onBlur`); mensagem específica abaixo do campo. Botão primário desabilitado até o passo/form estar válido.
 - **Estados de tela**: sempre tratar **loading** (skeleton/spinner), **empty** (mensagem + CTA) e **error** (mensagem + ação de retry). Nunca tela "morta".
