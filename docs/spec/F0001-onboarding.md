@@ -1,16 +1,16 @@
 # [CONCLUÍDO] Especificação: F0001 — Login Google + Onboarding
 
 > **Status:** F1 concluída e **em produção** (Split Layout) — validado no `/ssd-done 1`.
-> ⚠️ **Revisão pendente na Fase 2.5 (F0002.5):** o fluxo abaixo será simplificado para
+> ⚠️ **Revisão pendente na Fase 2.6 (F0002.6):** o fluxo abaixo será simplificado para
 > **onboarding minimalista** (ver seção logo abaixo). As telas de Plano e Faturamento
 > originais ficam registradas como histórico, mas **deixam de fazer parte do onboarding**.
 
-## Revisão de UX (Fase 2.5) — Onboarding Minimalista
+## Revisão de UX (Fase 2.6) — Onboarding Minimalista
 
 Decisão (`/ssd-doc UX`): **deixar o usuário começar a usar o quanto antes** e só decidir
 plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem pede Asaas.
 
-**Novo fluxo (alvo da F0002.5):**
+**Novo fluxo (alvo da F0002.6):**
 1. **Único passo — Identidade**: nome fantasia, **endereço público (slug)**, **segmento**
    e **seu nome** (profissional inicial, pré-preenchido do Google). Termos com **tooltip**
    de ajuda; campos com formato conhecido usam **máscara** (ver `docs/10`).
@@ -22,7 +22,7 @@ plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem 
 4. **Meio de pagamento (Asaas)** deixa de ser obrigatório em qualquer caso. É configurado
    **quando o usuário quiser** usar cobrança/NFS-e, em **Configurações ▸ "Configurar Meio
    de Pagamento e NFS-e"** (opcional, com aviso de que cobrança/NFS-e só funcionam após
-   conectar). Sem jargão "Asaas" como rótulo — ver F0002.5. Nada disso no onboarding.
+   conectar). Sem jargão "Asaas" como rótulo — ver F0002.7. Nada disso no onboarding.
 
 O restante desta spec (abaixo) é o desenho **original** da F1; vale como histórico e para
 as partes que permanecem (login Google, identidade, criação de business/professional).
@@ -48,7 +48,7 @@ as partes que permanecem (login Google, identidade, criação de business/profes
 - **Session Strategy**: **JWT** (sem adapter de banco). `googleId` (= `profile.sub`) liga o usuário ao `business`.
 - **Callback de Login**: Se o usuário não existir no banco, ele é redirecionado para o onboarding. Se existir, vai para o dashboard.
 
-### 2. Fluxo de Onboarding — **revisado na F0002.5 (minimalista)**
+### 2. Fluxo de Onboarding — **revisado na F0002.6 (minimalista)**
 - **Passo único: Identidade do Business**:
     - Nome Fantasia, Slug (validar contra lista de reservados e unicidade; rota pública `/agendar/{slug}`), **Segmento** (seleção obrigatória de lista controlada — coleção `segmento`; **sem texto livre**) e **Seu nome** (profissional inicial, pré-preenchido do Google).
     - Termos de jargão (segmento, endereço público) com **tooltip**; nada de plano nem Asaas aqui.
@@ -69,7 +69,7 @@ as partes que permanecem (login Google, identidade, criação de business/profes
 
 ---
 
-### Fluxo (jornada) — **revisado na F0002.5**
+### Fluxo (jornada) — **revisado na F0002.6**
 1. Acesso a `/` ou rota protegida sem sessão → redireciona para `/login`.
 2. `/login` → "Entrar com Google" → OAuth.
 3. Pós-login: sem `business` → `/onboarding`; com `onboardingStatus=COMPLETE` → `/dashboard`.
@@ -77,7 +77,7 @@ as partes que permanecem (login Google, identidade, criação de business/profes
 
 ---
 
-### Validações inline (onBlur) e erros — **revisado na F0002.5**
+### Validações inline (onBlur) e erros — **revisado na F0002.6**
 - **Slug**: normaliza e checa disponibilidade via `GET /api/onboarding/validate-slug`; erro abaixo do campo ("Slug já está em uso" / "Slug reservado"). Label com **tooltip** explicando "endereço público".
 - **Nome fantasia**: obrigatório (mín. 2). **Segmento**: obrigatório, da lista (`<select>`), com **tooltip** explicando o termo. **Seu nome**: obrigatório (vira o 1º profissional).
 - ~~**Plano**~~ e ~~**Asaas**~~ não fazem parte do onboarding (movidos para o painel — F0011 e Configurações).
@@ -87,11 +87,11 @@ as partes que permanecem (login Google, identidade, criação de business/profes
 
 ### Telas (ASCII — Split Layout)
 
-> ⚠️ **F0002.5:** a tela de onboarding válida é a **única (Identidade)** logo abaixo.
+> ⚠️ **F0002.6:** a tela de onboarding válida é a **única (Identidade)** logo abaixo.
 > As telas de **Plano (Passo 2)** e **Faturamento (Passo 3)** ficam como **histórico** —
 > não fazem mais parte do onboarding (Plano → painel/F0011; Asaas → Configurações).
 
-#### `/onboarding` — Passo único (Identidade) **[F0002.5]**
+#### `/onboarding` — Passo único (Identidade) **[F0002.6]**
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -163,7 +163,7 @@ com toast "Tudo pronto! Bem-vindo ao Atendaz 🎉".
 
 ---
 
-#### `/onboarding` — Passo 1: Identidade *(histórico — pré-F0002.5)*
+#### `/onboarding` — Passo 1: Identidade *(histórico — pré-F0002.6)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -195,7 +195,7 @@ com toast "Tudo pronto! Bem-vindo ao Atendaz 🎉".
 
 ---
 
-#### `/onboarding` — Passo 2: Plano *(histórico — removido na F0002.5; ver F0011)*
+#### `/onboarding` — Passo 2: Plano *(histórico — removido na F0002.6; ver F0011)*
 
 > Preços/nomes/módulos vêm da coleção `plano` (seed atual: **Agenda Simples R$ 29 · Cobrança + Nota R$ 39 · Completo R$ 59**). Os valores no mockup abaixo são ilustrativos.
 
@@ -229,7 +229,7 @@ com toast "Tudo pronto! Bem-vindo ao Atendaz 🎉".
 
 ---
 
-#### `/onboarding` — Passo 3: Faturamento *(histórico — removido na F0002.5; Asaas vai para Configurações)*
+#### `/onboarding` — Passo 3: Faturamento *(histórico — removido na F0002.6; Asaas vai para Configurações)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -257,7 +257,7 @@ com toast "Tudo pronto! Bem-vindo ao Atendaz 🎉".
 
 ---
 
-#### `/onboarding` — Passo 4: Profissional *(histórico — fundido ao passo único na F0002.5)*
+#### `/onboarding` — Passo 4: Profissional *(histórico — fundido ao passo único na F0002.6)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
