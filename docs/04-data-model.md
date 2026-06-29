@@ -3,7 +3,7 @@
 ## plano
 Configuração comercial (seed manual via Mongo).
 - `slug`, `nome`, `descricao`
-- `modulos`: `{ agenda: boolean, agendaPublica: boolean, cobranca: boolean, nfse: boolean }`
+- `modulos`: `{ agenda: boolean, agendaPublica: boolean, cobranca: boolean, nfse: boolean, financeiro: boolean }`
 - `precoBase`: Cobre a 1ª agenda.
 - `precoPorAgendaAdicional`: R$ por professional além do 1º (0 se sem agenda).
 - `ativo`: boolean.
@@ -90,6 +90,32 @@ Assinatura do negócio com a plataforma (Paulo).
 - `trialEndsAt`, `graceEndsAt`.
 - `qtdAgendasAtivas`, `valorMensal`.
 - `asaasSubscriptionId`, `asaasPaymentIdAtual`.
+
+## account *(F0013 — gated `modulos.financeiro`)*
+Conta/caixa financeira do Tenant.
+- `businessId`, `nome`, `tipo` (CAIXA|BANCO|CARTEIRA), `saldoInicial`, `ativo`.
+- `professionalId` (nullable — conta de um profissional; null = conta geral do business).
+- *Regra*: cada `professional` deve ter **ao menos uma** conta utilizável (própria ou a conta padrão do business apontada pelo usuário).
+
+## financial_category *(F0013)*
+Lista controlada de categorias de lançamento.
+- `businessId`, `nome`, `tipo` (RECEITA|DESPESA), `ativo`.
+
+## financial_tag *(F0013)*
+- `businessId`, `nome`, `ativo`.
+
+## document_type *(F0013)*
+Tipos de documento dos lançamentos (ex.: Boleto, Recibo, Nota, Pix).
+- `businessId`, `nome`, `ativo`.
+
+## financial_entry *(F0013)*
+Lançamento a pagar/receber.
+- `businessId`, `accountId`, `professionalId` (nullable).
+- `tipo` (PAGAR|RECEBER), `status` (PREVISTO|PAGO|RECEBIDO|CANCELADO).
+- `valor`, `vencimento`, `dataPagamento` (nullable), `descricao`.
+- `categoriaId` (nullable), `tags` ([tagId]), `documentTypeId` (nullable), `documentoNumero` (nullable).
+- `origem` (MANUAL|AUTOMATICA), `paymentId` (nullable — vínculo ao `payment` Asaas quando gerado automaticamente).
+- *Regra*: geração automática a partir de `payment` RECEBIDO é **idempotente** (1 lançamento por pagamento) e só ocorre com `cobranca` **e** `financeiro` ativos.
 
 ## marketing_page
 - `slug` (ex: `/para/{slug}`), `segmento`, `heroTitle`, `heroSubtitle`, `features`.

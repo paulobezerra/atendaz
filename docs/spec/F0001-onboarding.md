@@ -19,9 +19,10 @@ plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem 
    `platform_subscription` com `status: TRIAL` e `planoId: null`. Redireciona ao Dashboard.
 3. **Plano e pagamento** são escolhidos **depois**, no painel (quadro comparativo) — ver
    **[`F0011-platform-subscription.md`](F0011-platform-subscription.md)**.
-4. **Asaas** deixa de ser obrigatório em qualquer caso. É configurado **quando o usuário
-   quiser** usar cobrança/NFS-e, numa tela de **Configurações** do painel (opcional, com
-   aviso de que cobrança/NFS-e só funcionam após conectar). Nada de Asaas no onboarding.
+4. **Meio de pagamento (Asaas)** deixa de ser obrigatório em qualquer caso. É configurado
+   **quando o usuário quiser** usar cobrança/NFS-e, em **Configurações ▸ "Configurar Meio
+   de Pagamento e NFS-e"** (opcional, com aviso de que cobrança/NFS-e só funcionam após
+   conectar). Sem jargão "Asaas" como rótulo — ver F0002.5. Nada disso no onboarding.
 
 O restante desta spec (abaixo) é o desenho **original** da F1; vale como histórico e para
 as partes que permanecem (login Google, identidade, criação de business/professional).
