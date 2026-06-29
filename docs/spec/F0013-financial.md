@@ -58,7 +58,7 @@ projetado avançado, rateios complexos, integração contábil. Mantém-se simpl
 - Subnavegação: **Lançamentos** (lista filtrável + "Novo lançamento"), **Contas**,
   **Relatório**. Estados loading/empty/error completos; copy explicativa por tela.
 - Lançamento usa o **switch a pagar/receber**, máscaras de valor/data, e selects de
-  categoria/tag/documento. Tela de telas (ASCII) a detalhar no `/ssd-spec` desta fase.
+  categoria/tag/documento. Telas (ASCII) a detalhar via `/ssd-doc` desta fase.
 
 ## Verificação
 - **Local (Jest/TDD nas áreas críticas)**:

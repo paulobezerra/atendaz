@@ -27,10 +27,9 @@ Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o 
 
 | Comando | Descrição |
 | :--- | :--- |
-| `/ssd-spec {ID}` | *(futuro)* Cria uma nova spec em `docs/spec/` |
 | `/ssd-plan {ID}` | Cria a branch da feature e gera o plano em `docs/plans/` |
 | `/ssd-code {ID}` | Implementa a feature na branch (deploy de stage/Preview) |
-| `/ssd-doc {tema}` | Atualiza documentação/arquitetura (commit na `master`, sem deploy) |
+| `/ssd-doc {tema \| ID tema}` | Atualiza documentação/arquitetura **e specs** `docs/spec/F{ID}` (commit na `master`, sem deploy) |
 | `/ssd-test {local\|stage\|prod}` | Executa testes: Jest local · Cypress no Preview · Cypress em produção |
 | `/ssd-done {ID}` | Mergeia na `master`, valida em prod e finaliza (portão do DOD) |
 

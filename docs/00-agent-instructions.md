@@ -36,13 +36,12 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
    - `/ssd-plan`: **PROIBIDO** criar, editar ou deletar arquivos de **código** e executar testes que alterem estado real. Pode (e deve) **criar a branch `feature/{ID}-{slug}`** e commitar o documento de plano `docs/plans/{ID}-*` **nessa branch**. O agente **não deve** corrigir erros de código encontrados durante a análise; deve apenas reportá-los como débitos técnicos no plano.
    - `/ssd-code`: **ÚNICA** porta de entrada para modificação do código-fonte e correções técnicas. Trabalha sempre na branch da feature; `push` da branch gera o deploy de **homologação (stage/Preview)**.
    - `/ssd-test`: **ÚNICA** porta de entrada para baterias de testes. Alvos: `local` (Jest), `stage` (Cypress no Preview) e `prod` (Cypress na Produção).
-   - `/ssd-doc` e `/ssd-spec`: editam documentação base; commit direto na `master` (sem deploy — ver Ignored Build Step).
+   - `/ssd-doc`: edita **toda** a documentação — docs base, modelo de dados, decisões arquiteturais **e** as especificações por feature (`docs/spec/F{ID}`); commit direto na `master` (sem deploy — ver Ignored Build Step).
    - `/ssd-done`: **ÚNICO** comando que altera a `master` (merge da feature) e finaliza a feature.
 
 1. **Documentação Antes do Código**: Nenhuma funcionalidade deve ser implementada sem que sua especificação (`docs/spec`) e seu plano de execução (`docs/plans`) estejam alinhados. A **UX** (fluxos + telas) faz parte da spec, sobre a fundação do Design System (`docs/10`) — ver [UX e Design System](#ux-e-design-system).
 2. **Registro de Mudanças**: Qualquer alteração na lógica de negócio ou arquitetura deve ser refletida primeiro nos arquivos em `docs/` antes de tocar no código.
 3. **Comandos de Mini Agentes**: Os comandos do fluxo têm o prefixo `ssd-`. Os arquivos em `.claude/commands/` (ou configs de outros agentes) são **apenas atalhos/redirecionamentos** para as regras abaixo — ver [Fonte da Verdade dos Comandos](#fonte-da-verdade-dos-comandos). O comportamento de Git/branch/deploy de cada comando está em [Fluxo de Branches, Ambientes e Deploy](#fluxo-de-branches-ambientes-e-deploy).
-   - `/ssd-spec {ID} {tema}`: Cria/edita a especificação `docs/spec/F{ID}-...`, alinhada aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`). **Deve incluir a seção `## UX`** (fluxos + telas em ASCII) referenciando o Design System (`docs/10`). Commit direto na `master` (sem deploy).
    - `/ssd-plan {ID}`: Ativa o [Mini Agente de Planejamento](agent-plan-instructions.md). O agente deve:
      - Criar a branch `feature/{ID}-{slug}` e, ao final, commitar **apenas** o plano `docs/plans/{ID}-*` nela (nunca tocar código).
      - **Validar a Spec**: analisar `docs/spec/F{ID}-...` contra toda a base (`docs/01` a `docs/09`). Em caso de ambiguidade/conflito com Guardrails, interromper e pedir clarificação via `/ssd-doc`.
@@ -55,8 +54,9 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
      - Trabalhar **na branch da feature**; o `push` publica em **stage (Preview)**.
      - **Bloqueio de Integridade**: PROIBIDO `git push` com `/ssd-test local` falhando — reportar e corrigir primeiro.
      - Implementar com TDD nas áreas críticas, garantindo os critérios de aceite.
-   - `/ssd-doc {TÓPICO}`: Atualiza documentação/arquitetura. O agente deve:
+   - `/ssd-doc {TÓPICO | ID tema}`: Atualiza **toda** a documentação/arquitetura — incluindo **criar/editar as specs por feature** (`docs/spec/F{ID}-...`). Não existe comando `ssd-spec` separado: spec é documentação e também passa por aqui. O agente deve:
      - Localizar o documento pertinente (specs, modelo de dados, requisitos, etc.) e refletir a decisão sem quebrar consistência.
+     - **Ao criar/editar uma spec** `docs/spec/F{ID}`: alinhá-la aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`), e **incluir a seção `## UX`** (fluxos + telas em ASCII) referenciando o Design System (`docs/10`).
      - Atualizar `README.md` ou `docs/02-architecture-principles.md` se for transversal. Commit direto na `master` (sem deploy).
    - `/ssd-test {local|stage|prod}`: Executa os testes e reporta o resultado como evidência para o DOD.
      - `local`: Jest/Supertest contra MongoDB em memória.
@@ -127,8 +127,7 @@ Os planos devem ser numerados de acordo com a especificação e conter:
 ### Gatilhos de Git por comando
 | Comando | Ação de Git / Deploy |
 | :--- | :--- |
-| `/ssd-spec {ID}` *(futuro)* | Commit da nova spec direto na `master`. **Não deploya** (Ignored Build Step). |
-| `/ssd-doc {tema}` | Commit de documentação direto na `master`. **Não deploya.** |
+| `/ssd-doc {tema \| ID tema}` | Commit de documentação **e specs** (`docs/spec/F{ID}`) direto na `master`. **Não deploya** (Ignored Build Step). |
 | `/ssd-plan {ID}` | Cria `feature/{ID}-{slug}` a partir da `master`; commita **apenas** o plano na branch. Sem código. |
 | `/ssd-code {ID}` | Commits incrementais na branch; `push` da branch → deploy de **stage (Preview)**. Nunca toca a `master`. |
 | `/ssd-test {alvo}` | `local` (Jest) · `stage` (Cypress no Preview) · `prod` (Cypress na Produção). Não altera git. |
@@ -136,7 +135,7 @@ Os planos devem ser numerados de acordo com a especificação e conter:
 
 ### Commit e Push Automáticos
 Os comandos `ssd-*` têm **autorização permanente** para versionar: ao final de cada comando que produz alterações, o agente **DEVE** fazer `git commit` **e** `git push` automaticamente, **sem pausar para pedir confirmação**.
-- `/ssd-spec`, `/ssd-doc`: commit + push na `master`.
+- `/ssd-doc`: commit + push na `master`.
 - `/ssd-plan`: commit + push do plano na branch da feature.
 - `/ssd-code`: commit(s) + push na branch da feature (publica em stage).
 - `/ssd-done`: merge + push na `master`.
@@ -152,7 +151,7 @@ O usuário, neste momento:
 2. **Revisa o código** (diff da branch) — corretude, fidelidade à spec, qualidade, e os desvios/decisões que o agente registrou.
 3. **Decide**:
    - **Aprovar** → segue para `/ssd-done`.
-   - **Reprovar/ajustar** → volta ao ciclo de correção (`/ssd-code`, ou `/ssd-doc`/`/ssd-spec` se for lacuna de documentação), na mesma branch.
+   - **Reprovar/ajustar** → volta ao ciclo de correção (`/ssd-code`, ou `/ssd-doc` se for lacuna de documentação/spec), na mesma branch.
 
 Regras para o agente:
 - **Nunca** rodar `/ssd-done` por conta própria — é decisão exclusiva do usuário, tomada após esta revisão. Nada vai para produção sem ela.
@@ -161,9 +160,9 @@ Regras para o agente:
 
 ### Portão do DOD e Ciclo de Correção
 - O `/ssd-done` **só** marca `docs/spec/F{ID}` e `docs/06` como `[CONCLUÍDO]` (e arquiva o plano) **se o `/ssd-test prod` passar**.
-- **Se falhar em produção**, a feature **não** é concluída: retorna-se ao ciclo de correção `/ssd-code → /ssd-test → /ssd-done` (ou `/ssd-spec`/`/ssd-doc` se o erro revelar lacuna na spec), **na mesma branch**, até ficar verde. Como o `stage` já foi validado, falhas em `prod` tendem a ser específicas de ambiente e corrigidas por *fix-forward*.
+- **Se falhar em produção**, a feature **não** é concluída: retorna-se ao ciclo de correção `/ssd-code → /ssd-test → /ssd-done` (ou `/ssd-doc` se o erro revelar lacuna na spec), **na mesma branch**, até ficar verde. Como o `stage` já foi validado, falhas em `prod` tendem a ser específicas de ambiente e corrigidas por *fix-forward*.
 
 ### Deploys de Documentação (Ignored Build Step)
-Para que commits **somente de documentação/tooling** na `master` (`/ssd-doc`, `/ssd-spec`) **não** gerem deploy de produção, a Vercel é configurada com um **Ignored Build Step** apontando para `scripts/vercel-ignore-build.sh`.
+Para que commits **somente de documentação/tooling** na `master` (`/ssd-doc`) **não** gerem deploy de produção, a Vercel é configurada com um **Ignored Build Step** apontando para `scripts/vercel-ignore-build.sh`.
 - **Ação manual (uma vez)**: Painel da Vercel → *Project Settings → Git → Ignored Build Step* → comando `bash scripts/vercel-ignore-build.sh`.
 - O script pula o build quando o commit só alterou `docs/`, `*.md` ou `.claude/`.
