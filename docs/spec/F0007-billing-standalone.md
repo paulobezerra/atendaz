@@ -1,4 +1,4 @@
-# Especificação: F7 — Cobrança Standalone (Avulsa e Recorrente)
+# Especificação: F0007 — Cobrança Standalone (Avulsa e Recorrente)
 
 ## Escopo
 - Capacidade de emitir cobranças sem necessidade de um agendamento prévio.

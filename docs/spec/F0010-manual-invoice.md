@@ -1,4 +1,4 @@
-# Especificação: F10 — Emissão Manual de Nota
+# Especificação: F0010 — Emissão Manual de Nota
 
 ## Escopo
 - Capacidade de emitir NFS-e de forma avulsa, sem cobrança atrelada no Asaas.

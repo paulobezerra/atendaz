@@ -1,4 +1,4 @@
-# Especificação: F3 — Perfil, Serviços e Disponibilidade
+# Especificação: F0003 — Perfil, Serviços e Disponibilidade
 
 ## Escopo
 - Configuração detalhada de cada profissional.

@@ -1,4 +1,4 @@
-# Especificação: F8 — Dados Fiscais do Cliente
+# Especificação: F0008 — Dados Fiscais do Cliente
 
 ## Escopo
 - Coleta de dados necessários para emissão de nota fiscal (CPF/CNPJ, endereço).

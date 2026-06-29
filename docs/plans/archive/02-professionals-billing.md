@@ -1,6 +1,6 @@
 # Plano de Execução: F2 — Profissionais e Billing Override
 
-Este plano atende ao **DOR** da spec `docs/spec/F2-professionals-billing.md` e foi validado contra os Guardrails (`docs/07`), o Modelo de Dados (`docs/04`), o Design System (`docs/10`) e os Requisitos Técnicos (`docs/03`).
+Este plano atende ao **DOR** da spec `docs/spec/F0002-professionals-billing.md` e foi validado contra os Guardrails (`docs/07`), o Modelo de Dados (`docs/04`), o Design System (`docs/10`) e os Requisitos Técnicos (`docs/03`).
 
 ## Contexto
 Primeira feature **interna** (pós-onboarding). Entrega:

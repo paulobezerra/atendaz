@@ -2,6 +2,9 @@
 
 ## Stack Fixa
 - **Framework**: Next.js (Versão Estável Mais Recente) + TypeScript.
+- **UI/Componentes**: Tailwind CSS + **shadcn/ui** (Radix UI), ícones **lucide-react**. A partir da Fase 2.5 — ver `docs/10-design-system.md` e `docs/spec/F0002.5-ux-revamp.md`.
+- **Formulários**: **react-hook-form** + resolver **Zod** (reusa os schemas de validação).
+- **Dados no client**: **TanStack Query** (fetch/cache/estados) + **TanStack Table** (tabelas/listas).
 - **Banco de Dados**: MongoDB via Vercel Marketplace (`vercel install mongodb`).
 - **Autenticação**: Auth.js (NextAuth v5) - Provider Google (login apenas para donos de conta `business`).
 - **Validação**: Zod.

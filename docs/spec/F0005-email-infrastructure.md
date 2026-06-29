@@ -1,4 +1,4 @@
-# Especificação: F5 — Motor de Notificação por E-mail
+# Especificação: F0005 — Motor de Notificação por E-mail
 
 ## Escopo
 - Infraestrutura centralizada para envio de e-mails transacionais.

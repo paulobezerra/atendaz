@@ -1,4 +1,4 @@
-# Especificação: F11 — Assinatura da Plataforma
+# Especificação: F0011 — Assinatura da Plataforma
 
 ## Escopo
 - Gestão da cobrança recorrente dos negócios pelo uso da plataforma (Paulo).

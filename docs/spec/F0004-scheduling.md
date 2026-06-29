@@ -1,4 +1,4 @@
-# Especificação: F4 — Agenda: Pública e Manual
+# Especificação: F0004 — Agenda: Pública e Manual
 
 ## Escopo
 - Fluxo de agendamento por parte do cliente (público).

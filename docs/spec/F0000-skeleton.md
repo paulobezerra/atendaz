@@ -1,4 +1,4 @@
-# [CONCLUÍDO] Especificação: F0 — Esqueleto
+# [CONCLUÍDO] Especificação: F0000 — Esqueleto
 
 ## Escopo
 - Inicialização do projeto e infraestrutura base utilizando Next.js 15 e TypeScript.

@@ -52,6 +52,10 @@ Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o 
 - **Mongoose**: 8.x (estável)
 - **Tailwind**: 3.4.x (LTS)
 - **Zod**: 3.x (estável)
+- **shadcn/ui**: CLI/`latest` (Radix UI + `class-variance-authority` + `tailwind-merge` + `clsx`) — componentes copiados para o repo; ícones **lucide-react** (estável) *(F0002.5)*
+- **react-hook-form**: 7.x (estável) + **@hookform/resolvers**: 3.x (resolver Zod) *(F0002.5)*
+- **@tanstack/react-query**: 5.x (estável) *(F0002.5)*
+- **@tanstack/react-table**: 8.x (estável) *(F0002.5)*
 
 ## ⚡ Fluxo Acelerado (Vapt-Vupt)
 1. **DOR**: `/ssd-plan {ID}` -> cria a branch + auditoria de segurança + check de envs.

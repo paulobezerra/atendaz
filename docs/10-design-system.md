@@ -2,7 +2,7 @@
 
 Fundação **global** de UX, escrita uma vez e reusada por todas as features. Define **como** as coisas parecem e se comportam por padrão. O **desenho de cada tela/fluxo** fica na seção `## UX` de cada spec (`docs/spec/F{ID}`), referenciando estes tokens — ver [docs/00 → UX e Design System](00-agent-instructions.md#ux-e-design-system).
 
-Stack: **Tailwind CSS**. Os tokens abaixo mapeiam para classes utilitárias; quando fizer sentido, centralizar no `tailwind.config.ts`.
+Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod** (formulários) e **TanStack Query/Table** (dados e listas). Os tokens abaixo mapeiam para classes utilitárias e para as CSS variables do shadcn; quando fizer sentido, centralizar no `tailwind.config.ts`. A adoção dessa fundação foi decidida na **Fase 2.5** — ver [`docs/spec/F0002.5-ux-revamp.md`](spec/F0002.5-ux-revamp.md).
 
 ## Design Tokens
 
@@ -31,6 +31,24 @@ Stack: **Tailwind CSS**. Os tokens abaixo mapeiam para classes utilitárias; qua
 - Padding de card: 24px (`p-6`) · Gap entre campos: 16px (`gap-4`)
 - Radius: 8px (`rounded-lg`) · pílulas/badges: `rounded-full`
 - Sombra de card: `shadow-sm` sobre `border border-gray-200`
+
+## Fundação de Componentes (shadcn/ui + react-hook-form + TanStack)
+
+> A partir da **Fase 2.5**, **não reinventar a roda**: usar componentes prontos e padrões
+> reusáveis em vez de recriar formulários/listas a cada tela (DRY).
+
+- **shadcn/ui** é a fonte dos componentes de UI (copiados para o repo via CLI, sobre
+  **Radix UI** + `class-variance-authority` + `tailwind-merge` + `clsx`). Ícones via
+  **lucide-react**. Os componentes base abaixo descrevem o **resultado visual esperado**;
+  a implementação concreta usa os componentes shadcn estilizados com os tokens acima.
+- **Formulários**: **react-hook-form** + resolver **Zod**, reusando os **mesmos schemas Zod**
+  já usados na validação das rotas. Um único `<Form>` (shadcn) com `FormField`/`FormItem`/
+  `FormLabel`/`FormDescription`/`FormMessage` — nunca montar inputs+validação à mão.
+- **Dados e listas**: **@tanstack/react-query** para fetch/cache/estados (loading/error/
+  invalidação) e **@tanstack/react-table** para tabelas (ordenação/paginação), estilizadas
+  com o `Table` do shadcn. Evitar `useEffect`+`fetch` manuais.
+- **DRY de UI**: padrões repetidos (form em card, página de lista com toolbar, dialog de
+  confirmação, estado vazio) viram componentes/utilitários compartilhados, não cópias.
 
 ## Componentes Base
 - **Input/Select**: altura 40px (`h-10`), `border border-gray-300 rounded-lg px-3`, foco `focus:border-primary focus:ring-1`. Label acima, erro abaixo (texto `text-red-600 text-xs`).
@@ -140,6 +158,7 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 - **Estados completos**: toda lista trata loading / empty / error (ver Padrões de UX globais).
 
 ## Padrões de UX (globais)
+- **Copy explicativa (não deixar o usuário adivinhar)**: toda tela/formulário tem **subtítulo de contexto** (o que é e por que preencher); campos não óbvios têm **helper text** (`FormDescription`) e `placeholder` de exemplo; toda lista vazia tem **mensagem + CTA**; ações destrutivas têm texto de confirmação claro. Linguagem simples, em português, sem jargão interno.
 - **Validação inline**: validar ao sair do campo (`onBlur`); mensagem específica abaixo do campo. Botão primário desabilitado até o passo/form estar válido.
 - **Estados de tela**: sempre tratar **loading** (skeleton/spinner), **empty** (mensagem + CTA) e **error** (mensagem + ação de retry). Nunca tela "morta".
 - **Feedback de ação**: sucesso/erro via toast; em falha de submit, **preservar** o que o usuário preencheu.

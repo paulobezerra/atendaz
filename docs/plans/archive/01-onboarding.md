@@ -1,6 +1,6 @@
 # Plano de Execução: F1 — Login Google + Onboarding
 
-Este plano atende ao **DOR (Definition of Ready)** da spec `docs/spec/F1-onboarding.md` e foi validado contra os Guardrails (`docs/07`), o Modelo de Dados (`docs/04`) e os Requisitos Técnicos (`docs/03`).
+Este plano atende ao **DOR (Definition of Ready)** da spec `docs/spec/F0001-onboarding.md` e foi validado contra os Guardrails (`docs/07`), o Modelo de Dados (`docs/04`) e os Requisitos Técnicos (`docs/03`).
 
 ## Contexto
 Implementar autenticação Google (Auth.js v5) e o wizard de onboarding que cria o Tenant. Ao final do fluxo existe:
@@ -127,7 +127,7 @@ Build limpo na Vercel + `npm audit` zero + `/ssd-test prod` verde + aprovação 
 
 **Lacuna de documentação a formalizar via `/ssd-doc` (antes/junto do `/ssd-code`):**
 - `docs/04-data-model.md`: adicionar a coleção **`segmento`** (`slug` único, `nome`, `ativo`, `ordem`).
-- `docs/spec/F1-onboarding.md`: registrar que o segmento é **selecionado de lista controlada** (sem texto livre).
+- `docs/spec/F0001-onboarding.md`: registrar que o segmento é **selecionado de lista controlada** (sem texto livre).
 
 **Decisões de design:**
 - Novo model `Segmento` `{ slug (único), nome, ativo, ordem }`. Campos de hotsite (hero, features…) ficam em `marketing_page` (F12), **não** aqui.

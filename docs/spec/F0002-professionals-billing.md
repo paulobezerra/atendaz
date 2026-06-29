@@ -1,4 +1,4 @@
-# [CONCLUÍDO] Especificação: F2 — Profissionais e Billing Override
+# [CONCLUÍDO] Especificação: F0002 — Profissionais e Billing Override
 
 > **Status:** F2 concluída e **em produção** (validada via `/ssd-done 2` — `/ssd-test prod` 9/9). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/10-design-system.md`).
 
@@ -63,7 +63,7 @@ Reuso: `validateAsaasKey` (`src/lib/asaas.ts`), `encrypt`/`decrypt` (`src/lib/cr
 
 ### 5. Ativação / Desativação
 - `professional.ativo` é um toggle simples nesta fase.
-- **Decisão de faseamento (Guardrail 6):** o **recálculo do valor da assinatura** (`platform_subscription.valorMensal`/`qtdAgendasAtivas`) e a sincronização no Asaas **NÃO** ocorrem no F2 — são **postergados para o F11**, onde a cobrança da plataforma realmente acontece (`PLATFORM_ASAAS_API_KEY` é env de Fase 11). No F2, ativar/desativar apenas altera o estado e registra em `audit_log`. Ver nota correspondente em `docs/spec/F11-platform-subscription.md`.
+- **Decisão de faseamento (Guardrail 6):** o **recálculo do valor da assinatura** (`platform_subscription.valorMensal`/`qtdAgendasAtivas`) e a sincronização no Asaas **NÃO** ocorrem no F2 — são **postergados para o F11**, onde a cobrança da plataforma realmente acontece (`PLATFORM_ASAAS_API_KEY` é env de Fase 11). No F2, ativar/desativar apenas altera o estado e registra em `audit_log`. Ver nota correspondente em `docs/spec/F0011-platform-subscription.md`.
 
 ### 6. Auditoria (Guardrail 4)
 - Toda escrita (create/update/delete/ativar/desativar) gera registro em `audit_log` (`entidade: "professional"`, `acao`, `entidadeId`, `payloadResumido` — **sem** chave Asaas no payload).

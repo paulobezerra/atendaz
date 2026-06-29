@@ -1,4 +1,4 @@
-# Especificação: F6 — Confirmação de Agendamento Público
+# Especificação: F0006 — Confirmação de Agendamento Público
 
 ## Escopo
 - Gestão de solicitações de agendamento feitas por clientes.

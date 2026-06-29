@@ -1,6 +1,6 @@
 # Plano de Execução: F1 — Redesign de UX (Split Layout)
 
-Iteração de **UX** sobre a F1 (funcional já em produção). Implementa o **Split Layout** e o stepper conforme `docs/spec/F1-onboarding.md` (seção `## UX`) e `docs/10-design-system.md`. **Não altera regras de negócio nem APIs** — é redesenho de apresentação.
+Iteração de **UX** sobre a F1 (funcional já em produção). Implementa o **Split Layout** e o stepper conforme `docs/spec/F0001-onboarding.md` (seção `## UX`) e `docs/10-design-system.md`. **Não altera regras de negócio nem APIs** — é redesenho de apresentação.
 
 ## Contexto
 O UX inicial (caixas centralizadas genéricas) ficou abaixo do esperado no gate de revisão. Novo alvo: `/login` e `/onboarding` em **Split Layout** — painel esquerdo (branding/stepper, indigo escuro) + painel direito (formulário branco); colapso para header compacto no mobile.

@@ -1,4 +1,4 @@
-# Especificação: F12 — Hotsites por Nicho
+# Especificação: F0012 — Hotsites por Nicho
 
 ## Escopo
 - Criação de landing pages parametrizadas para diferentes segmentos.

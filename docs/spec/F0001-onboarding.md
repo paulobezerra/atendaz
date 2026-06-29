@@ -1,4 +1,4 @@
-# [CONCLUÍDO] Especificação: F1 — Login Google + Onboarding
+# [CONCLUÍDO] Especificação: F0001 — Login Google + Onboarding
 
 > **Status:** F1 concluída e **em produção**, incluindo o **redesign de UX (Split Layout)** — validado no `/ssd-done 1`.
 
