@@ -15,11 +15,18 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Gestão de agendas e faturamento próprio por profissional. Em produção, com App Shell (área autenticada).
 - Detalhes em: [docs/spec/F0002-professionals-billing.md](spec/F0002-professionals-billing.md)
 
-## Fase 2.5: Revamp de UX e Fundação de Componentes
-- Pausa estratégica entre F0002 e F0003 para elevar a usabilidade e reduzir retrabalho **antes** de construir as próximas telas (Perfil/Serviços, Agenda).
-- Adota **shadcn/ui** (componentes prontos), **react-hook-form + Zod** (formulários DRY) e **TanStack Query/Table** (dados e listas) como fundação reusável; refatora as telas existentes (Login, Onboarding, App Shell, Profissionais) para essa base, com **copy explicativa** (helper text, descrições, empty states) em cada parte.
-- Não introduz novas regras de negócio — é **fundação + redesenho**. Atualiza a fundação em `docs/10-design-system.md`.
+## Fase 2.5: Fundação de UX e Refactor das Telas Base
+- Pausa estratégica entre F0002 e F0003 para elevar a usabilidade e reduzir retrabalho **antes** das próximas telas.
+- Adota **shadcn/ui**, **react-hook-form + Zod**, **TanStack Query/Table**, **lucide-react** e **react-imask** como fundação reusável (primitivos DRY: máscaras, switch PF/PJ, tooltips de jargão, estados loading/empty/error); refatora **Login, Profissionais e App Shell**. **Não** altera regra de negócio/modelo/API.
 - Detalhes em: [docs/spec/F0002.5-ux-revamp.md](spec/F0002.5-ux-revamp.md)
+
+## Fase 2.6: Onboarding Minimalista
+- Onboarding vira **passo único** (identidade); trial libera o sistema completo; plano/Asaas saem do onboarding. **Altera** modelo (`planoId` nullable) e a rota de onboarding.
+- Detalhes em: [docs/spec/F0002.6-onboarding-minimal.md](spec/F0002.6-onboarding-minimal.md)
+
+## Fase 2.7: Configurações + Meio de Pagamento e NFS-e
+- Menu de **Configurações** da clínica/empresa + tela "Configurar Meio de Pagamento e NFS-e" (Asaas) com **tutorial in-app**; endpoint próprio com `audit_log`.
+- Detalhes em: [docs/spec/F0002.7-settings-payment.md](spec/F0002.7-settings-payment.md)
 
 ## Fase 3: Perfil, Serviços e Disponibilidade
 - Configuração da agenda do profissional.

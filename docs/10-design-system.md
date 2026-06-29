@@ -139,7 +139,7 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 - Logo no topo; lista vertical de itens de navegação (ícone + label).
 - **Item ativo**: fundo `indigo-50` + texto/ícone `primary` + barra/realce à esquerda. Demais itens: texto Muted, hover escurece.
 - **Apenas módulos ativos** do `business` aparecem (progressive disclosure). Itens sempre presentes: *Profissionais*, *Configurações*. Condicionais: *Serviços*/*Agenda* (se `agenda`), *Cobrança* (se `cobranca`), *Notas* (se `nfse`), *Financeiro* (se `financeiro` — **item de menu próprio**, ver F0013).
-- **Configurações** (sempre visível) é o **menu de configuração da clínica/empresa**: identidade do negócio, **Meio de Pagamento e NFS-e** (integração Asaas — ver F0002.5), plano/cobrança da plataforma (F0011) e demais ajustes. Nunca expor o termo técnico "Asaas" como rótulo de navegação.
+- **Configurações** (sempre visível) é o **menu de configuração da clínica/empresa**: identidade do negócio, **Meio de Pagamento e NFS-e** (integração Asaas — ver F0002.7), plano/cobrança da plataforma (F0011) e demais ajustes. Nunca expor o termo técnico "Asaas" como rótulo de navegação.
 - Rodapé da sidebar: usuário (foto Google + nome) e ação **Sair**.
 
 ### Topbar

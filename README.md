@@ -55,6 +55,7 @@ Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o 
 - **react-hook-form**: 7.x (estável) + **@hookform/resolvers**: 3.x (resolver Zod) *(F0002.5)*
 - **@tanstack/react-query**: 5.x (estável) *(F0002.5)*
 - **@tanstack/react-table**: 8.x (estável) *(F0002.5)*
+- **react-imask**: 7.x (estável) — máscaras de input (telefone/CPF/CNPJ/CEP/moeda) *(F0002.5)*
 
 ## ⚡ Fluxo Acelerado (Vapt-Vupt)
 1. **DOR**: `/ssd-plan {ID}` -> cria a branch + auditoria de segurança + check de envs.

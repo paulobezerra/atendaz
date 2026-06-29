@@ -3,12 +3,12 @@
 ## Escopo
 - Gestão da cobrança recorrente dos negócios pelo uso da plataforma (Paulo).
 - Preço baseado em plano base + quantidade de agendas adicionais.
-- **Escolha de plano no painel** (movida do onboarding na F0002.5): tela de conversão
+- **Escolha de plano no painel** (movida do onboarding na F0002.6): tela de conversão
   pós-trial onde o usuário compara planos e decide como pagar.
 
 ## UX — Escolha de Plano (quadro comparativo)
 
-Decisão de UX (F0002.5): a escolha de plano **não** ocorre no onboarding. Acontece no
+Decisão de UX (F0002.6): a escolha de plano **não** ocorre no onboarding. Acontece no
 **painel**, num **quadro comparativo lado a lado** (planos em colunas, funcionalidades em
 linhas com ✓/—), exibido na conversão (fim do trial / banner "Escolha seu plano") e numa
 página de **Cobrança/Plano** das Configurações. Sobre a fundação de `docs/10` (shadcn/ui).
@@ -37,7 +37,7 @@ página de **Cobrança/Plano** das Configurações. Sobre a fundação de `docs/
 ## Implementação
 - **Conta Destino**: Usar `PLATFORM_ASAAS_API_KEY` (Conta do Paulo).
 - **Criação da Assinatura**: Ao completar o onboarding, criar `platform_subscription` com
-  `status: TRIAL` e **`planoId: null`** (trial com sistema completo; ver F0001/F0002.5). O
+  `status: TRIAL` e **`planoId: null`** (trial com sistema completo; ver F0001/F0002.6). O
   `planoId`/`valorMensal` são definidos **quando o usuário escolhe o plano** no painel.
 - **Regras de Tempo**:
     - Trial: 30 dias.
