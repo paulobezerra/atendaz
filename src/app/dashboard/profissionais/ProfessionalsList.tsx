@@ -1,9 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  flexRender,
+  type ColumnDef,
+} from "@tanstack/react-table";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Plus, UserPlus } from "lucide-react";
 import { useToast } from "@/components/Toast";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { LoadingState } from "@/components/states/LoadingState";
+import { EmptyState } from "@/components/states/EmptyState";
+import { ErrorState } from "@/components/states/ErrorState";
 
 export interface ProfessionalDTO {
   id: string;
@@ -15,6 +41,15 @@ export interface ProfessionalDTO {
   asaasKeyLast4?: string;
 }
 
+const QUERY_KEY = ["professionals"] as const;
+
+async function fetchProfessionals(): Promise<ProfessionalDTO[]> {
+  const res = await fetch("/api/professionals");
+  if (!res.ok) throw new Error("Falha ao carregar profissionais.");
+  const json = await res.json();
+  return json.professionals as ProfessionalDTO[];
+}
+
 export default function ProfessionalsList({
   initial,
   billingEnabled,
@@ -22,90 +57,180 @@ export default function ProfessionalsList({
   initial: ProfessionalDTO[];
   billingEnabled: boolean;
 }) {
-  const router = useRouter();
   const { toast } = useToast();
-  const [items, setItems] = useState(initial);
-  const [busyId, setBusyId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: fetchProfessionals,
+    initialData: initial,
+  });
+
+  const items = data ?? [];
   const activeCount = items.filter((p) => p.ativo).length;
 
-  async function toggleAtivo(p: ProfessionalDTO) {
-    setBusyId(p.id);
-    const res = await fetch(`/api/professionals/${p.id}`, {
-      method: "PATCH",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ ativo: !p.ativo }),
-    });
-    setBusyId(null);
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      toast(j.error ?? "Não foi possível atualizar.", "error");
-      return;
+  const toggle = useMutation({
+    mutationFn: async (p: ProfessionalDTO) => {
+      const res = await fetch(`/api/professionals/${p.id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ativo: !p.ativo }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error ?? "Não foi possível atualizar.");
+      }
+      return { ...p, ativo: !p.ativo };
+    },
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      toast(updated.ativo ? "Profissional ativado." : "Profissional desativado.");
+    },
+    onError: (e: Error) => toast(e.message, "error"),
+  });
+
+  const columns = useMemo<ColumnDef<ProfessionalDTO>[]>(() => {
+    const cols: ColumnDef<ProfessionalDTO>[] = [
+      {
+        accessorKey: "nome",
+        header: "Profissional",
+        cell: ({ row }) => (
+          <Link
+            href={`/dashboard/profissionais/${row.original.id}`}
+            className="block min-w-0"
+          >
+            <span className="block truncate font-medium text-foreground">
+              {row.original.nome}
+            </span>
+            <span className="block truncate text-xs text-muted-foreground">
+              /{row.original.slugInterno}
+            </span>
+          </Link>
+        ),
+      },
+    ];
+
+    if (billingEnabled) {
+      cols.push({
+        id: "billing",
+        header: "Faturamento",
+        cell: ({ row }) =>
+          row.original.temAsaasProprio ? (
+            <Badge variant="secondary" className="font-medium text-primary">
+              Próprio ····{row.original.asaasKeyLast4 ?? ""}
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-muted-foreground">
+              Padrão do negócio
+            </Badge>
+          ),
+      });
     }
-    setItems((prev) =>
-      prev.map((x) => (x.id === p.id ? { ...x, ativo: !p.ativo } : x))
-    );
-    toast(p.ativo ? "Profissional desativado." : "Profissional ativado.");
-    router.refresh();
-  }
+
+    cols.push({
+      id: "ativo",
+      header: "Ativo",
+      cell: ({ row }) => {
+        const p = row.original;
+        const isLastActive = p.ativo && activeCount === 1;
+        return (
+          <div className="flex items-center justify-end">
+            <Switch
+              checked={p.ativo}
+              disabled={toggle.isPending || isLastActive}
+              onCheckedChange={() => toggle.mutate(p)}
+              aria-label={p.ativo ? "Desativar" : "Ativar"}
+              title={
+                isLastActive
+                  ? "Todo negócio precisa de ao menos um profissional ativo."
+                  : undefined
+              }
+            />
+          </div>
+        );
+      },
+    });
+
+    return cols;
+  }, [billingEnabled, activeCount, toggle]);
+
+  const table = useReactTable({
+    data: items,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Profissionais</h1>
-        <Link
-          href="/dashboard/profissionais/novo"
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
-        >
-          + Adicionar
-        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Profissionais</h1>
+          <p className="text-sm text-muted-foreground">
+            Gerencie quem atende no seu negócio e o faturamento de cada um.
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="/dashboard/profissionais/novo">
+            <Plus className="h-4 w-4" /> Adicionar
+          </Link>
+        </Button>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-        {items.map((p) => {
-          const isLastActive = p.ativo && activeCount === 1;
-          return (
-            <div
-              key={p.id}
-              className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 last:border-b-0"
-            >
-              <Link href={`/dashboard/profissionais/${p.id}`} className="min-w-0 flex-1">
-                <p className="truncate font-medium text-gray-900">{p.nome}</p>
-                <p className="truncate text-xs text-gray-500">/{p.slugInterno}</p>
+      {isLoading ? (
+        <LoadingState />
+      ) : isError ? (
+        <ErrorState onRetry={() => refetch()} />
+      ) : items.length === 0 ? (
+        <EmptyState
+          icon={UserPlus}
+          title="Nenhum profissional ainda"
+          description="Cadastre o primeiro profissional para começar a usar a agenda e o faturamento."
+          action={
+            <Button asChild>
+              <Link href="/dashboard/profissionais/novo">
+                <Plus className="h-4 w-4" /> Adicionar profissional
               </Link>
-
-              {billingEnabled && (
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${
-                    p.temAsaasProprio
-                      ? "bg-indigo-50 text-primary"
-                      : "bg-gray-100 text-gray-600"
-                  }`}
-                >
-                  {p.temAsaasProprio
-                    ? `Próprio ····${p.asaasKeyLast4 ?? ""}`
-                    : "Padrão"}
-                </span>
-              )}
-
-              <button
-                onClick={() => toggleAtivo(p)}
-                disabled={busyId === p.id || isLastActive}
-                title={
-                  isLastActive
-                    ? "Todo negócio precisa de ao menos um profissional ativo."
-                    : undefined
-                }
-                className={`rounded-full px-3 py-1 text-xs font-semibold disabled:opacity-50 ${
-                  p.ativo ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                {p.ativo ? "ON" : "OFF"}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+            </Button>
+          }
+        />
+      ) : (
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      className={header.id === "ativo" ? "text-right" : ""}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} data-state={isFetching ? "fetching" : undefined}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.id === "ativo" ? "text-right" : ""}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 }

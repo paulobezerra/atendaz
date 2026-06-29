@@ -1,7 +1,9 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { Check } from "lucide-react";
 import SplitLayout from "@/components/SplitLayout";
+import { Button } from "@/components/ui/button";
 
 const BULLETS = [
   "Agendamento online em 2 minutos",
@@ -38,8 +40,8 @@ export default function LoginPage() {
                   className="flex animate-fade-in-up items-start gap-3 text-indigo-100"
                   style={{ animationDelay: `${i * 150}ms` }}
                 >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-400/30 text-xs">
-                    ✓
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-400/30">
+                    <Check className="h-3 w-3" />
                   </span>
                   <span>{b}</span>
                 </li>
@@ -55,13 +57,15 @@ export default function LoginPage() {
         Entre com sua conta para acessar o painel.
       </p>
 
-      <button
+      <Button
+        variant="outline"
+        size="lg"
         onClick={() => signIn("google", { callbackUrl: "/" })}
-        className="mt-8 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        className="mt-8 w-full gap-3"
       >
         <GoogleIcon />
         Entrar com Google
-      </button>
+      </Button>
 
       <p className="mt-6 text-xs text-gray-400">
         Ao entrar, você concorda com os Termos de Uso e a Política de Privacidade.
