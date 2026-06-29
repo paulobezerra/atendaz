@@ -1,14 +1,38 @@
 # [CONCLUÍDO] Especificação: F0001 — Login Google + Onboarding
 
-> **Status:** F1 concluída e **em produção**, incluindo o **redesign de UX (Split Layout)** — validado no `/ssd-done 1`.
+> **Status:** F1 concluída e **em produção** (Split Layout) — validado no `/ssd-done 1`.
+> ⚠️ **Revisão pendente na Fase 2.5 (F0002.5):** o fluxo abaixo será simplificado para
+> **onboarding minimalista** (ver seção logo abaixo). As telas de Plano e Faturamento
+> originais ficam registradas como histórico, mas **deixam de fazer parte do onboarding**.
+
+## Revisão de UX (Fase 2.5) — Onboarding Minimalista
+
+Decisão (`/ssd-doc UX`): **deixar o usuário começar a usar o quanto antes** e só decidir
+plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem pede Asaas.
+
+**Novo fluxo (alvo da F0002.5):**
+1. **Único passo — Identidade**: nome fantasia, **endereço público (slug)**, **segmento**
+   e **seu nome** (profissional inicial, pré-preenchido do Google). Termos com **tooltip**
+   de ajuda; campos com formato conhecido usam **máscara** (ver `docs/10`).
+2. Ao concluir, cria: `business` (com **sistema completo habilitado** durante o trial —
+   `modulos` todos `true`, `planoId: null`), o 1º `professional`, e
+   `platform_subscription` com `status: TRIAL` e `planoId: null`. Redireciona ao Dashboard.
+3. **Plano e pagamento** são escolhidos **depois**, no painel (quadro comparativo) — ver
+   **[`F0011-platform-subscription.md`](F0011-platform-subscription.md)**.
+4. **Asaas** deixa de ser obrigatório em qualquer caso. É configurado **quando o usuário
+   quiser** usar cobrança/NFS-e, numa tela de **Configurações** do painel (opcional, com
+   aviso de que cobrança/NFS-e só funcionam após conectar). Nada de Asaas no onboarding.
+
+O restante desta spec (abaixo) é o desenho **original** da F1; vale como histórico e para
+as partes que permanecem (login Google, identidade, criação de business/professional).
 
 ## Escopo
 - Autenticação de usuários donos de `business` via Google.
-- Fluxo de configuração inicial (Onboarding) para novos Tenants.
-- Escolha de Plano Comercial.
-- Configuração de Módulos Dinâmicos.
+- Fluxo de configuração inicial (Onboarding) **minimalista** para novos Tenants — só identidade.
 - Provisionamento do primeiro `professional`.
-- Configuração de Faturamento (Asaas) e Dados Fiscais (se aplicável).
+- ~~Escolha de Plano Comercial~~ → movida para o painel (F0011).
+- ~~Configuração de Faturamento (Asaas) e Dados Fiscais~~ → movida para Configurações, opcional.
+- Trial habilita o **sistema completo**; módulos passam a refletir o plano só após a escolha.
 
 ## DOR (Definition of Ready)
 - [ ] Spec validada contra Guardrails e Modelo de Dados.
@@ -23,26 +47,17 @@
 - **Session Strategy**: **JWT** (sem adapter de banco). `googleId` (= `profile.sub`) liga o usuário ao `business`.
 - **Callback de Login**: Se o usuário não existir no banco, ele é redirecionado para o onboarding. Se existir, vai para o dashboard.
 
-### 2. Fluxo de Onboarding (Client-Side Wizard)
-- **Passo 1: Identidade do Business**:
-    - Nome Fantasia, Slug (validar contra lista de reservados e unicidade; rota pública `/agendar/{slug}`), **Segmento** (seleção obrigatória de lista controlada — coleção `segmento`; **sem texto livre**).
-- **Passo 2: Seleção de Plano**:
-    - Listar planos da coleção `plano`.
-    - Ao selecionar, copiar `modulos` do plano para o novo objeto `business`.
-- **Passo 3: Configuração de Módulos (Gated)**:
-    - Se `modulos.cobranca` ou `modulos.nfse` forem TRUE:
-        - Pedir API Key do Asaas.
-        - **Validação**: Testar a chave contra `ASAAS_BASE_URL/myAccount` (Sandbox/Prod conforme env).
-        - **Segurança**: Criptografar a chave com AES-256-GCM usando `CRYPTO_MASTER_KEY` antes de salvar em `billingConfigPadrao`.
-        - Pedir `nfseStrategy` e `codigosFiscais` (se `nfse` for true).
-- **Passo 4: Profissional Inicial**:
-    - Criar automaticamente 1 registro em `professional` vinculado ao `business`.
-    - Nome padrão: Nome do Usuário Google (editável).
-    - Ativar por padrão.
+### 2. Fluxo de Onboarding — **revisado na F0002.5 (minimalista)**
+- **Passo único: Identidade do Business**:
+    - Nome Fantasia, Slug (validar contra lista de reservados e unicidade; rota pública `/agendar/{slug}`), **Segmento** (seleção obrigatória de lista controlada — coleção `segmento`; **sem texto livre**) e **Seu nome** (profissional inicial, pré-preenchido do Google).
+    - Termos de jargão (segmento, endereço público) com **tooltip**; nada de plano nem Asaas aqui.
+- ~~**Passo 2: Seleção de Plano**~~ → **removido do onboarding**. Plano é escolhido no painel, em quadro comparativo (ver F0011). Durante o trial, `business.modulos` = **todos `true`** (sistema completo) e `planoId: null`.
+- ~~**Passo 3: Configuração de Módulos / Asaas**~~ → **removido do onboarding**. A chave Asaas, `nfseStrategy` e `codigosFiscais` passam a ser configurados **opcionalmente** em Configurações do painel, quando o usuário for usar cobrança/NFS-e (mantendo a criptografia AES-256-GCM via `CRYPTO_MASTER_KEY`).
+- **Profissional Inicial** (no mesmo passo): criar automaticamente 1 `professional` vinculado ao `business`, nome do campo "Seu nome" (editável), ativo por padrão.
 
 ### 3. Finalização
-- Criar documento `business` com `onboardingStatus: 'COMPLETE'`.
-- Criar documento `platform_subscription` com status `TRIAL` (30 dias).
+- Criar documento `business` com `onboardingStatus: 'COMPLETE'`, `planoId: null` e `modulos` **completos** (trial).
+- Criar documento `platform_subscription` com `status: TRIAL` (30 dias) e `planoId: null`.
 - Redirecionar para o Dashboard.
 
 ## UX (sobre o Design System — `docs/10`)
@@ -53,23 +68,64 @@
 
 ---
 
-### Fluxo (jornada)
+### Fluxo (jornada) — **revisado na F0002.5**
 1. Acesso a `/` ou rota protegida sem sessão → redireciona para `/login`.
 2. `/login` → "Entrar com Google" → OAuth.
 3. Pós-login: sem `business` → `/onboarding`; com `onboardingStatus=COMPLETE` → `/dashboard`.
-4. Wizard de 4 passos (Passo 3 condicional ao plano). Ao concluir, cria Business + Professional + PlatformSubscription e vai para `/dashboard`.
+4. **Onboarding de passo único** (Identidade). Ao concluir, cria Business (trial completo) + Professional + PlatformSubscription (TRIAL, sem plano) e vai para `/dashboard`. Plano/pagamento e Asaas ficam para depois, no painel.
 
 ---
 
-### Validações inline (onBlur) e erros
-- **Slug**: normaliza e checa disponibilidade via `GET /api/onboarding/validate-slug`; erro abaixo do campo ("Slug já está em uso" / "Slug reservado").
-- **Nome fantasia**: obrigatório (mín. 2). **Segmento**: obrigatório, da lista (`<select>`). **Plano**: seleção obrigatória.
-- **Asaas** (se gated): chave obrigatória, validada no Asaas; erro abaixo do campo se inválida.
-- Botão **Continuar/Concluir** desabilitado até o passo estar válido. Em falha de submit: preserva os dados e exibe toast de erro; sucesso → toast e redireciona.
+### Validações inline (onBlur) e erros — **revisado na F0002.5**
+- **Slug**: normaliza e checa disponibilidade via `GET /api/onboarding/validate-slug`; erro abaixo do campo ("Slug já está em uso" / "Slug reservado"). Label com **tooltip** explicando "endereço público".
+- **Nome fantasia**: obrigatório (mín. 2). **Segmento**: obrigatório, da lista (`<select>`), com **tooltip** explicando o termo. **Seu nome**: obrigatório (vira o 1º profissional).
+- ~~**Plano**~~ e ~~**Asaas**~~ não fazem parte do onboarding (movidos para o painel — F0011 e Configurações).
+- Botão **Concluir** desabilitado até o passo estar válido. Em falha de submit: preserva os dados e exibe toast de erro; sucesso → toast e redireciona.
 
 ---
 
 ### Telas (ASCII — Split Layout)
+
+> ⚠️ **F0002.5:** a tela de onboarding válida é a **única (Identidade)** logo abaixo.
+> As telas de **Plano (Passo 2)** e **Faturamento (Passo 3)** ficam como **histórico** —
+> não fazem mais parte do onboarding (Plano → painel/F0011; Asaas → Configurações).
+
+#### `/onboarding` — Passo único (Identidade) **[F0002.5]**
+
+```
+┌──────────────────────────────┬──────────────────────────────┐
+│                              │                              │
+│   ◈ Atendaz                  │   Vamos configurar seu       │
+│                              │   negócio                    │
+│   Comece em 1 minuto.        │   Leva 1 minuto. Você pode  │
+│   Configure o resto          │   ajustar tudo depois.       │
+│   quando quiser.             │                              │
+│                              │   Nome fantasia *            │
+│   ✓ Sem plano agora —        │   [______________________]  │
+│     teste tudo no trial      │                              │
+│                              │   Endereço público (slug) ⓘ*│
+│   ✓ Conecte pagamentos       │   /agendar/[_______________] │
+│     só quando precisar       │   Verificando disponibilidade│
+│                              │                              │
+│                              │   Segmento ⓘ *               │
+│                              │   [ Selecione seu segmento ▾]│
+│   ────────────────────────   │                              │
+│   Seu sistema completo,      │   Seu nome *                 │
+│   liberado no trial.         │   [ Maria Silva           ]  │
+│                              │   Será seu primeiro          │
+│                              │   profissional (edite depois)│
+│                              │                              │
+│                              │        [ Concluir ✓ ]        │
+└──────────────────────────────┴──────────────────────────────┘
+```
+
+**Tooltips (ⓘ):** "Endereço público" = o link que seus clientes usam para agendar
+(`atendaz.com/agendar/seu-slug`). "Segmento" = a área de atuação do seu negócio (ex.:
+barbearia, clínica), usada para personalizar a experiência. **Ao concluir:** cria Business
+(trial completo) + Professional + PlatformSubscription (TRIAL, sem plano) → `/dashboard`
+com toast "Tudo pronto! Bem-vindo ao Atendaz 🎉".
+
+---
 
 #### `/login`
 
@@ -106,7 +162,7 @@
 
 ---
 
-#### `/onboarding` — Passo 1: Identidade
+#### `/onboarding` — Passo 1: Identidade *(histórico — pré-F0002.5)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -138,7 +194,7 @@
 
 ---
 
-#### `/onboarding` — Passo 2: Plano
+#### `/onboarding` — Passo 2: Plano *(histórico — removido na F0002.5; ver F0011)*
 
 > Preços/nomes/módulos vêm da coleção `plano` (seed atual: **Agenda Simples R$ 29 · Cobrança + Nota R$ 39 · Completo R$ 59**). Os valores no mockup abaixo são ilustrativos.
 
@@ -172,7 +228,7 @@
 
 ---
 
-#### `/onboarding` — Passo 3: Faturamento *(condicional — pulado se o plano não tiver `cobranca`/`nfse`)*
+#### `/onboarding` — Passo 3: Faturamento *(histórico — removido na F0002.5; Asaas vai para Configurações)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐
@@ -200,7 +256,7 @@
 
 ---
 
-#### `/onboarding` — Passo 4: Profissional
+#### `/onboarding` — Passo 4: Profissional *(histórico — fundido ao passo único na F0002.5)*
 
 ```
 ┌──────────────────────────────┬──────────────────────────────┐

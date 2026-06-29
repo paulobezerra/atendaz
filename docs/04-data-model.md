@@ -18,7 +18,7 @@ Lista **controlada** de segmentos de atuação (seed administrativo). Alimenta o
 ## business
 Conta/tenant principal.
 - `googleId`, `nomeFantasia`, `slug` (único, `/agendar/{slug}`), `email`, `segmento` (slug de um `segmento` ativo — lista controlada, sem texto livre).
-- `planoId`, `modulos` (copiado do plano na assinatura).
+- `planoId` (**nullable** — `null` durante o trial até o usuário escolher um plano no painel; ver F0011), `modulos`. **Regra de módulos (F0002.5):** enquanto `planoId` é `null` (trial), `modulos` = **sistema completo** (todos `true`) para o usuário testar tudo; ao escolher o plano, `modulos` é **copiado do plano**.
 - `cpfCnpj` (nullable).
 - `billingConfigPadrao` (nullable): 
   { 
@@ -86,7 +86,7 @@ Plano de cobrança recorrente para o Cliente Final.
 
 ## platform_subscription
 Assinatura do negócio com a plataforma (Paulo).
-- `businessId` (único), `planoId`, `status` (TRIAL|GRACE|ACTIVE|CANCELED).
+- `businessId` (único), `planoId` (**nullable** — `null` durante o trial; definido quando o usuário escolhe o plano no painel, F0011), `status` (TRIAL|GRACE|ACTIVE|CANCELED).
 - `trialEndsAt`, `graceEndsAt`.
 - `qtdAgendasAtivas`, `valorMensal`.
 - `asaasSubscriptionId`, `asaasPaymentIdAtual`.

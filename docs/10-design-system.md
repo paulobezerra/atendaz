@@ -159,6 +159,10 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 
 ## Padrões de UX (globais)
 - **Copy explicativa (não deixar o usuário adivinhar)**: toda tela/formulário tem **subtítulo de contexto** (o que é e por que preencher); campos não óbvios têm **helper text** (`FormDescription`) e `placeholder` de exemplo; toda lista vazia tem **mensagem + CTA**; ações destrutivas têm texto de confirmação claro. Linguagem simples, em português, sem jargão interno.
+- **Tooltips para jargão**: o usuário é especialista no negócio dele, **não** no nosso vocabulário. Termos do produto (ex.: **segmento**, **endereço público/slug**, **Asaas**, **NFS-e**, **estratégia de NFS-e**) recebem um **ícone de ajuda** (`ⓘ`, `Tooltip` do shadcn) ao lado do label, explicando **o que é** e **o que preencher**. Tooltip nunca esconde informação essencial — é reforço, não substituto da copy.
+- **Máscaras de input**: campos de formato conhecido aplicam máscara para facilitar o preenchimento — **telefone/WhatsApp** `(00) 00000-0000`, **CPF** `000.000.000-00`, **CNPJ** `00.000.000/0000-00`, **CEP** `00000-000`, valores em **R$**. A máscara é de apresentação; persistir o valor normalizado.
+- **Tipo de pessoa (PF/PJ)**: **nunca** um único campo que sirva para CPF *e* CNPJ. Um **switch/segmented control** "Pessoa Física / Pessoa Jurídica" decide o tipo (`tipoPessoa`), e o campo de documento troca máscara e validação conforme a escolha.
+- **Ícones**: biblioteca padrão **lucide-react** em toda a interface (consistência visual); evitar SVGs avulsos ou ícones de fontes diferentes.
 - **Validação inline**: validar ao sair do campo (`onBlur`); mensagem específica abaixo do campo. Botão primário desabilitado até o passo/form estar válido.
 - **Estados de tela**: sempre tratar **loading** (skeleton/spinner), **empty** (mensagem + CTA) e **error** (mensagem + ação de retry). Nunca tela "morta".
 - **Feedback de ação**: sucesso/erro via toast; em falha de submit, **preservar** o que o usuário preencheu.
