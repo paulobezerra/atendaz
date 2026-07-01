@@ -3,8 +3,9 @@
 # Convenção da Vercel: exit 0 = PULA o build/deploy; exit 1 = EXECUTA o build/deploy.
 #
 # Objetivo: não disparar deploy quando o commit mexeu APENAS em
-# documentação/tooling (docs/, *.md, .claude/) — mantendo a master como
-# fonte da verdade dos docs sem gerar deploys de produção desnecessários.
+# documentação/tooling (docs/, *.md, .claude/, TEMPLATE/) — mantendo a master
+# como fonte da verdade dos docs sem gerar deploys de produção desnecessários.
+# TEMPLATE/ são protótipos estáticos de referência de UX, fora do build do app.
 #
 # Configurar no painel: Project Settings → Git → Ignored Build Step →
 #   bash scripts/vercel-ignore-build.sh
@@ -17,7 +18,8 @@ fi
 if git diff --quiet HEAD^ HEAD -- . \
     ':(exclude)docs/**' \
     ':(exclude)*.md' \
-    ':(exclude).claude/**'; then
+    ':(exclude).claude/**' \
+    ':(exclude)TEMPLATE/**'; then
   echo "Somente docs/tooling mudou — pulando build."
   exit 0
 fi

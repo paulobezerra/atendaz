@@ -29,8 +29,39 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 ### Espaçamento & Forma
 - Unidade base: 4px (escala Tailwind)
 - Padding de card: 24px (`p-6`) · Gap entre campos: 16px (`gap-4`)
-- Radius: 8px (`rounded-lg`) · pílulas/badges: `rounded-full`
-- Sombra de card: `shadow-sm` sobre `border border-gray-200`
+- Radius: 8px (`rounded-lg`) inputs/botões · **`rounded-2xl` (16px) para cards/painéis** · pílulas/badges: `rounded-full`
+- Sombra de card: `shadow-sm` sobre `border border-gray-200`; **elevar** em hover de card clicável (`hover:shadow-md`) e em destaques (`shadow-lg`).
+
+## Referências visuais e direção estética (revamp)
+
+> A interface "feita à mão" ficou datada. A meta é o **acabamento de um bom template shadcn**:
+> respiro generoso, hierarquia tipográfica forte, cards arredondados com borda sutil, cor usada
+> com parcimônia (fundo neutro + **um** primary), e microdetalhes (badges de status, ícones lucide,
+> gradiente sutil no hero). **Protótipos navegáveis** em [`TEMPLATE/`](../TEMPLATE/) materializam
+> este alvo — abrir `landing.html` e `dashboard.html` no navegador.
+
+**Galeria de referência** (templates shadcn/Tailwind — inspiração, não cópia 1:1):
+
+| Referência | URL | O que emprestar |
+| :--- | :--- | :--- |
+| **Swipe** (finanças) | `shadcn-nextjs-swipe-landing-page.vercel.app` | Landing clara e amigável; hero com mock do app + **cards flutuantes de métrica**. Direção principal p/ o marketing do Atendaz (F0012). |
+| **Matter / Plasma** | `shadcn-nextjs-matter-landing-page.vercel.app` · `plasma-nextjs-template.vercel.app` | Hero bold, tipografia grande, seção de produto em destaque; opção dark. |
+| **Studio Admin** | `next-shadcn-admin-dashboard.vercel.app` | **Dashboard SaaS quase igual ao domínio do Atendaz**: sidebar seccionada, cards de métrica com badge de tendência, e **tabela de clientes com Status/Cobrança/Plano**. |
+| **Shadcn Fintech** | `shadcn-fintech.vercel.app` | Overview financeiro: gráfico de área, cards de saldo/recebimento, medidores de saúde. |
+| **Tailwind Admin** | `react-free.tailwind-admin.com` | Cards de métrica coloridos, gráfico de barras, timeline de transações, tabela com badges de prioridade. |
+
+### Acabamento (o que eleva o look — aplicar em todo o app)
+- **Respiro**: seções de página com `py-16`/`py-20`; conteúdo em `max-w-6xl` (marketing) / `max-w-6xl`
+  no shell; nunca "grudar" elementos.
+- **Cards**: `rounded-2xl border border-gray-200 bg-white p-6 shadow-sm`; ícone do card num quadrado
+  `rounded-xl bg-primary/10 text-primary`.
+- **Cor com parcimônia**: fundo neutro (`gray-50`), texto forte (`gray-900`) + muted (`gray-500`);
+  o **primary** entra em CTAs, item ativo e destaques — não em tudo.
+- **Tipografia**: títulos `tracking-tight`, pesos 600–800; subtítulos em muted logo abaixo.
+- **Microdetalhes**: badges de status `rounded-full` com cor tonal (`bg-success/10 text-success`),
+  ícones **lucide** consistentes, gradiente radial sutil no hero, `backdrop-blur` em barras fixas.
+- **Dark mode**: desejável (várias refs são dark). Fica como evolução — mapear os tokens para
+  CSS variables e um `.dark` quando priorizado; não bloqueia o revamp claro.
 
 ## Fundação de Componentes (shadcn/ui + react-hook-form + TanStack)
 
@@ -157,6 +188,41 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 - **Sempre saber onde está**: item ativo evidente + breadcrumb nas telas aninhadas.
 - **Hierarquia rasa**: evitar menus aninhados profundos; preferir agrupamento simples.
 - **Estados completos**: toda lista trata loading / empty / error (ver Padrões de UX globais).
+
+### Dashboard: cards de métrica
+Faixa de 2–4 **cards de métrica** no topo da Visão Geral (ver `TEMPLATE/dashboard.html`). Cada card:
+- `rounded-2xl border bg-white p-5 shadow-sm`; topo com **ícone** (quadrado `bg-primary/10`) e um
+  **badge de tendência** (`▲ 12%` verde / `▼` vermelho / neutro cinza) alinhado à direita;
+- abaixo, **label muted** + **número grande** (`text-2xl font-bold`).
+- Exemplos no Atendaz: *Agendamentos hoje*, *Receita do mês*, *Cobranças pendentes*, *NFS-e emitidas*.
+
+### Dashboard: gráficos
+Um card largo (`lg:col-span-2`) com gráfico (receita por mês) + um card lateral de composição
+(ex.: formas de recebimento com barras de progresso). Placeholder aceitável no protótipo; na
+implementação usar uma lib de charts estável quando a feature exigir.
+
+### Tabela de dados (listas) — badges de domínio
+Listas (cobranças, clientes, agendamentos) usam o `Table` do shadcn dentro de um card, com **toolbar**
+(título + subtítulo à esquerda; *Filtrar*/*Exportar* à direita) e cabeçalho `text-xs uppercase muted`.
+Status viram **badges tonais** `rounded-full` reutilizáveis — padronizar as cores por significado:
+- **Cobrança**: `Pago` (success) · `Aguardando`/`Emitindo…` (warning) · `Vencido` (danger) · `—` (muted).
+- **NFS-e**: `Emitida` (success) · `Pendente`/`Emitindo…` (warning) · `Falhou` (danger).
+- **Assinatura (plataforma)**: `Ativo` (success) · `Trial` (primary/warning) · `Grace` (warning) · `Cancelado` (muted).
+- Primeira coluna com **avatar de iniciais** (`bg-primary/10 text-primary`) + nome. Linhas com `hover:bg-gray-50`.
+
+## Padrão: Landing / Página de marketing (F0012)
+Site público (fora do app autenticado). Referência principal: **Swipe** (claro e amigável). Ver
+`TEMPLATE/landing.html`. Anatomia:
+- **Nav fixa** com `backdrop-blur`, logo à esquerda, links no centro, *Entrar* + *Começar grátis* (primary) à direita; vira menu hambúrguer no mobile.
+- **Hero** em 2 colunas: à esquerda headline `text-4xl/5xl font-extrabold tracking-tight` (com uma
+  palavra em `text-primary`), subtítulo muted, 2 CTAs (primary + outline) e microcopy de confiança;
+  à direita um **mock do app** com **cards flutuantes** de métrica. Gradiente radial sutil de fundo.
+- **Trust bar** (faixa neutra: "500+ negócios", meios de pagamento, NFS-e).
+- **Recursos**: grid de 3 cards (Agenda, Cobrança, NFS-e) — ícone tonal + título + descrição curta.
+- **Como funciona**: 3 passos numerados.
+- **Preços**: 3 planos; o recomendado com `border-2 border-primary` + selo "Mais popular".
+- **CTA final**: faixa `bg-primary-dark` arredondada (`rounded-3xl`) com headline + botão claro.
+- **Footer** enxuto. Tudo mobile-first, `max-w-6xl`, seções com `py-20`.
 
 ## Padrões de UX (globais)
 - **Copy explicativa (não deixar o usuário adivinhar)**: toda tela/formulário tem **subtítulo de contexto** (o que é e por que preencher); campos não óbvios têm **helper text** (`FormDescription`) e `placeholder` de exemplo; toda lista vazia tem **mensagem + CTA**; ações destrutivas têm texto de confirmação claro. Linguagem simples, em português, sem jargão interno.
