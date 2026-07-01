@@ -9,6 +9,7 @@ import { Eye, EyeOff, Loader2, Check, X } from "lucide-react";
 import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -389,15 +390,15 @@ export default function ProfessionalForm({
                         </FormItem>
                       )}
                     />
-                    <FormItem>
-                      <FormLabel>CPF/CNPJ *</FormLabel>
+                    <div className="space-y-2">
+                      <Label>CPF/CNPJ *</Label>
                       <PessoaTipoField
                         tipo={form.watch("tipoPessoa")}
                         onTipoChange={(t) => form.setValue("tipoPessoa", t)}
                         documento={form.watch("cpfCnpj") ?? ""}
                         onDocumentoChange={(v) => form.setValue("cpfCnpj", v)}
                       />
-                    </FormItem>
+                    </div>
                   </>
                 )}
               </div>
