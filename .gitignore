@@ -11,3 +11,7 @@ build
 *.log
 cypress/videos
 cypress/screenshots
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo

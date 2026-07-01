@@ -1,20 +1,20 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import { getSession } from "@/lib/auth";
-import Plano from "@/models/Plano";
 import Segmento from "@/models/Segmento";
-import Business, { IBillingConfig } from "@/models/Business";
+import Business from "@/models/Business";
 import Professional from "@/models/Professional";
 import PlatformSubscription from "@/models/PlatformSubscription";
 import { onboardingSchema } from "@/lib/schemas/onboarding";
 import { validateSlug, normalizeSlug } from "@/lib/slug";
-import { validateAsaasKey } from "@/lib/asaas";
-import { encrypt } from "@/lib/crypto";
 
 export const dynamic = "force-dynamic";
 
 const TRIAL_DAYS = 30;
 
+// F0002.6: onboarding de passo único. Não pede plano nem Asaas — cria o business
+// em trial com o sistema completo liberado; plano vem depois (F0011) e Meio de
+// Pagamento na F0002.7.
 export async function POST(req: Request) {
   const session = await getSession();
   const googleId = session?.user?.googleId;
@@ -64,52 +64,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Segmento inválido." }, { status: 400 });
   }
 
-  // Plano + cópia de módulos
-  const plano = await Plano.findById(data.planoId);
-  if (!plano || !plano.ativo) {
-    return NextResponse.json({ error: "Plano inválido." }, { status: 400 });
-  }
-  const modulos = {
-    agenda: plano.modulos.agenda,
-    agendaPublica: plano.modulos.agendaPublica,
-    cobranca: plano.modulos.cobranca,
-    nfse: plano.modulos.nfse,
-  };
-
-  // Gating: só pede/valida/criptografa Asaas se o plano tiver cobranca/nfse
-  let billingConfigPadrao: IBillingConfig | null = null;
-  if (modulos.cobranca || modulos.nfse) {
-    if (!data.asaasApiKey) {
-      return NextResponse.json(
-        { error: "Chave Asaas obrigatória para este plano." },
-        { status: 400 }
-      );
-    }
-    const asaas = await validateAsaasKey(data.asaasApiKey);
-    if (!asaas.valid) {
-      return NextResponse.json(
-        { error: asaas.error ?? "Chave Asaas inválida." },
-        { status: 400 }
-      );
-    }
-    billingConfigPadrao = {
-      asaasApiKeyEncrypted: encrypt(data.asaasApiKey),
-      nfseStrategy: modulos.nfse ? data.nfseStrategy : undefined,
-      codigosFiscais: modulos.nfse ? data.codigosFiscais : undefined,
-    };
-  }
-
   try {
+    // Trial sem plano (planoId: null) → módulos completos para o usuário testar tudo.
+    // Ao escolher o plano (F0011), `modulos` passa a ser copiado do plano.
     const business = await Business.create({
       googleId,
       nomeFantasia: data.nomeFantasia,
       slug,
       email: session.user?.email ?? "",
       segmento: data.segmento,
-      planoId: plano._id,
-      modulos,
-      cpfCnpj: data.cpfCnpj ?? null,
-      billingConfigPadrao,
+      planoId: null,
+      modulos: {
+        agenda: true,
+        agendaPublica: true,
+        cobranca: true,
+        nfse: true,
+      },
+      cpfCnpj: null,
+      billingConfigPadrao: null,
       onboardingStatus: "COMPLETE",
     });
 
@@ -120,13 +92,13 @@ export async function POST(req: Request) {
       ativo: true,
     });
 
+    // Assinatura de plataforma em TRIAL, ainda sem plano/valor (definidos na F0011).
     await PlatformSubscription.create({
       businessId: business._id,
-      planoId: plano._id,
+      planoId: null,
       status: "TRIAL",
       trialEndsAt: new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000),
       qtdAgendasAtivas: 1,
-      valorMensal: plano.precoBase,
     });
 
     return NextResponse.json(

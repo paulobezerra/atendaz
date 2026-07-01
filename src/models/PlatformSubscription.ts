@@ -8,12 +8,12 @@ export type PlatformSubscriptionStatus =
 
 export interface IPlatformSubscription extends Document {
   businessId: Types.ObjectId;
-  planoId: Types.ObjectId;
+  planoId?: Types.ObjectId | null;
   status: PlatformSubscriptionStatus;
   trialEndsAt?: Date;
   graceEndsAt?: Date;
   qtdAgendasAtivas: number;
-  valorMensal: number;
+  valorMensal?: number;
   asaasSubscriptionId?: string;
   asaasPaymentIdAtual?: string;
   createdAt: Date;
@@ -28,7 +28,12 @@ const PlatformSubscriptionSchema = new Schema<IPlatformSubscription>(
       required: true,
       unique: true,
     },
-    planoId: { type: Schema.Types.ObjectId, ref: "Plano", required: true },
+    planoId: {
+      type: Schema.Types.ObjectId,
+      ref: "Plano",
+      required: false,
+      default: null,
+    },
     status: {
       type: String,
       enum: ["TRIAL", "GRACE", "ACTIVE", "CANCELED"],
@@ -37,7 +42,7 @@ const PlatformSubscriptionSchema = new Schema<IPlatformSubscription>(
     trialEndsAt: { type: Date },
     graceEndsAt: { type: Date },
     qtdAgendasAtivas: { type: Number, default: 1 },
-    valorMensal: { type: Number, required: true },
+    valorMensal: { type: Number },
     asaasSubscriptionId: { type: String },
     asaasPaymentIdAtual: { type: String },
   },
