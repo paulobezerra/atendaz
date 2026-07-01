@@ -22,7 +22,7 @@ plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem 
 4. **Meio de pagamento (Asaas)** deixa de ser obrigatório em qualquer caso. É configurado
    **quando o usuário quiser** usar cobrança/NFS-e, em **Configurações ▸ "Configurar Meio
    de Pagamento e NFS-e"** (opcional, com aviso de que cobrança/NFS-e só funcionam após
-   conectar). Sem jargão "Asaas" como rótulo — ver F0002.7. Nada disso no onboarding.
+   conectar). Sem jargão "Asaas" como rótulo — ver F0002.8. Nada disso no onboarding.
 
 O restante desta spec (abaixo) é o desenho **original** da F1; vale como histórico e para
 as partes que permanecem (login Google, identidade, criação de business/professional).

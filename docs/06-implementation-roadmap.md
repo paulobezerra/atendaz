@@ -24,9 +24,13 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Onboarding vira **passo único** (identidade); trial libera o sistema completo; plano/Asaas saem do onboarding. **Altera** modelo (`planoId` nullable) e a rota de onboarding. Em produção.
 - Detalhes em: [docs/spec/F0002.6-onboarding-minimal.md](spec/F0002.6-onboarding-minimal.md)
 
-## Fase 2.7: Configurações + Meio de Pagamento e NFS-e
+## Fase 2.7: Correções de UX (fidelidade ao `TEMPLATE/`)
+- Passe **só visual** sobre as telas já implementadas (Login, Onboarding, Profissionais, App Shell/Dashboard) alinhando-as ao `TEMPLATE/` como fonte da verdade (logo aprovado, cores, tipografia, componentes). **Não** altera modelo/API/regra (mesma natureza da F0002.5).
+- Detalhes em: [docs/spec/F0002.7-ux-corrections.md](spec/F0002.7-ux-corrections.md)
+
+## Fase 2.8: Configurações + Meio de Pagamento e NFS-e
 - Menu de **Configurações** da clínica/empresa + tela "Configurar Meio de Pagamento e NFS-e" (Asaas) com **tutorial in-app**; endpoint próprio com `audit_log`.
-- Detalhes em: [docs/spec/F0002.7-settings-payment.md](spec/F0002.7-settings-payment.md)
+- Detalhes em: [docs/spec/F0002.8-settings-payment.md](spec/F0002.8-settings-payment.md)
 
 ## Fase 3: Perfil, Serviços e Disponibilidade
 - Configuração da agenda do profissional.
