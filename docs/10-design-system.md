@@ -63,6 +63,14 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 - **Dark mode**: desejável (várias refs são dark). Fica como evolução — mapear os tokens para
   CSS variables e um `.dark` quando priorizado; não bloqueia o revamp claro.
 
+### Logo (marca "AtendAZ")
+Wordmark **AtendAZ**: "Atend" na cor de texto + "AZ" no **primary** (indigo `#4f46e5`). Fonte:
+`Logo para o app AtendAZ.svg` (raiz). Duas variantes prontas em `TEMPLATE/assets/` — **fundo
+transparente** e `viewBox` recortado ao wordmark (proporção ~4:1), para usar por altura:
+- **`atendaz-logo.svg`** — "Atend" escuro (`#242424`) + "AZ" indigo → **fundo claro** (nav, sidebar, footer claro).
+- **`atendaz-logo-inverted.svg`** — "Atend" branco + "AZ" indigo → **fundo escuro/indigo** (faixa CTA, painel esquerdo do split layout).
+- **Regra**: escolher a variante pelo **contraste com o fundo** (nunca a escura sobre escuro). Exibir com `h-6`/`h-7` e `w-auto`. Na implementação real, mover os SVGs para `public/` e servir via `<img>`/`next/image`.
+
 ## Fundação de Componentes (shadcn/ui + react-hook-form + TanStack)
 
 > A partir da **Fase 2.5**, **não reinventar a roda**: usar componentes prontos e padrões
