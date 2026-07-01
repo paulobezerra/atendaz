@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
+import { Home, Users, type LucideIcon } from "lucide-react";
 
 export interface NavItem {
   href: string;
   label: string;
-  icon: string; // emoji simples (substituível por ícone SVG depois)
+  icon: LucideIcon;
   module?: "agenda" | "cobranca" | "nfse";
 }
 
@@ -29,8 +30,8 @@ export interface AppShellProps {
  * mortos — serão adicionados em F3+.
  */
 const NAV: NavItem[] = [
-  { href: "/dashboard", label: "Início", icon: "🏠" },
-  { href: "/dashboard/profissionais", label: "Profissionais", icon: "👤" },
+  { href: "/dashboard", label: "Início", icon: Home },
+  { href: "/dashboard/profissionais", label: "Profissionais", icon: Users },
 ];
 
 function visibleItems(modulos: AppShellProps["business"]["modulos"]) {
@@ -56,6 +57,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
         <nav className="flex-1 space-y-1 px-3 py-4">
           {items.map((i) => {
             const active = isActive(pathname, i.href);
+            const Icon = i.icon;
             return (
               <Link
                 key={i.href}
@@ -66,7 +68,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
-                <span aria-hidden>{i.icon}</span>
+                <Icon className="h-4 w-4" aria-hidden />
                 {i.label}
               </Link>
             );
@@ -110,6 +112,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
       <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-gray-200 bg-white lg:hidden">
         {items.map((i) => {
           const active = isActive(pathname, i.href);
+          const Icon = i.icon;
           return (
             <Link
               key={i.href}
@@ -118,7 +121,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
                 active ? "text-primary" : "text-gray-500"
               }`}
             >
-              <span className="text-lg" aria-hidden>{i.icon}</span>
+              <Icon className="h-5 w-5" aria-hidden />
               {i.label}
             </Link>
           );

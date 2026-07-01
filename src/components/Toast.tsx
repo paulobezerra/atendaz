@@ -1,52 +1,30 @@
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useState,
-  type ReactNode,
-} from "react";
+import type { ReactNode } from "react";
+import { toast as sonnerToast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 type ToastType = "success" | "error";
-interface ToastItem {
-  id: number;
-  message: string;
-  type: ToastType;
+
+/**
+ * API estável de toasts (mantida desde F1): `useToast().toast(msg, type)`.
+ * A partir da F0002.5 o backend é o `sonner` (shadcn) — um único sistema de
+ * toast no app (docs/10). Os call sites existentes não mudam.
+ */
+export function useToast() {
+  return {
+    toast: (message: string, type: ToastType = "success") =>
+      type === "error"
+        ? sonnerToast.error(message)
+        : sonnerToast.success(message),
+  };
 }
 
-const ToastContext = createContext<{
-  toast: (message: string, type?: ToastType) => void;
-}>({ toast: () => {} });
-
-export const useToast = () => useContext(ToastContext);
-
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ToastItem[]>([]);
-
-  const toast = useCallback((message: string, type: ToastType = "success") => {
-    const id = Date.now() + Math.random();
-    setItems((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setItems((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
-  }, []);
-
   return (
-    <ToastContext.Provider value={{ toast }}>
+    <>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        {items.map((t) => (
-          <div
-            key={t.id}
-            className={`animate-fade-in-up rounded-lg px-4 py-3 text-sm text-white shadow-lg ${
-              t.type === "success" ? "bg-emerald-600" : "bg-red-600"
-            }`}
-          >
-            {t.message}
-          </div>
-        ))}
-      </div>
-    </ToastContext.Provider>
+      <Toaster richColors position="bottom-right" />
+    </>
   );
 }
