@@ -222,45 +222,44 @@ export default function ProfessionalForm({
           )}
         />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="whatsapp"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>WhatsApp</FormLabel>
-                <FormControl>
-                  <MaskedInput
-                    kind="phone"
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    placeholder="(11) 99999-9999"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio (opcional)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={1}
-                    placeholder="Breve descrição"
-                    {...field}
-                    value={field.value ?? ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="whatsapp"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>WhatsApp</FormLabel>
+              <FormControl>
+                <MaskedInput
+                  kind="phone"
+                  value={field.value ?? ""}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="(11) 99999-9999"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="bio"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bio (opcional)</FormLabel>
+              <FormControl>
+                <Textarea
+                  rows={3}
+                  placeholder="Breve descrição"
+                  {...field}
+                  value={field.value ?? ""}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {billingEnabled && (
           <fieldset className="space-y-3 rounded-lg border border-border p-4">
