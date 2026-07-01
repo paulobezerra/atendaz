@@ -15,3 +15,6 @@ cypress/screenshots
 # TypeScript incremental build info
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+
+# Screenshots de review na raiz (mantidos localmente, fora do versionamento)
+/img*.png
