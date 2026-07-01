@@ -124,22 +124,25 @@ Reuso: `validateAsaasKey` (`src/lib/asaas.ts`), `encrypt`/`decrypt` (`src/lib/cr
 ┌────────────┬──────────────────────────────────────────────┐
 │ ◈ Atendaz  │  Profissionais › Editar                      │
 │            ├──────────────────────────────────────────────┤
-│ ▸ Profis-  │  Nome *                                       │
-│   sionais  │  [ Maria Silva________________________ ]      │
-│   Serviços │  Endereço interno (slug) *                    │
-│   Cobrança │  [ maria-silva________________________ ]      │
-│   Notas    │  ✓ Disponível                                 │
-│            │  WhatsApp        Bio (opcional)               │
-│            │  [ (11)9____ ]   [ ____________________ ]     │
-│            │                                              │
-│            │  Faturamento                ← só se cobranca/ │
-│            │  ( ) Usar padrão do negócio    nfse ativos    │
-│            │  (•) Configurar faturamento próprio           │
-│            │     Chave API Asaas *                         │
-│            │     [ $aact·········789 ] 👁  ✓ validada      │
-│            │     Estratégia de NFS-e *  ← só se nfse=true  │
-│            │     [ Automática              ▾ ]             │
-│            │     CPF/CNPJ *  [ ________________ ]          │
+│ ▸ Profis-  │  Nome *                                      │
+│   sionais  │  [ Maria Silva________________________ ]     │
+│   Serviços │  Endereço interno (slug) *                   │
+│   Cobrança │  [ maria-silva________________________ ]     │
+│   Notas    │  ✓ Disponível                                │
+│            │  WhatsApp                                    │
+│            │  [ (11)9______________________________ ]     │
+│            │  Bio (opcional)                              │
+│            │  [ ____________________________________      │
+│            │    ____________________________________      │
+│            │    ____________________________________ ]    │
+│            │  Faturamento                ← só se cobranca/│
+│            │  ( ) Usar padrão do negócio    nfse ativos   │
+│            │  (•) Configurar faturamento próprio          │
+│            │     Chave API Asaas *                        │
+│            │     [ $aact·········789 ] 👁  ✓ validada     │
+│            │     Estratégia de NFS-e *  ← só se nfse=true │
+│            │     [ Automática              ▾ ]            │
+│            │     CPF/CNPJ *  [ ________________ ]         │
 │ 👤 Paulo   │                                              │
 │  ─ Sair    │  [ Desativar ]      [ Cancelar ] [ Salvar ]  │
 └────────────┴──────────────────────────────────────────────┘
