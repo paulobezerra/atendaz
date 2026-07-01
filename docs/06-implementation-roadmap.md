@@ -20,8 +20,8 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Adota **shadcn/ui**, **react-hook-form + Zod**, **TanStack Query/Table**, **lucide-react** e **react-imask** como fundação reusável (primitivos DRY: máscaras, switch PF/PJ, tooltips de jargão, estados loading/empty/error); refatora **Login, Profissionais e App Shell**. **Não** altera regra de negócio/modelo/API.
 - Detalhes em: [docs/spec/F0002.5-ux-revamp.md](spec/F0002.5-ux-revamp.md)
 
-## Fase 2.6: Onboarding Minimalista
-- Onboarding vira **passo único** (identidade); trial libera o sistema completo; plano/Asaas saem do onboarding. **Altera** modelo (`planoId` nullable) e a rota de onboarding.
+## [CONCLUÍDO] Fase 2.6: Onboarding Minimalista
+- Onboarding vira **passo único** (identidade); trial libera o sistema completo; plano/Asaas saem do onboarding. **Altera** modelo (`planoId` nullable) e a rota de onboarding. Em produção.
 - Detalhes em: [docs/spec/F0002.6-onboarding-minimal.md](spec/F0002.6-onboarding-minimal.md)
 
 ## Fase 2.7: Configurações + Meio de Pagamento e NFS-e
