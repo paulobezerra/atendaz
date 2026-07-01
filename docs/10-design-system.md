@@ -7,7 +7,7 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 ## Design Tokens
 
 ### Cores
-> ⚠️ **Cor primária = decisão de identidade pendente** (default abaixo, ajustável pelo usuário).
+> ✅ **Identidade confirmada**: primary indigo `#4F46E5`, conforme o `TEMPLATE/` e o logo aprovado.
 - **Primary**: `#4F46E5` (indigo-600) · hover `#4338CA` (indigo-700)
 - **Primary Dark**: `#3730A3` (indigo-800) — usado no painel esquerdo do split layout
 - **Danger**: `#DC2626` (red-600)
@@ -34,13 +34,22 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 
 ## Referências visuais e direção estética (revamp)
 
-> A interface "feita à mão" ficou datada. A meta é o **acabamento de um bom template shadcn**:
-> respiro generoso, hierarquia tipográfica forte, cards arredondados com borda sutil, cor usada
-> com parcimônia (fundo neutro + **um** primary), e microdetalhes (badges de status, ícones lucide,
-> gradiente sutil no hero). **Protótipos navegáveis** em [`TEMPLATE/`](../TEMPLATE/) materializam
-> este alvo — abrir `landing.html` e `dashboard.html` no navegador.
+> **`TEMPLATE/` é a fonte da verdade visual do produto.** Os protótipos navegáveis
+> [`TEMPLATE/landing.html`](../TEMPLATE/landing.html) e [`TEMPLATE/dashboard.html`](../TEMPLATE/dashboard.html)
+> definem o alvo concreto de acabamento — abrir no navegador. **A aplicação real deve reproduzi-los o
+> mais fielmente possível**: mesmas **cores**, mesmo **logo**, mesma **tipografia**, mesmos **componentes**,
+> mesmos espaçamentos/radius/sombras e o mesmo "aspecto" geral. Isso vale para **todas as superfícies** —
+> não só as duas páginas de exemplo, mas **formulários, listas/tabelas, dashboard, telas de configuração
+> e onboarding**. A meta continua sendo o **acabamento de um bom template shadcn** (respiro generoso,
+> hierarquia tipográfica forte, cards arredondados com borda sutil, cor com parcimônia, microdetalhes) —
+> e o `TEMPLATE/` é a materialização exata desse acabamento a ser copiada.
+>
+> **Regra prática**: ao construir qualquer tela, comparar **lado a lado** com o protótipo equivalente em
+> `TEMPLATE/` e replicar as classes/tokens; divergências visuais só com motivo documentado
+> (acessibilidade, restrição técnica) — registrar na seção `## UX` da spec. Se o `TEMPLATE/` e um item
+> pontual desta fundação divergirem, **o `TEMPLATE/` prevalece** e esta doc deve ser atualizada para refletir.
 
-**Galeria de referência** (templates shadcn/Tailwind — inspiração, não cópia 1:1):
+**Galeria de referência** (inspiração *upstream*, **já materializada e consolidada no `TEMPLATE/`** — consultar para entender o *porquê* das escolhas; o alvo a replicar é o `TEMPLATE/`, não estas páginas):
 
 | Referência | URL | O que emprestar |
 | :--- | :--- | :--- |
@@ -64,12 +73,13 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
   CSS variables e um `.dark` quando priorizado; não bloqueia o revamp claro.
 
 ### Logo (marca "AtendAZ")
-Wordmark **AtendAZ**: "Atend" na cor de texto + "AZ" no **primary** (indigo `#4f46e5`). Fonte:
-`Logo para o app AtendAZ.svg` (raiz). Duas variantes prontas em `TEMPLATE/assets/` — **fundo
-transparente** e `viewBox` recortado ao wordmark (proporção ~4:1), para usar por altura:
-- **`atendaz-logo.svg`** — "Atend" escuro (`#242424`) + "AZ" indigo → **fundo claro** (nav, sidebar, footer claro).
-- **`atendaz-logo-inverted.svg`** — "Atend" branco + "AZ" indigo → **fundo escuro/indigo** (faixa CTA, painel esquerdo do split layout).
-- **Regra**: escolher a variante pelo **contraste com o fundo** (nunca a escura sobre escuro). Exibir com `h-6`/`h-7` e `w-auto`. Na implementação real, mover os SVGs para `public/` e servir via `<img>`/`next/image`.
+Wordmark **AtendAZ** em peso **bold**: "Atend" na cor de texto + "AZ" em **acento indigo**. Duas variantes
+prontas em `TEMPLATE/assets/`, **fundo transparente** e `viewBox` recortado ao wordmark (proporção ~4:1),
+para usar por altura:
+- **`atendaz-logo.svg`** — "Atend" `#111827` (gray-900, cor do texto) + "AZ" **primary** `#4F46E5` → **fundo claro** (nav, sidebar, footer claro).
+- **`atendaz-logo-inverted.svg`** — "Atend" **branco** + "AZ" `#93A0FA` (indigo ~350) → **fundo escuro/indigo** (faixa CTA, painel esquerdo do split layout). O acento clareia nesta variante para contrastar **com o "Atend" branco** *e* com o fundo indigo — na janela estreita entre "quase branco" (some no "Atend") e "escuro demais" (some no fundo).
+- **Regra**: escolher a variante pelo **contraste com o fundo** (nunca a clara sobre claro nem a escura sobre escuro). Exibir com `h-6`/`h-7` e `w-auto`.
+- **Fontes** (arte original, fundo sólido, na raiz do repo): `Logo para o app AtendAZ (2).svg` (fundo claro) e `Logo para o app AtendAZ (1).svg` (fundo escuro). As variantes de `TEMPLATE/assets/` são **derivadas** delas (fundo removido + recorte do `viewBox`); ao ajustar a marca, editar estas variantes. Na implementação real, mover os SVGs de `TEMPLATE/assets/` para `public/` e servir via `<img>`/`next/image`.
 
 ## Fundação de Componentes (shadcn/ui + react-hook-form + TanStack)
 
@@ -229,7 +239,7 @@ Site público (fora do app autenticado). Referência principal: **Swipe** (claro
 - **Recursos**: grid de 3 cards (Agenda, Cobrança, NFS-e) — ícone tonal + título + descrição curta.
 - **Como funciona**: 3 passos numerados.
 - **Preços**: 3 planos; o recomendado com `border-2 border-primary` + selo "Mais popular".
-- **CTA final**: faixa `bg-primary-dark` arredondada (`rounded-3xl`) com headline + botão claro.
+- **CTA final**: faixa `bg-primary` arredondada (`rounded-3xl`) com logo invertido, headline + botão claro.
 - **Footer** enxuto. Tudo mobile-first, `max-w-6xl`, seções com `py-20`.
 
 ## Padrões de UX (globais)
