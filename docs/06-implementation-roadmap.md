@@ -15,8 +15,8 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Gestão de agendas e faturamento próprio por profissional. Em produção, com App Shell (área autenticada).
 - Detalhes em: [docs/spec/F0002-professionals-billing.md](spec/F0002-professionals-billing.md)
 
-## Fase 2.5: Fundação de UX e Refactor das Telas Base
-- Pausa estratégica entre F0002 e F0003 para elevar a usabilidade e reduzir retrabalho **antes** das próximas telas.
+## [CONCLUÍDO] Fase 2.5: Fundação de UX e Refactor das Telas Base
+- Pausa estratégica entre F0002 e F0003 para elevar a usabilidade e reduzir retrabalho **antes** das próximas telas. Em produção.
 - Adota **shadcn/ui**, **react-hook-form + Zod**, **TanStack Query/Table**, **lucide-react** e **react-imask** como fundação reusável (primitivos DRY: máscaras, switch PF/PJ, tooltips de jargão, estados loading/empty/error); refatora **Login, Profissionais e App Shell**. **Não** altera regra de negócio/modelo/API.
 - Detalhes em: [docs/spec/F0002.5-ux-revamp.md](spec/F0002.5-ux-revamp.md)
 
