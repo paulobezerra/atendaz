@@ -32,7 +32,7 @@ export interface IBusiness extends Document {
   slug: string;
   email: string;
   segmento?: string;
-  planoId: Types.ObjectId;
+  planoId?: Types.ObjectId | null;
   modulos: IModulos;
   cpfCnpj?: string | null;
   billingConfigPadrao?: IBillingConfig | null;
@@ -71,7 +71,12 @@ const BusinessSchema = new Schema<IBusiness>(
     slug: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     segmento: { type: String },
-    planoId: { type: Schema.Types.ObjectId, ref: "Plano", required: true },
+    planoId: {
+      type: Schema.Types.ObjectId,
+      ref: "Plano",
+      required: false,
+      default: null,
+    },
     modulos: {
       agenda: { type: Boolean, default: false },
       agendaPublica: { type: Boolean, default: false },

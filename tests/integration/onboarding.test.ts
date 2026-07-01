@@ -1,16 +1,11 @@
 import { POST } from "@/app/api/onboarding/route";
 import dbConnect from "@/lib/mongodb";
-import Plano from "@/models/Plano";
 import Segmento from "@/models/Segmento";
 import Business from "@/models/Business";
 import Professional from "@/models/Professional";
 import PlatformSubscription from "@/models/PlatformSubscription";
-import { decrypt } from "@/lib/crypto";
 
 jest.mock("@/lib/auth", () => ({ getSession: jest.fn() }));
-jest.mock("@/lib/asaas", () => ({
-  validateAsaasKey: jest.fn().mockResolvedValue({ valid: true }),
-}));
 
 import { getSession } from "@/lib/auth";
 const mockedAuth = getSession as jest.Mock;
@@ -23,29 +18,12 @@ function makeReq(body: unknown) {
   });
 }
 
-async function seedPlano(over: Record<string, unknown> = {}) {
-  await dbConnect();
-  return Plano.create({
-    slug: "agenda-simples",
-    nome: "Agenda Simples",
-    modulos: { agenda: true, agendaPublica: true, cobranca: false, nfse: false },
-    precoBase: 29,
-    precoPorAgendaAdicional: 15,
-    ativo: true,
-    ...over,
-  });
-}
-
 async function seedSegmento() {
   await dbConnect();
   return Segmento.create({ slug: "barbearia", nome: "Barbearia", ativo: true, ordem: 0 });
 }
 
-describe("POST /api/onboarding", () => {
-  beforeAll(() => {
-    process.env.CRYPTO_MASTER_KEY = "chave-mestre-teste";
-    process.env.ASAAS_BASE_URL = "https://sandbox.asaas.com/api/v3";
-  });
+describe("POST /api/onboarding (F0002.6 — passo único, trial)", () => {
   beforeEach(() => {
     mockedAuth.mockReset();
   });
@@ -56,9 +34,8 @@ describe("POST /api/onboarding", () => {
     expect(res.status).toBe(401);
   });
 
-  it("cria Business + Professional + PlatformSubscription (plano grátis)", async () => {
+  it("cria Business (trial, módulos completos, sem plano) + Professional + PlatformSubscription", async () => {
     mockedAuth.mockResolvedValue({ user: { googleId: "g-123", email: "dono@x.com" } });
-    const plano = await seedPlano();
     await seedSegmento();
 
     const res = await POST(
@@ -66,7 +43,6 @@ describe("POST /api/onboarding", () => {
         nomeFantasia: "Barbearia Zé",
         slug: "Barbearia Zé",
         segmento: "barbearia",
-        planoId: plano._id.toString(),
         profissionalNome: "Zé",
       }) as Request
     );
@@ -75,8 +51,13 @@ describe("POST /api/onboarding", () => {
     const biz = await Business.findOne({ googleId: "g-123" });
     expect(biz?.slug).toBe("barbearia-ze");
     expect(biz?.segmento).toBe("barbearia");
-    expect(biz?.modulos.agenda).toBe(true);
     expect(biz?.onboardingStatus).toBe("COMPLETE");
+    // Trial: sem plano, sistema completo liberado, sem billing.
+    expect(biz?.planoId ?? null).toBeNull();
+    expect(biz?.modulos.agenda).toBe(true);
+    expect(biz?.modulos.agendaPublica).toBe(true);
+    expect(biz?.modulos.cobranca).toBe(true);
+    expect(biz?.modulos.nfse).toBe(true);
     expect(biz?.billingConfigPadrao ?? null).toBeNull();
 
     const prof = await Professional.findOne({ businessId: biz!._id });
@@ -85,20 +66,19 @@ describe("POST /api/onboarding", () => {
 
     const sub = await PlatformSubscription.findOne({ businessId: biz!._id });
     expect(sub?.status).toBe("TRIAL");
-    expect(sub?.valorMensal).toBe(29);
+    expect(sub?.planoId ?? null).toBeNull();
+    expect(sub?.valorMensal ?? null).toBeNull();
     expect(sub?.trialEndsAt).toBeInstanceOf(Date);
   });
 
   it("rejeita segmento fora da lista controlada (400)", async () => {
     mockedAuth.mockResolvedValue({ user: { googleId: "g-seg", email: "s@x.com" } });
-    const plano = await seedPlano();
     await seedSegmento();
     const res = await POST(
       makeReq({
         nomeFantasia: "Negócio X",
         slug: "negocio-x",
         segmento: "segmento-inexistente",
-        planoId: plano._id.toString(),
         profissionalNome: "Pedro",
       }) as Request
     );
@@ -107,13 +87,11 @@ describe("POST /api/onboarding", () => {
 
   it("é idempotente: re-submit do mesmo googleId retorna 409", async () => {
     mockedAuth.mockResolvedValue({ user: { googleId: "g-dup", email: "d@x.com" } });
-    const plano = await seedPlano();
     await seedSegmento();
     const body = {
       nomeFantasia: "Negócio A",
       slug: "negocio-a",
       segmento: "barbearia",
-      planoId: plano._id.toString(),
       profissionalNome: "Pedro",
     };
     const r1 = await POST(makeReq(body) as Request);
@@ -123,67 +101,28 @@ describe("POST /api/onboarding", () => {
     expect(await Business.countDocuments({ googleId: "g-dup" })).toBe(1);
   });
 
-  it("plano pago: valida e criptografa a chave Asaas (gating)", async () => {
-    mockedAuth.mockResolvedValue({ user: { googleId: "g-pay", email: "p@x.com" } });
-    const plano = await seedPlano({
-      slug: "completo",
-      nome: "Completo",
-      modulos: { agenda: true, agendaPublica: true, cobranca: true, nfse: true },
-      precoBase: 59,
-    });
-    await seedSegmento();
-
-    const res = await POST(
-      makeReq({
-        nomeFantasia: "Clínica Vida",
-        slug: "clinica-vida",
-        segmento: "barbearia",
-        planoId: plano._id.toString(),
-        profissionalNome: "Dra Ana",
-        asaasApiKey: "$aact_chave_real",
-        nfseStrategy: "AUTO_AFTER_PAYMENT",
-      }) as Request
-    );
-    expect(res.status).toBe(201);
-
-    const biz = await Business.findOne({ googleId: "g-pay" });
-    const enc = biz?.billingConfigPadrao?.asaasApiKeyEncrypted;
-    expect(enc).toBeTruthy();
-    expect(enc).not.toContain("$aact_chave_real");
-    expect(decrypt(enc!)).toBe("$aact_chave_real");
-    expect(biz?.billingConfigPadrao?.nfseStrategy).toBe("AUTO_AFTER_PAYMENT");
-  });
-
-  it("plano pago sem chave Asaas retorna 400", async () => {
-    mockedAuth.mockResolvedValue({ user: { googleId: "g-nokey", email: "n@x.com" } });
-    const plano = await seedPlano({
-      slug: "cobranca-nota",
-      nome: "Cobrança + Nota",
-      modulos: { agenda: false, agendaPublica: false, cobranca: true, nfse: true },
-      precoBase: 39,
-    });
-    await seedSegmento();
-    const res = await POST(
-      makeReq({
-        nomeFantasia: "Emissor",
-        slug: "emissor-notas",
-        segmento: "barbearia",
-        planoId: plano._id.toString(),
-        profissionalNome: "Fulano",
-      }) as Request
-    );
-    expect(res.status).toBe(400);
-  });
-
-  it("rejeita slug reservado", async () => {
+  it("rejeita slug reservado (400)", async () => {
     mockedAuth.mockResolvedValue({ user: { googleId: "g-res", email: "r@x.com" } });
-    const plano = await seedPlano();
+    await seedSegmento();
     const res = await POST(
       makeReq({
         nomeFantasia: "Xpto Ltda",
         slug: "admin",
         segmento: "barbearia",
-        planoId: plano._id.toString(),
+        profissionalNome: "Pedro",
+      }) as Request
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("rejeita dados inválidos do schema — nome muito curto (400)", async () => {
+    mockedAuth.mockResolvedValue({ user: { googleId: "g-inv", email: "i@x.com" } });
+    await seedSegmento();
+    const res = await POST(
+      makeReq({
+        nomeFantasia: "X",
+        slug: "negocio-y",
+        segmento: "barbearia",
         profissionalNome: "Pedro",
       }) as Request
     );
