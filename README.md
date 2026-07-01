@@ -56,6 +56,15 @@ Com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o 
 - **@tanstack/react-query**: 5.x (estável) *(F0002.5)*
 - **@tanstack/react-table**: 8.x (estável) *(F0002.5)*
 - **react-imask**: 7.x (estável) — máscaras de input (telefone/CPF/CNPJ/CEP/moeda) *(F0002.5)*
+- **@testing-library/react** + **@testing-library/jest-dom** + **jest-environment-jsdom** (estáveis) — camada de teste de **componente/render** (`jsdom`), obrigatória para UI com lógica *(F0002.5)*
+
+## 🧪 Modelo de Testes (três camadas)
+A Política de Testes canônica está em [`docs/07` §4.1](docs/07-guardrails.md). Em resumo:
+1. **Integração/API** (Jest) — handlers de rota + lógica crítica (TDD nas áreas de risco).
+2. **Componente/Render** (Jest + React Testing Library, `jsdom`) — **todo componente de UI com lógica** monta sem lançar e exercita os ramos interativos. Roda junto no `npm test`.
+3. **E2E** (Cypress) — contrato público no Preview/Prod; fluxos autenticados críticos quando viável.
+
+**Regra dura**: "verde" não conta se não cobre a **superfície alterada**. Um crash de render não pode passar nos testes.
 
 ## ⚡ Fluxo Acelerado (Vapt-Vupt)
 1. **DOR**: `/ssd-plan {ID}` -> cria a branch + auditoria de segurança + check de envs.

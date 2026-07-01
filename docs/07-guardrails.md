@@ -20,10 +20,21 @@ Este documento centraliza as regras críticas que garantem a integridade, segura
 - **Segurança de Chaves**: Chaves de API do Asaas (de Tenants ou Profissionais) devem ser criptografadas com **AES-256-GCM** antes de serem salvas no MongoDB.
 - **Fidelidade à API**: É proibido inventar campos ou simular comportamentos que não existam na documentação oficial do Asaas.
 
-## 4. Idempotência e Confiabilidade
+## 4. Idempotência, Confiabilidade e Testes
 - **Webhooks**: Todos os webhooks (Asaas, Plataforma) devem ser idempotentes. O processamento deve verificar se o evento já foi tratado para evitar duplicidade de ações (ex: emitir 2 notas para 1 pagamento).
 - **Audit Log**: Toda operação de escrita (Create/Update/Delete) em entidades financeiras ou de agendamento deve gerar um registro em `audit_log`.
-- **TDD Obrigatório**: Áreas de risco (idempotência, cálculos de slots, transições de assinatura e resolução de billing) exigem testes automatizados antes da implementação.
+- **TDD Obrigatório (lógica crítica)**: Áreas de risco (idempotência, cálculos de slots, transições de assinatura e resolução de billing) exigem testes automatizados **antes** da implementação.
+
+### 4.1 Política de Testes (camadas obrigatórias)
+
+O gate de testes tem **três camadas**; nenhuma cobre a outra. "Verde" só vale se as camadas certas existirem para a superfície tocada:
+
+1. **Integração / API (Jest)** — handlers de rota importados direto + lógica crítica (com TDD nas áreas de risco). É o que já temos.
+2. **Componente / Render (Jest + React Testing Library, ambiente `jsdom`)** — **todo componente de UI com lógica** (renderização condicional, estado de formulário, seções reveladas por rádio/checkbox, máscaras, PF/PJ, validação inline) exige teste que **(a)** monte sem lançar e **(b)** exercite os **ramos interativos** (ex.: alternar o rádio que revela o bloco de "faturamento próprio", trocar PF↔PJ). Um componente com render condicional **não** pode ser dado como pronto sem esse teste.
+3. **E2E (Cypress)** — contrato público (status/redirect/401) no Preview/Prod. Fluxos autenticados **críticos** ganham E2E quando viável; os demais ficam no gate manual.
+
+- **Regra dura — cobertura da superfície alterada**: testes verdes **não** satisfazem o gate se **não cobrem o que a mudança tocou**. Toda alteração de UI vem acompanhada de teste de render/interação da parte alterada. Um crash de render que passa em verde (ex.: `useFormField should be used within <FormField>`) é **falha de política de testes**, não azar — a resposta correta é **fechar a lacuna de cobertura**, não só corrigir o sintoma.
+- **Ao corrigir um bug**: escrever **primeiro** o teste que o reproduz (falha), depois a correção (passa) — teste de regressão obrigatório na camada adequada.
 
 ## 5. NFS-e e Dados Fiscais
 - **Estratégias de Emissão (Configurável por Tenant)**:

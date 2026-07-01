@@ -53,15 +53,17 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
      - Ler a spec e o plano correspondente; revalidar os Guardrails em `docs/07-guardrails.md`.
      - Trabalhar **na branch da feature**; o `push` publica em **stage (Preview)**.
      - **Bloqueio de Integridade**: PROIBIDO `git push` com `/ssd-test local` falhando — reportar e corrigir primeiro.
+     - **Cobertura junto com o código**: toda mudança de UI com lógica sai com teste de render/interação (RTL) da parte tocada; ao corrigir bug, escrever antes o teste que o reproduz. Ver Política de Testes (`docs/07` §4.1). "Verde" sem cobrir a superfície alterada **não** é pronto.
      - Implementar com TDD nas áreas críticas, garantindo os critérios de aceite.
    - `/ssd-doc {TÓPICO | ID tema}`: Atualiza **toda** a documentação/arquitetura — incluindo **criar/editar as specs por feature** (`docs/spec/F{ID}-...`). Não existe comando `ssd-spec` separado: spec é documentação e também passa por aqui. O agente deve:
      - Localizar o documento pertinente (specs, modelo de dados, requisitos, etc.) e refletir a decisão sem quebrar consistência.
      - **Ao criar/editar uma spec** `docs/spec/F{ID}`: alinhá-la aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`), e **incluir a seção `## UX`** (fluxos + telas em ASCII) referenciando o Design System (`docs/10`).
      - Atualizar `README.md` ou `docs/02-architecture-principles.md` se for transversal. Commit direto na `master` (sem deploy).
    - `/ssd-test {local|stage|prod}`: Executa os testes e reporta o resultado como evidência para o DOD.
-     - `local`: Jest/Supertest contra MongoDB em memória.
+     - `local`: Jest contra MongoDB em memória (integração/API) **+ testes de componente/render** (React Testing Library em `jsdom`). As duas camadas rodam no `npm test`. Ver a Política de Testes em `docs/07` §4.1.
      - `stage`: Cypress (headless) contra a URL de **Preview** (homologação).
      - `prod`: Cypress (headless) contra a URL de **Produção**.
+     - **"Verde" não basta**: um resultado verde só é evidência válida se as camadas certas cobrirem a **superfície alterada**. Se a mudança tocou UI com lógica e não há teste de render dela, a cobertura está incompleta — reportar como lacuna, não como aprovado.
    - `/ssd-done {ID}`: Comando exclusivo do usuário; único que altera a `master`. O agente deve:
      - Exigir verde em `local` e `stage`; fazer `merge --no-ff` na `master` (mantendo a branch) e validar com `/ssd-test prod`.
      - **Só se passar em prod**: marcar `docs/spec/F{ID}` e o Roadmap `docs/06` como **[CONCLUÍDO]** e arquivar o plano em `docs/plans/archive/`. Se falhar, retornar ao ciclo de correção.
