@@ -19,6 +19,17 @@ describe('LoginPage', () => {
     expect(document.querySelector('aside')).toBeNull();
   });
 
+  it('mostra o hero fiel à landing (headline, subcopy e trust bar)', () => {
+    render(<LoginPage />);
+    expect(
+      screen.getByRole('heading', { name: /Agenda, cobrança e nota fiscal num só lugar/ })
+    ).toBeInTheDocument();
+    expect(screen.getByText(/500 negócios/)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Começar grátis' })
+    ).toHaveAttribute('href', '/onboarding');
+  });
+
   it('dispara signIn("google") ao clicar', async () => {
     const user = userEvent.setup();
     render(<LoginPage />);

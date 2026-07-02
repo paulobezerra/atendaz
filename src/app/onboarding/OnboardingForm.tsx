@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import PublicShell from "@/components/PublicShell";
+import AppMockupCard from "@/components/AppMockupCard";
 import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,17 +96,54 @@ export default function OnboardingForm({
   }
 
   return (
-    <PublicShell>
-      <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
-        <h2 className="text-2xl font-bold tracking-tight text-foreground">
-          Vamos configurar seu negócio
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Só o essencial para você já começar a usar.
-        </p>
+    <PublicShell
+      headerRight={
+        <span className="text-sm text-gray-500">
+          Já tem conta?{" "}
+          <Link href="/login" className="font-medium text-primary hover:underline">
+            Entrar
+          </Link>
+        </span>
+      }
+    >
+      <div className="grid flex-1 items-center gap-12 py-6 lg:grid-cols-2 lg:py-16">
+        <div className="order-2 lg:order-1">
+          <AppMockupCard />
+          <div className="mt-10 max-w-md space-y-4">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+              Leva menos de um minuto.
+            </h2>
+            <p className="text-gray-500">
+              Você entra com o sistema completo liberado no período de teste —
+              plano e pagamento ficam para depois.
+            </p>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-success" /> Agenda
+                pública para seus clientes
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-success" /> Cobrança
+                via Pix e cartão sem esforço
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-success" /> NFS-e
+                emitida automaticamente
+              </li>
+            </ul>
+          </div>
+        </div>
 
-        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
+        <div className="order-1 w-full max-w-lg justify-self-center rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-200/60 sm:p-8 lg:order-2">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Vamos configurar seu negócio
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Só o essencial para você já começar a usar.
+          </p>
+
+          <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
           <FormField
             control={form.control}
             name="nomeFantasia"
@@ -209,8 +248,9 @@ export default function OnboardingForm({
           >
             {form.formState.isSubmitting ? "Configurando…" : "Começar a usar"}
           </Button>
-        </form>
-      </Form>
+          </form>
+          </Form>
+        </div>
       </div>
     </PublicShell>
   );

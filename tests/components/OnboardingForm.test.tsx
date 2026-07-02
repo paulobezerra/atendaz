@@ -30,6 +30,17 @@ describe('OnboardingForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('mostra o lado visual (mockup + benefícios) no Shell Público, sem split', () => {
+    render(<OnboardingForm segmentos={SEGMENTOS} defaultProfissional="Maria" />);
+    expect(screen.getByText('Leva menos de um minuto.')).toBeInTheDocument();
+    expect(screen.getByText(/NFS-e emitida automaticamente/)).toBeInTheDocument();
+    expect(screen.getByText('Barbearia do Zé')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Entrar' })
+    ).toHaveAttribute('href', '/login');
+    expect(document.querySelector('aside')).toBeNull();
+  });
+
   it('valida o slug no blur e mostra erro quando indisponível', async () => {
     const user = userEvent.setup();
     global.fetch = jest

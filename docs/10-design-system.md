@@ -117,52 +117,56 @@ mesma moldura clara da landing.
 
 ### Moldura
 - **Nav fixa** (`sticky top-0`, `bg-white/80 backdrop-blur`, `border-b border-gray-100`): **logo claro**
-  à esquerda; links centrais **apenas nas páginas de marketing**; à direita **"Entrar"** (login com
-  Google) + **"Começar grátis"** (primary). No mobile, menu compacto.
-- Fundo branco/neutro (`bg-white` / `gray-50`); conteúdo **centralizado** em `max-w-6xl mx-auto px-4`.
+  à esquerda; links centrais **apenas nas páginas de marketing**; à direita as ações padrão
+  **"Entrar"** (`Link` para `/login`) + **"Começar grátis"** (`Link` primary para `/onboarding`) — a
+  própria página pode sobrescrever essas ações (`headerRight`) quando ela já É o destino de uma delas
+  (ex.: `/login` some com "Entrar" e mostra "Novo por aqui? Começar grátis"). No mobile, menu compacto.
+- Fundo branco/neutro (`bg-white` / `gray-50`); conteúdo em `max-w-6xl mx-auto px-4` — **não** força
+  centralização vertical/horizontal do `<main>`: cada página monta seu próprio layout dentro da moldura
+  (card único ou hero de 2 colunas, ver abaixo).
 - Rodapé enxuto (logo + linha institucional), como na landing.
 
-### Login (`/login`) — **sem tela dedicada**
-O acesso é **"Entrar com Google"**, exposto no **topo** do shell público (botão "Entrar" da nav). Não
-há layout de login próprio. Se `/login` for acessado direto (deep link ou redirect de rota protegida),
-renderiza o shell público com um **card centralizado** contendo apenas: logo, uma linha de contexto e o
-botão **"Entrar com Google"**. Sem split, **sem painel roxo**.
+### Login (`/login`) — **hero da landing, não uma tela de auth isolada**
+`/login` **não é** uma página de auth genérica: ela reaproveita o **hero da landing**
+(`TEMPLATE/landing.html`) como pano de fundo, já que ainda não existe a landing de marketing (F0012) —
+é a porta de entrada pública do produto. **2 colunas** dentro do `max-w-6xl` (`lg:grid-cols-2`, stack no
+mobile): **headline + subcopy + trust bar** à esquerda (texto idêntico ao hero: badge "Feito para
+barbearias, clínicas e estética", h1 "Agenda, cobrança e nota fiscal num só lugar.", subcopy, trust bar
+"500+ negócios"/"Pix · Cartão · Boleto"/"NFS-e integrada"); **card de acesso** à direita
+(`rounded-2xl border shadow-xl`) com heading "Acesse sua conta" + botão **"Entrar com Google"**. Sem
+split, **sem painel roxo** — o card substitui o mockup do app que a landing completa (F0012) usaria
+nesse mesmo slot.
 
 ```
-┌─ Nav: [AtendAZ]                        Entrar · Começar grátis ─┐
-│                                                                │
-│                     ┌───────────────────────────┐             │
-│                     │        [ AtendAZ ]         │             │
-│                     │  Acesse sua conta          │             │
-│                     │  [  G   Entrar com Google ]│             │
-│                     └───────────────────────────┘             │
-│                        (card centralizado, bg-white)           │
-└────────────────────────────────────────────────────────────────┘
+┌─ Nav: [AtendAZ]                      Novo por aqui? Começar grátis ─┐
+│  ● Feito para barbearias…          ┌───────────────────────────┐   │
+│  Agenda, cobrança e                │      Acesse sua conta      │   │
+│  nota fiscal num só lugar.         │  [  G   Entrar com Google ]│   │
+│  <subcopy>                         └───────────────────────────┘   │
+│  500+ negócios · Pix/Cartão/Boleto · NFS-e integrada                │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
-### Onboarding (`/onboarding`) — **formulário centralizado**
-Passo único (identidade — F0002.6), num **card centralizado** sobre o shell público: `max-w-md`/
-`max-w-lg`, `mx-auto`, centralizado na página, `bg-white rounded-2xl border border-gray-200 shadow-sm
-p-6/8`. Título + subtítulo de contexto + form (primitivos da F0002.5: máscaras, PF/PJ, tooltips) +
-botão primary **full-width**. **Sem painel roxo.**
+### Onboarding (`/onboarding`) — **hero de 2 colunas: mockup+benefícios × form**
+Passo único (identidade — F0002.6), agora em **2 colunas** dentro do `max-w-6xl` (`lg:grid-cols-2`,
+stack no mobile, form primeiro): à **esquerda**, `AppMockupCard` (mesma peça visual do hero da landing —
+`src/components/AppMockupCard.tsx`, reusável quando a landing de marketing existir) + headline curta
+("Leva menos de um minuto.") + lista de benefícios (bullets `bg-success`); à **direita**, o card do
+form: `max-w-lg`, `bg-white rounded-2xl border border-gray-200 shadow-xl p-6/8`, título + subtítulo de
+contexto + form (primitivos da F0002.5: máscaras, PF/PJ, tooltips) + botão primary **full-width**.
+**Sem painel roxo.**
 
 ```
-┌─ Nav: [AtendAZ]                                                ─┐
-│                  ┌─────────────────────────────┐              │
-│                  │  Configure sua identidade    │              │
-│                  │  Como seu negócio aparece…    │              │
-│                  │  Nome fantasia [___________] │              │
-│                  │  Segmento ⓘ    [▾__________] │              │
-│                  │  WhatsApp      [(__)_______] │              │
-│                  │           [   Continuar   ]   │              │
-│                  └─────────────────────────────┘              │
-│                     (card centralizado, bg-white)              │
-└────────────────────────────────────────────────────────────────┘
+┌─ Nav: [AtendAZ]                              Já tem conta? Entrar ─┐
+│  ┌──[ mockup do app ]──┐   ┌─────────────────────────────┐        │
+│  │  receita · agenda…  │   │  Vamos configurar seu negócio │        │
+│  └──────────────────────┘   │  Nome fantasia [___________] │        │
+│  Leva menos de um minuto.   │  Segmento ⓘ    [▾__________] │        │
+│  • Agenda pública            │  WhatsApp      [(__)_______] │        │
+│  • Cobrança via Pix/cartão   │      [   Começar a usar   ]   │        │
+│  • NFS-e automática          └─────────────────────────────┘        │
+└────────────────────────────────────────────────────────────────────┘
 ```
-
-> **Variante aceitável** (só se um visual de apoio à direita agregar): 2 colunas **dentro** do
-> `max-w-6xl`, form à esquerda ~50% e ilustração/benefícios à direita, **centralizado como o hero da
-> landing** — nunca um painel `full-height` roxo.
 
 ### Responsividade
 - **≥ lg (1024px)**: card centralizado (ou 2 colunas dentro do `max-w-6xl`, na variante).

@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import PublicShell from "@/components/PublicShell";
-import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 
 function GoogleIcon() {
@@ -18,29 +18,66 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   return (
-    <PublicShell>
-      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-        <Logo className="mx-auto h-8" />
-        <h1 className="mt-6 text-xl font-bold tracking-tight text-gray-900">
-          Acesse sua conta
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Entre com o Google para acessar o painel.
-        </p>
+    <PublicShell
+      headerRight={
+        <span className="text-sm text-gray-500">
+          Novo por aqui?{" "}
+          <Link href="/onboarding" className="font-medium text-primary hover:underline">
+            Começar grátis
+          </Link>
+        </span>
+      }
+    >
+      <div className="grid flex-1 items-center gap-12 py-6 lg:grid-cols-2 lg:py-16">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600">
+            <span className="h-1.5 w-1.5 rounded-full bg-success" /> Feito para
+            barbearias, clínicas e estética
+          </span>
+          <h1 className="mt-5 text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl">
+            Agenda, cobrança e <span className="text-primary">nota fiscal</span> num
+            só lugar.
+          </h1>
+          <p className="mt-5 max-w-lg text-lg text-gray-500">
+            O Atendaz organiza seus agendamentos, cobra automaticamente pelo
+            Pix/cartão e emite a NFS-e sozinho. Você cuida dos clientes; o
+            financeiro roda no automático.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-10 gap-y-3 text-sm text-gray-400">
+            <span>
+              Mais de <b className="text-gray-600">500 negócios</b> confiam no
+              Atendaz
+            </span>
+            <span className="hidden h-4 w-px bg-gray-200 sm:block" />
+            <span>Pix · Cartão · Boleto</span>
+            <span className="hidden h-4 w-px bg-gray-200 sm:block" />
+            <span>NFS-e integrada</span>
+          </div>
+        </div>
 
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="mt-8 w-full gap-3"
-        >
-          <GoogleIcon />
-          Entrar com Google
-        </Button>
+        <div className="w-full max-w-md justify-self-center rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-xl shadow-gray-200/60">
+          <h2 className="text-xl font-bold tracking-tight text-gray-900">
+            Acesse sua conta
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Entre com o Google para acessar o painel.
+          </p>
 
-        <p className="mt-6 text-xs text-gray-400">
-          Ao entrar, você concorda com os Termos de Uso e a Política de Privacidade.
-        </p>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="mt-8 w-full gap-3"
+          >
+            <GoogleIcon />
+            Entrar com Google
+          </Button>
+
+          <p className="mt-6 text-xs text-gray-400">
+            Ao entrar, você concorda com os Termos de Uso e a Política de
+            Privacidade.
+          </p>
+        </div>
       </div>
     </PublicShell>
   );

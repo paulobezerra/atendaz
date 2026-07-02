@@ -32,6 +32,8 @@ describe('ProfessionalForm', () => {
 
     expect(screen.getByText(/Token do meio de pagamento/)).toBeInTheDocument();
     expect(screen.getByText('CPF/CNPJ *')).toBeInTheDocument();
+    // Explicação visível (sem depender de hover no tooltip) do que é o token.
+    expect(screen.getByText(/É a Chave de API da conta Asaas/)).toBeInTheDocument();
   });
 
   it('alternar PF↔PJ troca a máscara do documento', async () => {

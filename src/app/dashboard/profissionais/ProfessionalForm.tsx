@@ -170,7 +170,7 @@ export default function ProfessionalForm({
   }
 
   return (
-    <div className="max-w-xl space-y-4">
+    <div className="mx-auto max-w-xl space-y-4">
       <nav className="text-xs text-muted-foreground">
         Profissionais › {isEdit ? "Editar" : "Novo"}
       </nav>
@@ -308,6 +308,10 @@ export default function ProfessionalForm({
                           ? "(deixe em branco para manter)"
                           : "*"}
                       </JargonLabel>
+                      <p className="mb-2 text-xs text-muted-foreground">
+                        É a Chave de API da conta Asaas do profissional (painel
+                        Asaas → Configurações → Integrações → Chaves de API).
+                      </p>
                       <div className="flex items-center gap-2">
                         <FormControl>
                           <Input
