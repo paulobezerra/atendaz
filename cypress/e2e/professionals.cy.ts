@@ -8,7 +8,7 @@ const headers: Record<string, string> = bypass
   : {};
 
 describe("F2 - Profissionais (smoke público)", () => {
-  it("/dashboard/profissionais redireciona para /login sem sessão", () => {
+  it("/dashboard/profissionais redireciona para a Home sem sessão", () => {
     cy.request({
       url: "/dashboard/profissionais",
       headers,
@@ -16,7 +16,8 @@ describe("F2 - Profissionais (smoke público)", () => {
       failOnStatusCode: false,
     }).then((res) => {
       expect(res.status).to.be.oneOf([302, 307]);
-      expect(res.redirectedToUrl).to.contain("/login");
+      // F0002.7: signIn agora é a Home (/), não mais /login.
+      expect(new URL(res.redirectedToUrl).pathname).to.eq("/");
     });
   });
 

@@ -27,8 +27,9 @@ describe("F0 - Health Check E2E", () => {
 });
 
 describe("F1 - Onboarding (smoke público)", () => {
-  it("Página de login responde 200", () => {
-    cy.request({ url: "/login", headers }).then((res) => {
+  it("Home pública responde 200", () => {
+    // F0002.7: não há mais rota /login; a Home (/) é a landing + modal de login.
+    cy.request({ url: "/", headers }).then((res) => {
       expect(res.status).to.eq(200);
     });
   });
@@ -54,7 +55,7 @@ describe("F1 - Onboarding (smoke público)", () => {
     });
   });
 
-  it("rota protegida /dashboard redireciona para /login sem sessão", () => {
+  it("rota protegida /dashboard redireciona para a Home sem sessão", () => {
     cy.request({
       url: "/dashboard",
       headers,
@@ -62,7 +63,8 @@ describe("F1 - Onboarding (smoke público)", () => {
       failOnStatusCode: false,
     }).then((res) => {
       expect(res.status).to.be.oneOf([302, 307]);
-      expect(res.redirectedToUrl).to.contain("/login");
+      // F0002.7: signIn agora é a Home (/), não mais /login.
+      expect(new URL(res.redirectedToUrl).pathname).to.eq("/");
     });
   });
 });
