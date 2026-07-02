@@ -1,8 +1,12 @@
-# TEMPLATE/ — Protótipos de referência visual (NÃO é produção)
+# templates/referencia/ — Protótipos de referência visual (NÃO é produção)
 
 Protótipos **estáticos** (HTML + Tailwind via CDN + um pouco de JS) que servem de **alvo
-estético** para o revamp de UX do Atendaz. **Não** fazem parte do app Next.js, **não** são
-buildados nem deployados (o `scripts/vercel-ignore-build.sh` ignora `TEMPLATE/**`).
+estético fixo** para o revamp de UX do Atendaz. **Não** fazem parte do app Next.js, **não** são
+buildados nem deployados (o `scripts/vercel-ignore-build.sh` ignora `templates/referencia/**`).
+
+Diferente de [`../prototipos/`](../prototipos/) (workspace **vivo**, um protótipo por tela, em
+refinamento até aprovação — ver `docs/00` → "Prototipação de Telas"), esta pasta é a referência
+visual **fixa**: não muda por feature, é o "de onde viemos" estético do produto.
 
 ## Como abrir
 Abra os arquivos direto no navegador (duplo clique) — não precisa de build nem servidor:
@@ -11,7 +15,7 @@ Abra os arquivos direto no navegador (duplo clique) — não precisa de build ne
 
 ## Para que serve
 Alinhar a **direção visual** antes de refatorar as telas reais. O que for aprovado aqui vira
-guia em [`docs/10-design-system.md`](../docs/10-design-system.md) e insumo das specs por feature.
+guia em [`docs/10-design-system.md`](../../docs/10-design-system.md) e insumo das specs por feature.
 Reflete os tokens atuais da fundação (primary indigo-600, Inter, cards `rounded-2xl` com borda +
 `shadow-sm`) elevando o acabamento com base nas referências shadcn coletadas (ver `docs/10` →
 "Referências visuais").
