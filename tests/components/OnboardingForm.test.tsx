@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { signOut } from 'next-auth/react';
 import OnboardingForm from '@/app/onboarding/OnboardingForm';
 
 jest.mock('next/navigation', () => ({
@@ -9,6 +10,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('@/components/Toast', () => ({
   useToast: () => ({ toast: jest.fn() }),
 }));
+jest.mock('next-auth/react', () => ({ signOut: jest.fn() }));
 
 const SEGMENTOS = [
   { slug: 'barbearia', nome: 'Barbearia' },
@@ -30,15 +32,16 @@ describe('OnboardingForm', () => {
     ).toBeInTheDocument();
   });
 
-  it('mostra o lado visual (mockup + benefícios) no Shell Público, sem split', () => {
+  it('mostra o lado de benefícios (sem mockup) no Shell Público, sem split', async () => {
+    const user = userEvent.setup();
     render(<OnboardingForm segmentos={SEGMENTOS} defaultProfissional="Maria" />);
-    expect(screen.getByText('Leva menos de um minuto.')).toBeInTheDocument();
-    expect(screen.getByText(/NFS-e emitida automaticamente/)).toBeInTheDocument();
-    expect(screen.getByText('Barbearia do Zé')).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: 'Entrar' })
-    ).toHaveAttribute('href', '/login');
+    expect(screen.getByText(/Leva menos de/)).toBeInTheDocument();
+    expect(screen.getByText('NFS-e automática')).toBeInTheDocument();
+    expect(screen.getByText('Nota emitida sozinha após o pagamento.')).toBeInTheDocument();
     expect(document.querySelector('aside')).toBeNull();
+
+    await user.click(screen.getByRole('button', { name: /Voltar/ }));
+    expect(signOut).toHaveBeenCalledWith({ callbackUrl: '/' });
   });
 
   it('valida o slug no blur e mostra erro quando indisponível', async () => {

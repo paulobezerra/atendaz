@@ -116,69 +116,82 @@ para usar por altura:
 - **Toast**: bottom-right, auto-dismiss 4s; sucesso/erro com cor correspondente.
 - **Formulários multi-passo** (quando houver): **stepper horizontal** no topo do card (ou passos numerados dentro do próprio card centralizado); botões **Voltar** (ghost) / **Continuar** (primary); validação por passo antes de avançar. **Nunca** painel lateral roxo. (O onboarding hoje é **passo único** — F0002.6.)
 
-## Padrão: Shell Público (marketing + login + onboarding)
+## Padrão: Home (`/`) — landing completa + modal de login
 
-Base: **[`templates/referencia/landing.html`](../templates/referencia/landing.html)**. Usado por **todas as páginas públicas** —
-marketing (F0012), **login** e **onboarding** — e por qualquer página aberta (ex.: agenda pública,
-coleta de dados fiscais). **Não** existe mais "meia tela roxa": as telas de auth vivem **dentro** da
-mesma moldura clara da landing.
+Base: **[`templates/referencia/landing.html`](../templates/referencia/landing.html)** e o protótipo
+aprovado **[`templates/prototipos/home.html`](../templates/prototipos/home.html)**. **Não existe rota
+`/login`** — a Home **é** a landing de marketing completa (hero, recursos, como funciona, preços, CTA
+final, footer) **e** o ponto de acesso ao mesmo tempo. Decisão do gate de revisão (F0002.7, após 4
+rodadas): login como página dedicada "roubava" o lugar do hero/mockup — vira **modal**.
 
-### Moldura
-- **Nav fixa** (`sticky top-0`, `bg-white/80 backdrop-blur`, `border-b border-gray-100`): **logo claro**
-  à esquerda; links centrais **apenas nas páginas de marketing**; à direita as ações padrão
-  **"Entrar"** (`Link` para `/login`) + **"Começar grátis"** (`Link` primary para `/onboarding`) — a
-  própria página pode sobrescrever essas ações (`headerRight`) quando ela já É o destino de uma delas
-  (ex.: `/login` some com "Entrar" e mostra "Novo por aqui? Começar grátis"). No mobile, menu compacto.
-- Fundo branco/neutro (`bg-white` / `gray-50`); conteúdo em `max-w-6xl mx-auto px-4` — **não** força
-  centralização vertical/horizontal do `<main>`: cada página monta seu próprio layout dentro da moldura
-  (card único ou hero de 2 colunas, ver abaixo).
-- Rodapé enxuto (logo + linha institucional), como na landing.
+### Nav
+`sticky top-0`, `bg-white/80 backdrop-blur`, `border-b border-gray-100`: logo claro à esquerda; links
+`#recursos`/`#como`/`#precos` (hidden no mobile); "Entrar" (texto) + "Começar grátis" (`Button`
+primary) à direita — **ambos abrem o modal de login**, não navegam.
 
-### Login (`/login`) — **hero da landing, não uma tela de auth isolada**
-`/login` **não é** uma página de auth genérica: ela reaproveita o **hero da landing**
-(`templates/referencia/landing.html`) como pano de fundo, já que ainda não existe a landing de marketing (F0012) —
-é a porta de entrada pública do produto. **2 colunas** dentro do `max-w-6xl` (`lg:grid-cols-2`, stack no
-mobile): **headline + subcopy + trust bar** à esquerda (texto idêntico ao hero: badge "Feito para
-barbearias, clínicas e estética", h1 "Agenda, cobrança e nota fiscal num só lugar.", subcopy, trust bar
-"500+ negócios"/"Pix · Cartão · Boleto"/"NFS-e integrada"); **card de acesso** à direita
-(`rounded-2xl border shadow-xl`) com heading "Acesse sua conta" + botão **"Entrar com Google"**. Sem
-split, **sem painel roxo** — o card substitui o mockup do app que a landing completa (F0012) usaria
-nesse mesmo slot.
+### Modal de login
+Implementado em `src/components/HomeLanding.tsx` (estado local `useState`), **sem rota própria**.
+Todo CTA de entrada da página (nav, hero, cada card de preço, CTA final) chama a mesma função
+`openLogin()`.
+
+- **Posição**: `fixed`, `top-20 right-4` (`sm:right-6`), `max-w-sm` — **não** centralizado na tela.
+- **Overlay leve**: `fixed inset-0 bg-gray-900/10 backdrop-blur-[1px]`; clique nele fecha o modal.
+- **Card**: `rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl`. Botão **X** (`absolute
+  right-4 top-4`) fecha; `Esc` também fecha.
+- **Conteúdo**: ícone de cadeado (`bg-primary/10 text-primary`) **+ heading "Acesse sua conta" na
+  mesma linha** (não empilhados — ficou desalinhado numa rodada anterior); botão **"Entrar com
+  Google"**: `bg-primary` sólido **+ ícone branco/flattened** (não o "G" colorido — cor mantida por
+  pedido explícito do usuário, mesmo com o G real do Google disponível).
 
 ```
-┌─ Nav: [AtendAZ]                      Novo por aqui? Começar grátis ─┐
-│  ● Feito para barbearias…          ┌───────────────────────────┐   │
-│  Agenda, cobrança e                │      Acesse sua conta      │   │
-│  nota fiscal num só lugar.         │  [  G   Entrar com Google ]│   │
-│  <subcopy>                         └───────────────────────────┘   │
-│  500+ negócios · Pix/Cartão/Boleto · NFS-e integrada                │
-└────────────────────────────────────────────────────────────────────┘
+┌─ Nav: [AtendAZ]           Recursos · Como funciona · Preços   Entrar · Começar grátis ─┐  ┌── X
+│  ● Feito para barbearias…                                              ┌─────────────────────┐
+│  Agenda, cobrança e nota fiscal num só lugar.                           │ 🔒 Acesse sua conta │
+│  <subcopy>                              [ mockup do app ]              │ Entre c/ conta Google│
+│  [Começar grátis →] [Ver como funciona]                                 │ [ Entrar com Google ]│
+│  500+ negócios · Pix/Cartão/Boleto · NFS-e integrada                    └─────────────────────┘
+└──────────────────────────────────────────────────────────────────────────────────────────────┘
+  (recursos · como funciona · preços · CTA final · footer abaixo, iguais ao templates/referencia/)
 ```
 
-### Onboarding (`/onboarding`) — **hero de 2 colunas: mockup+benefícios × form**
-Passo único (identidade — F0002.6), agora em **2 colunas** dentro do `max-w-6xl` (`lg:grid-cols-2`,
-stack no mobile, form primeiro): à **esquerda**, `AppMockupCard` (mesma peça visual do hero da landing —
-`src/components/AppMockupCard.tsx`, reusável quando a landing de marketing existir) + headline curta
-("Leva menos de um minuto.") + lista de benefícios (bullets `bg-success`); à **direita**, o card do
-form: `max-w-lg`, `bg-white rounded-2xl border border-gray-200 shadow-xl p-6/8`, título + subtítulo de
-contexto + form (primitivos da F0002.5: máscaras, PF/PJ, tooltips) + botão primary **full-width**.
-**Sem painel roxo.**
+`signIn("google", { callbackUrl: "/" })` — o retorno do OAuth cai na Home, que redireciona pro
+`/dashboard` (usuário existente) ou o `/dashboard` redireciona pro `/onboarding` (conta nova, sem
+`business`). Fluxo validado ponta a ponta no protótipo antes de codar.
+
+## Padrão: Onboarding (`/onboarding`) — form em foco, sem gráfico competindo
+
+Base: protótipo aprovado **[`templates/prototipos/onboarding.html`](../templates/prototipos/onboarding.html)**.
+Ainda no **Shell Público** (`PublicShell`), mas **2 colunas assimétricas** dentro de `max-w-5xl`
+(`lg:grid-cols-5`, stack no mobile): **form à esquerda** (`lg:col-span-3`, o elemento dominante) +
+**benefícios à direita** (`lg:col-span-2`, calmo).
+
+- **Form** (esquerda): card `rounded-2xl border border-gray-200 bg-white p-6/8 shadow-sm`, título +
+  subtítulo + campos (RHF+Zod, máscaras, tooltips da F0002.5) + botão primary `full-width`.
+- **Benefícios** (direita): badge "Configuração inicial" + headline "Leva menos de **um minuto.**" +
+  subcopy + 3 bullets **ícone + texto** (`bg-{tone}/10` quadrado 32px + título/descrição de duas
+  linhas) — **nunca** um gráfico/mockup detalhado aqui: numa rodada anterior isso "roubava a atenção
+  do formulário" (feedback do gate). `AppMockupCard` fica reservado pra Home.
+- **Nav**: `headerRight` troca "Entrar" por **"Voltar"**, que desloga o usuário
+  (`signOut({ callbackUrl: "/" })`) — sair do onboarding com sessão ativa mas sem `business` não pode
+  simplesmente linkar pra Home (voltaria a cair no próprio onboarding via redirect).
 
 ```
-┌─ Nav: [AtendAZ]                              Já tem conta? Entrar ─┐
-│  ┌──[ mockup do app ]──┐   ┌─────────────────────────────┐        │
-│  │  receita · agenda…  │   │  Vamos configurar seu negócio │        │
-│  └──────────────────────┘   │  Nome fantasia [___________] │        │
-│  Leva menos de um minuto.   │  Segmento ⓘ    [▾__________] │        │
-│  • Agenda pública            │  WhatsApp      [(__)_______] │        │
-│  • Cobrança via Pix/cartão   │      [   Começar a usar   ]   │        │
-│  • NFS-e automática          └─────────────────────────────┘        │
-└────────────────────────────────────────────────────────────────────┘
+┌─ Nav: [AtendAZ]                    Já tem uma conta configurada? Voltar ─┐
+│  ┌─────────────────────────────┐   ● Configuração inicial               │
+│  │ Vamos configurar seu negócio │   Leva menos de um minuto.             │
+│  │ Nome do negócio [_________] │   <subcopy>                            │
+│  │ Endereço público ⓘ [______] │   🗓 Agenda pública                     │
+│  │ Segmento ⓘ      [▾_______] │   💳 Cobrança automática                │
+│  │ Seu nome        [_________] │   📄 NFS-e automática                   │
+│  │      [   Começar a usar   ]  │                                        │
+│  └─────────────────────────────┘                                        │
+└───────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Responsividade
-- **≥ lg (1024px)**: card centralizado (ou 2 colunas dentro do `max-w-6xl`, na variante).
-- **< lg**: coluna única; card ocupa a largura com margens; botões **`full-width`**; alvos ≥ 44px.
+### Responsividade (Home e Onboarding)
+- **≥ lg (1024px)**: layout de colunas conforme cada tela (ver acima).
+- **< lg**: coluna única, stack; modal de login continua ancorado (não vira full-screen); botões
+  **`full-width`**; alvos ≥ 44px.
 
 ## Padrão: App Shell (área autenticada)
 

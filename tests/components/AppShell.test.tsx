@@ -38,6 +38,6 @@ describe('AppShell', () => {
     );
     const [sairButton] = screen.getAllByRole('button', { name: 'Sair' });
     await user.click(sairButton);
-    expect(signOut).toHaveBeenCalledWith({ callbackUrl: '/login' });
+    expect(signOut).toHaveBeenCalledWith({ callbackUrl: '/' });
   });
 });

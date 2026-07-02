@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function NovoProfissionalPage() {
   const session = await getSession();
-  if (!session?.user?.googleId) redirect("/login");
+  if (!session?.user?.googleId) redirect("/");
 
   await dbConnect();
   const business = await Business.findOne({ googleId: session.user.googleId });

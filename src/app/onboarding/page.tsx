@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage() {
   const session = await getSession();
-  if (!session?.user?.googleId) redirect("/login");
+  if (!session?.user?.googleId) redirect("/");
 
   await dbConnect();
   await ensureSeed(); // garante segmentos (e planos p/ F0011) no banco (1x por instância)

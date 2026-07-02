@@ -1,13 +1,13 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
+import { CalendarCheck, CreditCard, FileText } from "lucide-react";
 import PublicShell from "@/components/PublicShell";
-import AppMockupCard from "@/components/AppMockupCard";
 import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,27 @@ export interface SegmentoDTO {
 }
 
 type FormValues = z.infer<typeof onboardingSchema>;
+
+const BENEFICIOS = [
+  {
+    icon: CalendarCheck,
+    tone: "bg-primary/10 text-primary",
+    title: "Agenda pública",
+    desc: "Seus clientes marcam sozinhos, direto pelo link.",
+  },
+  {
+    icon: CreditCard,
+    tone: "bg-success/10 text-success",
+    title: "Cobrança automática",
+    desc: "Pix e cartão sem esforço, quando você ativar.",
+  },
+  {
+    icon: FileText,
+    tone: "bg-warning/10 text-warning",
+    title: "NFS-e automática",
+    desc: "Nota emitida sozinha após o pagamento.",
+  },
+];
 
 /**
  * F0002.6 — Onboarding de passo único (Identidade). Sem plano nem Asaas: o
@@ -98,47 +119,22 @@ export default function OnboardingForm({
   return (
     <PublicShell
       headerRight={
-        <span className="text-sm text-gray-500">
-          Já tem conta?{" "}
-          <Link href="/login" className="font-medium text-primary hover:underline">
-            Entrar
-          </Link>
-        </span>
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="text-sm text-gray-500 hover:text-gray-900"
+        >
+          Já tem uma conta configurada? <span className="font-medium text-primary">Voltar</span>
+        </button>
       }
     >
-      <div className="grid flex-1 items-center gap-12 py-6 lg:grid-cols-2 lg:py-16">
-        <div className="order-2 lg:order-1">
-          <AppMockupCard />
-          <div className="mt-10 max-w-md space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-              Leva menos de um minuto.
-            </h2>
-            <p className="text-gray-500">
-              Você entra com o sistema completo liberado no período de teste —
-              plano e pagamento ficam para depois.
-            </p>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-success" /> Agenda
-                pública para seus clientes
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-success" /> Cobrança
-                via Pix e cartão sem esforço
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-success" /> NFS-e
-                emitida automaticamente
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="order-1 w-full max-w-lg justify-self-center rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-gray-200/60 sm:p-8 lg:order-2">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="mx-auto grid max-w-5xl flex-1 items-center gap-12 py-6 lg:grid-cols-5 lg:py-16">
+        <div className="lg:col-span-3">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">
             Vamos configurar seu negócio
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-gray-500">
             Só o essencial para você já começar a usar.
           </p>
 
@@ -250,6 +246,33 @@ export default function OnboardingForm({
           </Button>
           </form>
           </Form>
+          </div>
+        </div>
+
+        <div className="lg:col-span-2">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600">
+            <span className="h-1.5 w-1.5 rounded-full bg-success" /> Configuração inicial
+          </span>
+          <h2 className="mt-5 text-3xl font-extrabold leading-[1.15] tracking-tight text-gray-900">
+            Leva menos de <span className="text-primary">um minuto.</span>
+          </h2>
+          <p className="mt-4 text-base text-gray-500">
+            Você entra com o sistema completo liberado no período de teste — plano e
+            meio de pagamento ficam para depois.
+          </p>
+          <ul className="mt-8 space-y-4">
+            {BENEFICIOS.map((b) => (
+              <li key={b.title} className="flex items-start gap-3">
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${b.tone}`}>
+                  <b.icon className="h-4 w-4" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{b.title}</p>
+                  <p className="text-sm text-gray-500">{b.desc}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </PublicShell>

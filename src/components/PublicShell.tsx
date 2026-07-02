@@ -4,13 +4,13 @@ import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 
 /**
- * Shell Público (docs/10) — moldura das páginas abertas (marketing, login,
- * onboarding), baseada em `templates/referencia/landing.html`: nav fixa com logo claro +
- * ações padrão (Entrar / Começar grátis), fundo branco, conteúdo em
- * `max-w-6xl`, rodapé enxuto. **Sem** painel roxo full-height.
+ * Shell Público (docs/10) — moldura de páginas abertas fora da Home (hoje só
+ * `/onboarding`), baseada em `templates/referencia/landing.html`: nav fixa com logo
+ * claro + rodapé enxuto. Login não tem rota própria — vive como modal na Home
+ * (`HomeLanding`).
  *
- * `headerRight` sobrescreve as ações da nav quando a própria página já é o
- * destino de uma delas (ex.: `/login` esconde "Entrar").
+ * `headerRight` sobrescreve as ações padrão da nav (ex.: onboarding troca por
+ * "Voltar", que desloga o usuário).
  */
 export default function PublicShell({
   children,
@@ -30,7 +30,7 @@ export default function PublicShell({
             {headerRight ?? (
               <>
                 <Link
-                  href="/login"
+                  href="/"
                   className="text-sm font-medium text-gray-600 hover:text-gray-900"
                 >
                   Entrar

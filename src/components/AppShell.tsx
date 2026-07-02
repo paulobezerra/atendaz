@@ -88,7 +88,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
               <p className="truncate text-xs text-gray-400">{business.nomeFantasia}</p>
             </div>
             <button
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="text-gray-400 hover:text-gray-700"
               aria-label="Sair"
             >
@@ -109,7 +109,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
             <p className="truncate text-xs text-gray-500">/agendar/{business.slug}</p>
           </div>
           <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="text-sm text-gray-500 hover:text-gray-900 lg:hidden"
           >
             Sair
