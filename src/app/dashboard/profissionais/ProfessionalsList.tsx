@@ -30,6 +30,7 @@ import {
 import { LoadingState } from "@/components/states/LoadingState";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
+import { initials } from "@/lib/initials";
 
 export interface ProfessionalDTO {
   id: string;
@@ -97,13 +98,18 @@ export default function ProfessionalsList({
         cell: ({ row }) => (
           <Link
             href={`/dashboard/profissionais/${row.original.id}`}
-            className="block min-w-0"
+            className="flex min-w-0 items-center gap-3"
           >
-            <span className="block truncate font-medium text-foreground">
-              {row.original.nome}
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+              {initials(row.original.nome)}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
-              /{row.original.slugInterno}
+            <span className="min-w-0">
+              <span className="block truncate font-medium text-foreground">
+                {row.original.nome}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                /{row.original.slugInterno}
+              </span>
             </span>
           </Link>
         ),

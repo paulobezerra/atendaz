@@ -170,13 +170,15 @@ export default function ProfessionalForm({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-xl space-y-5">
-        <nav className="text-xs text-muted-foreground">
-          Profissionais › {isEdit ? "Editar" : "Novo"}
-        </nav>
+    <div className="mx-auto max-w-xl space-y-4">
+      <nav className="text-xs text-muted-foreground">
+        Profissionais › {isEdit ? "Editar" : "Novo"}
+      </nav>
 
-        <FormField
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
           control={form.control}
           name="nome"
           render={({ field }) => (
@@ -306,6 +308,10 @@ export default function ProfessionalForm({
                           ? "(deixe em branco para manter)"
                           : "*"}
                       </JargonLabel>
+                      <p className="mb-2 text-xs text-muted-foreground">
+                        É a Chave de API da conta Asaas do profissional (painel
+                        Asaas → Configurações → Integrações → Chaves de API).
+                      </p>
                       <div className="flex items-center gap-2">
                         <FormControl>
                           <Input
@@ -406,19 +412,21 @@ export default function ProfessionalForm({
           </fieldset>
         )}
 
-        <div className="flex items-center justify-end gap-3 pt-2">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => router.push("/dashboard/profissionais")}
-          >
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Salvando…" : "Salvar"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => router.push("/dashboard/profissionais")}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Salvando…" : "Salvar"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }

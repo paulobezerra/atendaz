@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atendaz — Profissionais</title>
+  <meta name="description" content="Protótipo de referência visual (não é produção). Lista e formulário de Profissionais do Atendaz." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: "#4F46E5", hover: "#4338CA", dark: "#3730A3", 50: "#EEF2FF" },
+            success: "#059669", warning: "#D97706", danger: "#DC2626",
+          },
+          fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] },
+        },
+      },
+    };
+  </script>
+  <style>body { font-feature-settings: "cv02","cv03","cv04","cv11"; }</style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+<div class="flex min-h-screen">
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside class="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-white lg:flex">
+    <div class="flex h-16 items-center border-b border-gray-100 px-5">
+      <img src="../referencia/assets/atendaz-logo.svg" alt="Atendaz" class="h-7 w-auto" />
+    </div>
+    <nav class="flex-1 space-y-1 px-3 py-4">
+      <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+        <i data-lucide="home" class="h-4 w-4"></i> Início
+      </a>
+      <a href="#" class="flex items-center gap-3 rounded-lg bg-indigo-50 px-3 py-2 text-sm font-medium text-primary">
+        <i data-lucide="users" class="h-4 w-4"></i> Profissionais
+      </a>
+    </nav>
+    <div class="border-t border-gray-100 p-3">
+      <div class="flex items-center gap-3 rounded-lg px-3 py-2">
+        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">MS</span>
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-medium text-gray-900">Maria Silva</p>
+          <p class="truncate text-xs text-gray-400">Barbearia do Zé</p>
+        </div>
+        <button class="text-gray-400 hover:text-gray-700" aria-label="Sair"><i data-lucide="log-out" class="h-4 w-4"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== CONTEÚDO ==================== -->
+  <div class="flex w-full flex-col lg:pl-60">
+    <header class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur lg:px-8">
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-gray-900">Barbearia do Zé</p>
+        <p class="truncate text-xs text-gray-500">/agendar/barbearia-do-ze</p>
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-5xl px-4 py-8 lg:px-8">
+
+      <!-- ==================== LISTA ==================== -->
+      <div class="space-y-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">Profissionais</h1>
+            <p class="text-sm text-gray-500">Gerencie quem atende no seu negócio e o faturamento de cada um.</p>
+          </div>
+          <button class="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-primary-hover">
+            <i data-lucide="plus" class="h-4 w-4"></i> Adicionar
+          </button>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 text-left text-xs uppercase tracking-wide text-gray-400">
+                <th class="px-5 py-3 font-medium">Profissional</th>
+                <th class="px-5 py-3 font-medium">Faturamento</th>
+                <th class="px-5 py-3 text-right font-medium">Ativo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">MS</span>
+                    <div>
+                      <p class="font-medium text-gray-900">Maria Silva</p>
+                      <p class="text-xs text-gray-500">/maria-silva</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3"><span class="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-medium text-gray-500">Padrão do negócio</span></td>
+                <td class="px-5 py-3 text-right">
+                  <span class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary"><span class="inline-block h-4 w-4 translate-x-4 rounded-full bg-white shadow"></span></span>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">JS</span>
+                    <div>
+                      <p class="font-medium text-gray-900">João Souza</p>
+                      <p class="text-xs text-gray-500">/joao-souza</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3"><span class="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">Próprio ····4821</span></td>
+                <td class="px-5 py-3 text-right">
+                  <span class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary"><span class="inline-block h-4 w-4 translate-x-4 rounded-full bg-white shadow"></span></span>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">CD</span>
+                    <div>
+                      <p class="font-medium text-gray-900">Carla Dias</p>
+                      <p class="text-xs text-gray-500">/carla-dias</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-5 py-3"><span class="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-medium text-gray-500">Padrão do negócio</span></td>
+                <td class="px-5 py-3 text-right">
+                  <span class="relative inline-flex h-5 w-9 items-center rounded-full bg-gray-200"><span class="inline-block h-4 w-4 translate-x-0.5 rounded-full bg-white shadow"></span></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== DIVISÓRIA (só no protótipo, pra ver as duas telas juntas) ==================== -->
+      <div class="my-12 flex items-center gap-4">
+        <div class="h-px flex-1 bg-gray-200"></div>
+        <span class="text-xs font-semibold uppercase tracking-wide text-gray-400">Formulário — Novo profissional</span>
+        <div class="h-px flex-1 bg-gray-200"></div>
+      </div>
+
+      <!-- ==================== FORM ==================== -->
+      <div class="mx-auto max-w-xl space-y-4">
+        <nav class="text-xs text-muted-foreground text-gray-500">Profissionais › Novo</nav>
+
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <form class="space-y-5">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Nome *</label>
+              <input type="text" placeholder="Maria Silva" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Endereço interno (slug) *</label>
+              <input type="text" placeholder="maria-silva" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+              <p class="mt-1.5 text-xs text-gray-500">Identificador único do profissional dentro do seu negócio.</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">WhatsApp</label>
+              <input type="text" placeholder="(11) 99999-9999" class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+            </div>
+
+            <fieldset class="space-y-3 rounded-lg border border-gray-200 p-4">
+              <legend class="px-1 text-sm font-semibold text-gray-900">Faturamento</legend>
+              <label class="flex items-center gap-2 text-sm text-gray-900">
+                <input type="radio" name="billing" checked /> Usar faturamento padrão do negócio
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-900">
+                <input type="radio" name="billing" /> Configurar faturamento próprio
+              </label>
+
+              <div class="space-y-3 pt-1">
+                <div>
+                  <label class="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                    Token do meio de pagamento *
+                    <span class="text-gray-400" title="A cobrança e a emissão de NFS-e são feitas através do Asaas.">
+                      <i data-lucide="info" class="h-3.5 w-3.5"></i>
+                    </span>
+                  </label>
+                  <p class="mb-2 text-xs text-gray-500">É a Chave de API da conta Asaas do profissional (painel Asaas → Configurações → Integrações → Chaves de API).</p>
+                  <div class="flex items-center gap-2">
+                    <input type="password" placeholder="$aact_..." class="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" />
+                    <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-700"><i data-lucide="eye" class="h-4 w-4"></i></button>
+                  </div>
+                  <p class="mt-1.5 text-xs text-gray-500">Guardado com criptografia AES-256. Nunca compartilhamos.</p>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <button type="button" class="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Cancelar</button>
+              <button type="button" class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bottom tab bar (mobile) -->
+  <nav class="fixed inset-x-0 bottom-0 z-20 flex border-t border-gray-200 bg-white lg:hidden">
+    <a href="#" class="flex flex-1 flex-col items-center gap-0.5 py-2 text-xs text-gray-500"><i data-lucide="home" class="h-5 w-5"></i>Início</a>
+    <a href="#" class="flex flex-1 flex-col items-center gap-0.5 py-2 text-xs text-primary"><i data-lucide="users" class="h-5 w-5"></i>Profissionais</a>
+  </nav>
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -21,5 +21,5 @@ correspondente o replica fielmente.
 
 ## Estado atual (F0002.7)
 
-Em prototipação — ver `docs/plans/0002.7-ux-corrections.md` (na branch `feature/0002.7-ux-corrections`,
-seção H, tarefa T27) para o acompanhamento tela a tela.
+Em prototipação — ver `docs/plans/0002.7-ux-corrections.md` (seção H, tarefa T27) para o
+acompanhamento tela a tela.

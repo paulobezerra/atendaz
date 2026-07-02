@@ -10,7 +10,7 @@ const headers: Record<string, string> = bypass
   : {};
 
 describe("F0002.6 - Onboarding (smoke público)", () => {
-  it("/onboarding redireciona para /login sem sessão", () => {
+  it("/onboarding redireciona para a Home sem sessão", () => {
     cy.request({
       url: "/onboarding",
       headers,
@@ -18,7 +18,9 @@ describe("F0002.6 - Onboarding (smoke público)", () => {
       failOnStatusCode: false,
     }).then((res) => {
       expect(res.status).to.be.oneOf([302, 307]);
-      expect(res.redirectedToUrl).to.contain("/login");
+      // F0002.7: signIn agora é a Home (/), não mais /login → redireciona p/
+      // "/?callbackUrl=…". O "/?" prova que o path é a raiz (não "/login?…").
+      expect(res.redirectedToUrl).to.contain("/?callbackUrl=");
     });
   });
 
