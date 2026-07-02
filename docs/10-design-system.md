@@ -9,7 +9,7 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 ### Cores
 > ✅ **Identidade confirmada**: primary indigo `#4F46E5`, conforme o `TEMPLATE/` e o logo aprovado.
 - **Primary**: `#4F46E5` (indigo-600) · hover `#4338CA` (indigo-700)
-- **Primary Dark**: `#3730A3` (indigo-800) — usado no painel esquerdo do split layout
+- **Primary Dark**: `#3730A3` (indigo-800) — realces/hover escuros (não há mais painel roxo full-screen)
 - **Danger**: `#DC2626` (red-600)
 - **Success**: `#059669` (emerald-600)
 - **Warning**: `#D97706` (amber-600)
@@ -17,7 +17,7 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 - **Surface**: `#FFFFFF`
 - **Text**: `#111827` (gray-900) · **Muted**: `#6B7280` (gray-500)
 - **Border**: `#E5E7EB` (gray-200)
-- **Panel text (sobre escuro)**: `#FFFFFF` (título) · `#C7D2FE` (indigo-200, subtexto/muted)
+- **Texto sobre fundo escuro (faixa CTA)**: `#FFFFFF` (título) · `#C7D2FE` (indigo-200, subtexto/muted)
 
 ### Tipografia
 - Fonte: **Inter** (Google Fonts — `font-sans`)
@@ -77,7 +77,7 @@ Wordmark **AtendAZ** em peso **bold**: "Atend" na cor de texto + "AZ" em **acent
 prontas em `TEMPLATE/assets/`, **fundo transparente** e `viewBox` recortado ao wordmark (proporção ~4:1),
 para usar por altura:
 - **`atendaz-logo.svg`** — "Atend" `#111827` (gray-900, cor do texto) + "AZ" **primary** `#4F46E5` → **fundo claro** (nav, sidebar, footer claro).
-- **`atendaz-logo-inverted.svg`** — "Atend" **branco** + "AZ" `#93A0FA` (indigo ~350) → **fundo escuro/indigo** (faixa CTA, painel esquerdo do split layout). O acento clareia nesta variante para contrastar **com o "Atend" branco** *e* com o fundo indigo — na janela estreita entre "quase branco" (some no "Atend") e "escuro demais" (some no fundo).
+- **`atendaz-logo-inverted.svg`** — "Atend" **branco** + "AZ" `#93A0FA` (indigo ~350) → **fundo escuro/indigo** (faixa CTA e outras superfícies escuras). O acento clareia nesta variante para contrastar **com o "Atend" branco** *e* com o fundo indigo — na janela estreita entre "quase branco" (some no "Atend") e "escuro demais" (some no fundo).
 - **Regra**: escolher a variante pelo **contraste com o fundo** (nunca a clara sobre claro nem a escura sobre escuro). Exibir com `h-6`/`h-7` e `w-auto`.
 - **Fontes** (arte original, fundo sólido, na raiz do repo): `Logo para o app AtendAZ (2).svg` (fundo claro) e `Logo para o app AtendAZ (1).svg` (fundo escuro). As variantes de `TEMPLATE/assets/` são **derivadas** delas (fundo removido + recorte do `viewBox`); ao ajustar a marca, editar estas variantes. Na implementação real, mover os SVGs de `TEMPLATE/assets/` para `public/` e servir via `<img>`/`next/image`.
 
@@ -106,61 +106,71 @@ para usar por altura:
 - **Card**: `rounded-2xl border border-gray-200 bg-white p-6 shadow-sm`.
 - **Badge**: `rounded-full px-3 py-1 text-xs font-medium`.
 - **Toast**: bottom-right, auto-dismiss 4s; sucesso/erro com cor correspondente.
-- **Wizard (multi-step)**: stepper lateral no painel esquerdo (ver padrão Split Layout abaixo); botões **Voltar** (ghost) / **Continuar** (primary) no painel direito; validação por passo antes de avançar.
+- **Formulários multi-passo** (quando houver): **stepper horizontal** no topo do card (ou passos numerados dentro do próprio card centralizado); botões **Voltar** (ghost) / **Continuar** (primary); validação por passo antes de avançar. **Nunca** painel lateral roxo. (O onboarding hoje é **passo único** — F0002.6.)
 
-## Padrão: Split Layout (Auth + Onboarding)
+## Padrão: Shell Público (marketing + login + onboarding)
 
-Usado em `/login` e `/onboarding`. **Nunca** usar caixa centralizada isolada nessas rotas.
+Base: **[`TEMPLATE/landing.html`](../TEMPLATE/landing.html)**. Usado por **todas as páginas públicas** —
+marketing (F0012), **login** e **onboarding** — e por qualquer página aberta (ex.: agenda pública,
+coleta de dados fiscais). **Não** existe mais "meia tela roxa": as telas de auth vivem **dentro** da
+mesma moldura clara da landing.
 
-### Estrutura
-```
-[  Painel Esquerdo — 50%  ] [  Painel Direito — 50%  ]
-  bg: Primary Dark (indigo)    bg: white / gray-50
-  posição: fixed, full-height  scroll independente se form longo
-```
+### Moldura
+- **Nav fixa** (`sticky top-0`, `bg-white/80 backdrop-blur`, `border-b border-gray-100`): **logo claro**
+  à esquerda; links centrais **apenas nas páginas de marketing**; à direita **"Entrar"** (login com
+  Google) + **"Começar grátis"** (primary). No mobile, menu compacto.
+- Fundo branco/neutro (`bg-white` / `gray-50`); conteúdo **centralizado** em `max-w-6xl mx-auto px-4`.
+- Rodapé enxuto (logo + linha institucional), como na landing.
 
-### Painel Esquerdo (branding / contexto)
-- Background: gradiente sutil de `indigo-700` → `indigo-900` (`bg-gradient-to-br from-indigo-700 to-indigo-900`)
-- Logo no topo (texto ou SVG)
-- Título do produto + tagline centralizados verticalmente
-- **Na tela de login**: 3 bullets com os diferenciais do produto (ícone + texto)
-- **No wizard de onboarding**: substitui os bullets pelo **stepper vertical** de passos (ver abaixo)
-- Rodapé: frase curta de confiança (ex.: "Mais de 500 negócios confiam no Atendaz")
-- Texto sobre fundo escuro: branco / indigo-200
-
-### Painel Direito (formulário)
-- Background: `bg-white`
-- Conteúdo centralizado verticalmente com `max-w-md mx-auto px-8`
-- Título da ação (ex.: "Crie sua conta", "Configure sua identidade")
-- Subtítulo opcional em Muted
-- Form / conteúdo do passo
-- Botões de ação no rodapé do painel
-
-### Stepper vertical (painel esquerdo no wizard)
-Cada item representa um passo. Estado visual:
-- **Concluído** `✓`: círculo preenchido indigo-400 + texto indigo-200 + linha conectora sólida
-- **Atual**: círculo branco com borda branca + label branco / 600 + descrição breve indigo-200
-- **Futuro**: círculo outline indigo-400 + texto indigo-300 opacidade 60%
+### Login (`/login`) — **sem tela dedicada**
+O acesso é **"Entrar com Google"**, exposto no **topo** do shell público (botão "Entrar" da nav). Não
+há layout de login próprio. Se `/login` for acessado direto (deep link ou redirect de rota protegida),
+renderiza o shell público com um **card centralizado** contendo apenas: logo, uma linha de contexto e o
+botão **"Entrar com Google"**. Sem split, **sem painel roxo**.
 
 ```
-  ●  Identidade          ← concluído (círculo preenchido)
-  │
-  ◉  Plano               ← atual (círculo branco + texto branco bold)
-  │  Configure seu plano de acesso
-  │
-  ○  Faturamento         ← futuro (outline)
-  │
-  ○  Profissional
+┌─ Nav: [AtendAZ]                        Entrar · Começar grátis ─┐
+│                                                                │
+│                     ┌───────────────────────────┐             │
+│                     │        [ AtendAZ ]         │             │
+│                     │  Acesse sua conta          │             │
+│                     │  [  G   Entrar com Google ]│             │
+│                     └───────────────────────────┘             │
+│                        (card centralizado, bg-white)           │
+└────────────────────────────────────────────────────────────────┘
 ```
+
+### Onboarding (`/onboarding`) — **formulário centralizado**
+Passo único (identidade — F0002.6), num **card centralizado** sobre o shell público: `max-w-md`/
+`max-w-lg`, `mx-auto`, centralizado na página, `bg-white rounded-2xl border border-gray-200 shadow-sm
+p-6/8`. Título + subtítulo de contexto + form (primitivos da F0002.5: máscaras, PF/PJ, tooltips) +
+botão primary **full-width**. **Sem painel roxo.**
+
+```
+┌─ Nav: [AtendAZ]                                                ─┐
+│                  ┌─────────────────────────────┐              │
+│                  │  Configure sua identidade    │              │
+│                  │  Como seu negócio aparece…    │              │
+│                  │  Nome fantasia [___________] │              │
+│                  │  Segmento ⓘ    [▾__________] │              │
+│                  │  WhatsApp      [(__)_______] │              │
+│                  │           [   Continuar   ]   │              │
+│                  └─────────────────────────────┘              │
+│                     (card centralizado, bg-white)              │
+└────────────────────────────────────────────────────────────────┘
+```
+
+> **Variante aceitável** (só se um visual de apoio à direita agregar): 2 colunas **dentro** do
+> `max-w-6xl`, form à esquerda ~50% e ilustração/benefícios à direita, **centralizado como o hero da
+> landing** — nunca um painel `full-height` roxo.
 
 ### Responsividade
-- **≥ lg (1024px)**: split 50/50 side-by-side
-- **< lg**: painel esquerdo colapsa em **header compacto** (logo + nome do passo atual); form ocupa 100% da tela
-- Botões `full-width` no mobile
+- **≥ lg (1024px)**: card centralizado (ou 2 colunas dentro do `max-w-6xl`, na variante).
+- **< lg**: coluna única; card ocupa a largura com margens; botões **`full-width`**; alvos ≥ 44px.
 
 ## Padrão: App Shell (área autenticada)
 
-Usado em **todas as rotas internas** (pós-login): `/dashboard` e tudo sob ele. O Split Layout é **exclusivo** de `/login` e `/onboarding`; a partir do momento em que o usuário tem um `business` configurado, a navegação passa para o **App Shell**.
+Base: **[`TEMPLATE/dashboard.html`](../TEMPLATE/dashboard.html)**. Usado em **todas as rotas internas** (pós-login): `/dashboard` e tudo sob ele. As rotas públicas (marketing, login, onboarding) usam o **Shell Público**; a partir do momento em que o usuário tem um `business` configurado, a navegação passa para o **App Shell**.
 
 O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashboard): navegação **persistente e sempre visível** no desktop, com hierarquia rasa e rótulos claros, de modo que o usuário reconheça o que fazer por experiência prévia com outras aplicações — sem precisar de tutorial. Aplica **progressive disclosure**: o menu mostra apenas os módulos ativos do `business`; o que está desabilitado não aparece (alinhado ao Guardrail 2).
 
@@ -184,7 +194,7 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 ```
 
 ### Sidebar (desktop)
-- Largura fixa `~240px`, full-height, `bg-white` com `border-r border-gray-200` (ou Primary Dark se a identidade pedir — manter consistência com o branding do split).
+- Largura fixa `~240px`, full-height, `bg-white` com `border-r border-gray-200` (como em `TEMPLATE/dashboard.html`).
 - Logo no topo; lista vertical de itens de navegação (ícone + label).
 - **Item ativo**: fundo `indigo-50` + texto/ícone `primary` + barra/realce à esquerda. Demais itens: texto Muted, hover escurece.
 - **Apenas módulos ativos** do `business` aparecem (progressive disclosure). Itens sempre presentes: *Profissionais*, *Configurações*. Condicionais: *Serviços*/*Agenda* (se `agenda`), *Cobrança* (se `cobranca`), *Notas* (se `nfse`), *Financeiro* (se `financeiro` — **item de menu próprio**, ver F0013).
@@ -256,26 +266,24 @@ Site público (fora do app autenticado). Referência principal: **Swipe** (claro
 - **Acessibilidade**: todo input com `label`; foco visível; contraste mínimo AA; navegação por teclado.
 
 ## Convenção de "Tela" na spec (ASCII)
-Cada tela na seção `## UX` usa o layout split. O painel esquerdo é desenhado uma vez; o direito varia por passo. Exemplo:
+Cada tela na seção `## UX` referencia o **shell** ao qual pertence — **Shell Público** (páginas
+abertas/auth/onboarding) ou **App Shell** (rotas internas) — e desenha só o **conteúdo** daquele shell.
+Não desenhar mais painel roxo. Exemplo (onboarding = card centralizado no Shell Público):
 
 ```
-## Tela: /onboarding — Passo 2 (Plano)
+## Tela: /onboarding (Shell Público — card centralizado)
 
-┌──────────────────────────┬──────────────────────────────┐
-│  ◉ Atendaz               │  Escolha seu plano           │
-│                          │  Selecione o que melhor      │
-│  ● Identidade      ✓     │  se encaixa no seu negócio.  │
-│  │                       │                              │
-│  ◉ Plano           ←     │  (•) Agenda Simples  R$ 29   │
-│  │ Configure seu   atual │  ( ) Cobrança+Nota   R$ 39   │
-│  │ plano de acesso       │  ( ) Completo        R$ 59   │
-│  │                       │                              │
-│  ○ Faturamento           │  [ ← Voltar ]  [ Continuar →]│
-│  │                       │                              │
-│  ○ Profissional          │                              │
-│                          │                              │
-│  500+ negócios confiam   │                              │
-└──────────────────────────┴──────────────────────────────┘
+┌─ Nav: [AtendAZ]                                                ─┐
+│                  ┌─────────────────────────────┐              │
+│                  │  Configure sua identidade    │              │
+│                  │  Como seu negócio aparece p/  │              │
+│                  │  seus clientes.               │              │
+│                  │  Nome fantasia [___________] │              │
+│                  │  Segmento ⓘ    [▾__________] │              │
+│                  │  WhatsApp      [(__)_______] │              │
+│                  │           [   Continuar   ]   │              │
+│                  └─────────────────────────────┘              │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ## O que isto NÃO resolve
