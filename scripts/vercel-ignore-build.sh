@@ -4,12 +4,11 @@
 #
 # Objetivo: não disparar deploy quando o commit mexeu APENAS em
 # documentação/tooling (docs/, *.md, .claude/, templates/referencia/, templates/prototipos/)
-# ou na arte-fonte do logo na raiz — mantendo a master como fonte da verdade
-# dos docs sem gerar deploys de produção desnecessários.
+# — mantendo a master como fonte da verdade dos docs sem gerar deploys de
+# produção desnecessários.
 # templates/referencia/ é a referência visual fixa de design; templates/prototipos/ é o
 # workspace vivo de protótipos por tela (docs/00 — "Prototipação de Telas");
-# ambos são HTML estático fora do build do app. Os "Logo para o app AtendAZ*.svg"
-# da raiz são a arte-fonte da marca (não importada pelo app Next).
+# ambos são HTML estático fora do build do app.
 #
 # Configurar no painel: Project Settings → Git → Ignored Build Step →
 #   bash scripts/vercel-ignore-build.sh
@@ -24,8 +23,7 @@ if git diff --quiet HEAD^ HEAD -- . \
     ':(exclude)*.md' \
     ':(exclude).claude/**' \
     ':(exclude)templates/referencia/**' \
-    ':(exclude)templates/prototipos/**' \
-    ':(exclude)Logo para o app AtendAZ*.svg'; then
+    ':(exclude)templates/prototipos/**'; then
   echo "Somente docs/tooling mudou — pulando build."
   exit 0
 fi
