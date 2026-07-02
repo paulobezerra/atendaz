@@ -16,8 +16,9 @@ describe("F2 - Profissionais (smoke público)", () => {
       failOnStatusCode: false,
     }).then((res) => {
       expect(res.status).to.be.oneOf([302, 307]);
-      // F0002.7: signIn agora é a Home (/), não mais /login.
-      expect(new URL(res.redirectedToUrl).pathname).to.eq("/");
+      // F0002.7: signIn agora é a Home (/), não mais /login → redireciona p/
+      // "/?callbackUrl=…". O "/?" prova que o path é a raiz (não "/login?…").
+      expect(res.redirectedToUrl).to.contain("/?callbackUrl=");
     });
   });
 
