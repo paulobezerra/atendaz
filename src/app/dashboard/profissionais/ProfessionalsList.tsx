@@ -30,6 +30,7 @@ import {
 import { LoadingState } from "@/components/states/LoadingState";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
+import { initials } from "@/lib/initials";
 
 export interface ProfessionalDTO {
   id: string;
@@ -42,15 +43,6 @@ export interface ProfessionalDTO {
 }
 
 const QUERY_KEY = ["professionals"] as const;
-
-function initials(nome: string) {
-  return nome
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((n) => n[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 async function fetchProfessionals(): Promise<ProfessionalDTO[]> {
   const res = await fetch("/api/professionals");

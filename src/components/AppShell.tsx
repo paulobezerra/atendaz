@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
-import { Home, Users, type LucideIcon } from "lucide-react";
+import { Home, Users, LogOut, type LucideIcon } from "lucide-react";
 import Logo from "@/components/Logo";
+import { initials } from "@/lib/initials";
 
 export interface NavItem {
   href: string;
@@ -75,14 +76,25 @@ export default function AppShell({ business, user, children }: AppShellProps) {
             );
           })}
         </nav>
-        <div className="border-t border-gray-200 p-4 text-sm">
-          <p className="truncate font-medium text-gray-900">{user?.nome ?? "Conta"}</p>
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="mt-1 text-gray-500 hover:text-gray-900"
-          >
-            Sair
-          </button>
+        <div className="border-t border-gray-100 p-3">
+          <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+              {initials(user?.nome ?? business.nomeFantasia)}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-gray-900">
+                {user?.nome ?? "Conta"}
+              </p>
+              <p className="truncate text-xs text-gray-400">{business.nomeFantasia}</p>
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="text-gray-400 hover:text-gray-700"
+              aria-label="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </aside>
 

@@ -6,6 +6,7 @@ import {
   CreditCard,
   FileText,
   LineChart,
+  PieChart,
   type LucideIcon,
 } from "lucide-react";
 import { getSession } from "@/lib/auth";
@@ -109,20 +110,43 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      {/* Área de gráfico — estado honesto até haver movimento para exibir */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h3 className="font-semibold text-gray-900">Resumo financeiro</h3>
-        <p className="text-sm text-gray-500">Últimos 12 meses</p>
-        <div className="mt-6 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-12 text-center">
-          <span className="grid h-10 w-10 place-items-center rounded-lg bg-gray-100 text-gray-400">
-            <LineChart className="h-5 w-5" aria-hidden />
-          </span>
-          <p className="text-sm font-medium text-gray-700">Sem dados por enquanto</p>
-          <p className="max-w-xs text-xs text-gray-500">
-            Seu resumo financeiro aparece aqui assim que houver agendamentos e
-            cobranças registrados.
-          </p>
+      {/* Gráfico + composição — estado honesto até haver movimento para exibir */}
+      <div className={`grid gap-4 ${business.modulos.cobranca ? "lg:grid-cols-3" : ""}`}>
+        <div
+          className={`rounded-2xl border border-gray-200 bg-white p-6 shadow-sm ${
+            business.modulos.cobranca ? "lg:col-span-2" : ""
+          }`}
+        >
+          <h3 className="font-semibold text-gray-900">Resumo financeiro</h3>
+          <p className="text-sm text-gray-500">Últimos 12 meses</p>
+          <div className="mt-6 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-12 text-center">
+            <span className="grid h-10 w-10 place-items-center rounded-lg bg-gray-100 text-gray-400">
+              <LineChart className="h-5 w-5" aria-hidden />
+            </span>
+            <p className="text-sm font-medium text-gray-700">Sem dados por enquanto</p>
+            <p className="max-w-xs text-xs text-gray-500">
+              Seu resumo financeiro aparece aqui assim que houver agendamentos e
+              cobranças registrados.
+            </p>
+          </div>
         </div>
+
+        {business.modulos.cobranca && (
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900">Formas de recebimento</h3>
+            <p className="text-sm text-gray-500">Este mês</p>
+            <div className="mt-6 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 py-8 text-center">
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-gray-100 text-gray-400">
+                <PieChart className="h-5 w-5" aria-hidden />
+              </span>
+              <p className="text-sm font-medium text-gray-700">Sem cobranças ainda</p>
+              <p className="max-w-[16rem] text-xs text-gray-500">
+                A composição por Pix, cartão e boleto aparece aqui assim que houver
+                cobranças pagas.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
