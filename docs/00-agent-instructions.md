@@ -116,16 +116,16 @@ layout aprovado vão em prosa na seção `## UX` ou ficam a critério razoável 
 cor/espaçamento) vai para `/ssd-code` sem um protótipo **aprovado explicitamente pelo usuário**.
 
 **Processo**:
-1. O agente monta a tela como **HTML/JS estático** (mesmo espírito do `templates/referencia/`: Tailwind via CDN,
-   sem framework, sem dados reais/API — só o visual), salvo em **`templates/prototipos/{slug}.html`**
-   (ex.: `templates/prototipos/login.html`).
+1. O agente monta a tela como **HTML/JS estático** (mesmo espírito de `templates/referencia/`:
+   Tailwind via CDN, sem framework, sem dados reais/API — só o visual), salvo em
+   **`templates/prototipos/{slug}.html`** (ex.: `templates/prototipos/login.html`).
 2. O protótipo é **apresentado ao usuário** (ex.: via Artifact, para visualização imediata sem precisar
    rodar nada localmente).
 3. **Ciclo de refinamento**: o usuário dá feedback → o agente ajusta o HTML → repete até aprovação
    **explícita** ("aprovado", "pode implementar", equivalente). Nenhuma suposição de aprovação
    implícita — silêncio ou "tá melhor" não é aprovação.
 4. **Só depois da aprovação** o `/ssd-code` implementa a tela em React/Next, **replicando fielmente o
-   HTML aprovado** (mesma disciplina de fidelidade do `docs/10` em relação ao `templates/referencia/`).
+   HTML aprovado** (mesma disciplina de fidelidade do `docs/10` em relação a `templates/referencia/`).
 5. O protótipo aprovado **fica versionado** em `templates/prototipos/` — é o registro navegável da
    decisão visual (substitui/complementa o ASCII da spec para essa tela).
 
