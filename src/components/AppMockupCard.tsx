@@ -1,5 +1,5 @@
 /**
- * Mockup flutuante do app (TEMPLATE/landing.html, seção Hero). Reusado como o
+ * Mockup flutuante do app (templates/referencia/landing.html, seção Hero). Reusado como o
  * "lado visual" do Shell Público em telas de auth (onboarding) — mesma peça
  * que a landing usará quando existir (F0012), evitando recriar do zero.
  */

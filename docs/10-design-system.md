@@ -2,12 +2,20 @@
 
 Fundação **global** de UX, escrita uma vez e reusada por todas as features. Define **como** as coisas parecem e se comportam por padrão. O **desenho de cada tela/fluxo** fica na seção `## UX` de cada spec (`docs/spec/F{ID}`), referenciando estes tokens — ver [docs/00 → UX e Design System](00-agent-instructions.md#ux-e-design-system).
 
+> ⚠️ Telas **novas ou refeitas** não vão direto para código a partir do ASCII da spec: passam antes por
+> **protótipo HTML estático aprovado** em [`templates/prototipos/`](../templates/prototipos/) — ver
+> [docs/00 → Prototipação de Telas](00-agent-instructions.md#prototipação-de-telas-obrigatória-para-telas-novas-ou-refeitas).
+> Tudo em uma única pasta `templates/` (minúsculo), com dois propósitos distintos:
+> [`templates/referencia/`](../templates/referencia/) é a referência visual **fixa** de design
+> (landing/dashboard de exemplo, não muda por feature); [`templates/prototipos/`](../templates/prototipos/)
+> é o **workspace vivo** de protótipos por tela, em refinamento até aprovação.
+
 Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod** (formulários) e **TanStack Query/Table** (dados e listas). Os tokens abaixo mapeiam para classes utilitárias e para as CSS variables do shadcn; quando fizer sentido, centralizar no `tailwind.config.ts`. A adoção dessa fundação foi decidida na **Fase 2.5** — ver [`docs/spec/F0002.5-ux-revamp.md`](spec/F0002.5-ux-revamp.md).
 
 ## Design Tokens
 
 ### Cores
-> ✅ **Identidade confirmada**: primary indigo `#4F46E5`, conforme o `TEMPLATE/` e o logo aprovado.
+> ✅ **Identidade confirmada**: primary indigo `#4F46E5`, conforme o `templates/referencia/` e o logo aprovado.
 - **Primary**: `#4F46E5` (indigo-600) · hover `#4338CA` (indigo-700)
 - **Primary Dark**: `#3730A3` (indigo-800) — realces/hover escuros (não há mais painel roxo full-screen)
 - **Danger**: `#DC2626` (red-600)
@@ -34,22 +42,22 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 
 ## Referências visuais e direção estética (revamp)
 
-> **`TEMPLATE/` é a fonte da verdade visual do produto.** Os protótipos navegáveis
-> [`TEMPLATE/landing.html`](../TEMPLATE/landing.html) e [`TEMPLATE/dashboard.html`](../TEMPLATE/dashboard.html)
+> **`templates/referencia/` é a fonte da verdade visual do produto.** Os protótipos navegáveis
+> [`templates/referencia/landing.html`](../templates/referencia/landing.html) e [`templates/referencia/dashboard.html`](../templates/referencia/dashboard.html)
 > definem o alvo concreto de acabamento — abrir no navegador. **A aplicação real deve reproduzi-los o
 > mais fielmente possível**: mesmas **cores**, mesmo **logo**, mesma **tipografia**, mesmos **componentes**,
 > mesmos espaçamentos/radius/sombras e o mesmo "aspecto" geral. Isso vale para **todas as superfícies** —
 > não só as duas páginas de exemplo, mas **formulários, listas/tabelas, dashboard, telas de configuração
 > e onboarding**. A meta continua sendo o **acabamento de um bom template shadcn** (respiro generoso,
 > hierarquia tipográfica forte, cards arredondados com borda sutil, cor com parcimônia, microdetalhes) —
-> e o `TEMPLATE/` é a materialização exata desse acabamento a ser copiada.
+> e o `templates/referencia/` é a materialização exata desse acabamento a ser copiada.
 >
 > **Regra prática**: ao construir qualquer tela, comparar **lado a lado** com o protótipo equivalente em
-> `TEMPLATE/` e replicar as classes/tokens; divergências visuais só com motivo documentado
-> (acessibilidade, restrição técnica) — registrar na seção `## UX` da spec. Se o `TEMPLATE/` e um item
-> pontual desta fundação divergirem, **o `TEMPLATE/` prevalece** e esta doc deve ser atualizada para refletir.
+> `templates/referencia/` e replicar as classes/tokens; divergências visuais só com motivo documentado
+> (acessibilidade, restrição técnica) — registrar na seção `## UX` da spec. Se o `templates/referencia/` e um item
+> pontual desta fundação divergirem, **o `templates/referencia/` prevalece** e esta doc deve ser atualizada para refletir.
 
-**Galeria de referência** (inspiração *upstream*, **já materializada e consolidada no `TEMPLATE/`** — consultar para entender o *porquê* das escolhas; o alvo a replicar é o `TEMPLATE/`, não estas páginas):
+**Galeria de referência** (inspiração *upstream*, **já materializada e consolidada no `templates/referencia/`** — consultar para entender o *porquê* das escolhas; o alvo a replicar é o `templates/referencia/`, não estas páginas):
 
 | Referência | URL | O que emprestar |
 | :--- | :--- | :--- |
@@ -74,12 +82,12 @@ Stack: **Tailwind CSS** + **shadcn/ui** (componentes), **react-hook-form + Zod**
 
 ### Logo (marca "AtendAZ")
 Wordmark **AtendAZ** em peso **bold**: "Atend" na cor de texto + "AZ" em **acento indigo**. Duas variantes
-prontas em `TEMPLATE/assets/`, **fundo transparente** e `viewBox` recortado ao wordmark (proporção ~4:1),
+prontas em `templates/referencia/assets/`, **fundo transparente** e `viewBox` recortado ao wordmark (proporção ~4:1),
 para usar por altura:
 - **`atendaz-logo.svg`** — "Atend" `#111827` (gray-900, cor do texto) + "AZ" **primary** `#4F46E5` → **fundo claro** (nav, sidebar, footer claro).
 - **`atendaz-logo-inverted.svg`** — "Atend" **branco** + "AZ" `#93A0FA` (indigo ~350) → **fundo escuro/indigo** (faixa CTA e outras superfícies escuras). O acento clareia nesta variante para contrastar **com o "Atend" branco** *e* com o fundo indigo — na janela estreita entre "quase branco" (some no "Atend") e "escuro demais" (some no fundo).
 - **Regra**: escolher a variante pelo **contraste com o fundo** (nunca a clara sobre claro nem a escura sobre escuro). Exibir com `h-6`/`h-7` e `w-auto`.
-- **Fontes** (arte original, fundo sólido, na raiz do repo): `Logo para o app AtendAZ (2).svg` (fundo claro) e `Logo para o app AtendAZ (1).svg` (fundo escuro). As variantes de `TEMPLATE/assets/` são **derivadas** delas (fundo removido + recorte do `viewBox`); ao ajustar a marca, editar estas variantes. Na implementação real, mover os SVGs de `TEMPLATE/assets/` para `public/` e servir via `<img>`/`next/image`.
+- **Fontes** (arte original, fundo sólido, na raiz do repo): `Logo para o app AtendAZ (2).svg` (fundo claro) e `Logo para o app AtendAZ (1).svg` (fundo escuro). As variantes de `templates/referencia/assets/` são **derivadas** delas (fundo removido + recorte do `viewBox`); ao ajustar a marca, editar estas variantes. Na implementação real, mover os SVGs de `templates/referencia/assets/` para `public/` e servir via `<img>`/`next/image`.
 
 ## Fundação de Componentes (shadcn/ui + react-hook-form + TanStack)
 
@@ -110,7 +118,7 @@ para usar por altura:
 
 ## Padrão: Shell Público (marketing + login + onboarding)
 
-Base: **[`TEMPLATE/landing.html`](../TEMPLATE/landing.html)**. Usado por **todas as páginas públicas** —
+Base: **[`templates/referencia/landing.html`](../templates/referencia/landing.html)**. Usado por **todas as páginas públicas** —
 marketing (F0012), **login** e **onboarding** — e por qualquer página aberta (ex.: agenda pública,
 coleta de dados fiscais). **Não** existe mais "meia tela roxa": as telas de auth vivem **dentro** da
 mesma moldura clara da landing.
@@ -128,7 +136,7 @@ mesma moldura clara da landing.
 
 ### Login (`/login`) — **hero da landing, não uma tela de auth isolada**
 `/login` **não é** uma página de auth genérica: ela reaproveita o **hero da landing**
-(`TEMPLATE/landing.html`) como pano de fundo, já que ainda não existe a landing de marketing (F0012) —
+(`templates/referencia/landing.html`) como pano de fundo, já que ainda não existe a landing de marketing (F0012) —
 é a porta de entrada pública do produto. **2 colunas** dentro do `max-w-6xl` (`lg:grid-cols-2`, stack no
 mobile): **headline + subcopy + trust bar** à esquerda (texto idêntico ao hero: badge "Feito para
 barbearias, clínicas e estética", h1 "Agenda, cobrança e nota fiscal num só lugar.", subcopy, trust bar
@@ -174,7 +182,7 @@ contexto + form (primitivos da F0002.5: máscaras, PF/PJ, tooltips) + botão pri
 
 ## Padrão: App Shell (área autenticada)
 
-Base: **[`TEMPLATE/dashboard.html`](../TEMPLATE/dashboard.html)**. Usado em **todas as rotas internas** (pós-login): `/dashboard` e tudo sob ele. As rotas públicas (marketing, login, onboarding) usam o **Shell Público**; a partir do momento em que o usuário tem um `business` configurado, a navegação passa para o **App Shell**.
+Base: **[`templates/referencia/dashboard.html`](../templates/referencia/dashboard.html)**. Usado em **todas as rotas internas** (pós-login): `/dashboard` e tudo sob ele. As rotas públicas (marketing, login, onboarding) usam o **Shell Público**; a partir do momento em que o usuário tem um `business` configurado, a navegação passa para o **App Shell**.
 
 O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashboard): navegação **persistente e sempre visível** no desktop, com hierarquia rasa e rótulos claros, de modo que o usuário reconheça o que fazer por experiência prévia com outras aplicações — sem precisar de tutorial. Aplica **progressive disclosure**: o menu mostra apenas os módulos ativos do `business`; o que está desabilitado não aparece (alinhado ao Guardrail 2).
 
@@ -198,7 +206,7 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 ```
 
 ### Sidebar (desktop)
-- Largura fixa `~240px`, full-height, `bg-white` com `border-r border-gray-200` (como em `TEMPLATE/dashboard.html`).
+- Largura fixa `~240px`, full-height, `bg-white` com `border-r border-gray-200` (como em `templates/referencia/dashboard.html`).
 - Logo no topo; lista vertical de itens de navegação (ícone + label).
 - **Item ativo**: fundo `indigo-50` + texto/ícone `primary` + barra/realce à esquerda. Demais itens: texto Muted, hover escurece.
 - **Apenas módulos ativos** do `business` aparecem (progressive disclosure). Itens sempre presentes: *Profissionais*, *Configurações*. Condicionais: *Serviços*/*Agenda* (se `agenda`), *Cobrança* (se `cobranca`), *Notas* (se `nfse`), *Financeiro* (se `financeiro` — **item de menu próprio**, ver F0013).
@@ -222,7 +230,7 @@ O padrão segue as convenções consagradas de SaaS (Asana, Linear, Stripe Dashb
 - **Estados completos**: toda lista trata loading / empty / error (ver Padrões de UX globais).
 
 ### Dashboard: cards de métrica
-Faixa de 2–4 **cards de métrica** no topo da Visão Geral (ver `TEMPLATE/dashboard.html`). Cada card:
+Faixa de 2–4 **cards de métrica** no topo da Visão Geral (ver `templates/referencia/dashboard.html`). Cada card:
 - `rounded-2xl border bg-white p-5 shadow-sm`; topo com **ícone** (quadrado `bg-primary/10`) e um
   **badge de tendência** (`▲ 12%` verde / `▼` vermelho / neutro cinza) alinhado à direita;
 - abaixo, **label muted** + **número grande** (`text-2xl font-bold`).
@@ -244,7 +252,7 @@ Status viram **badges tonais** `rounded-full` reutilizáveis — padronizar as c
 
 ## Padrão: Landing / Página de marketing (F0012)
 Site público (fora do app autenticado). Referência principal: **Swipe** (claro e amigável). Ver
-`TEMPLATE/landing.html`. Anatomia:
+`templates/referencia/landing.html`. Anatomia:
 - **Nav fixa** com `backdrop-blur`, logo à esquerda, links no centro, *Entrar* + *Começar grátis* (primary) à direita; vira menu hambúrguer no mobile.
 - **Hero** em 2 colunas: à esquerda headline `text-4xl/5xl font-extrabold tracking-tight` (com uma
   palavra em `text-primary`), subtítulo muted, 2 CTAs (primary + outline) e microcopy de confiança;

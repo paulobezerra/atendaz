@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 /**
  * Shell Público (docs/10) — moldura das páginas abertas (marketing, login,
- * onboarding), baseada em `TEMPLATE/landing.html`: nav fixa com logo claro +
+ * onboarding), baseada em `templates/referencia/landing.html`: nav fixa com logo claro +
  * ações padrão (Entrar / Começar grátis), fundo branco, conteúdo em
  * `max-w-6xl`, rodapé enxuto. **Sem** painel roxo full-height.
  *

@@ -94,9 +94,49 @@ A UX é definida em **texto (Markdown)** — sem Figma — em duas camadas, para
 1. **Fundação (global, uma vez)** — [`docs/10-design-system.md`](10-design-system.md): design tokens (cores, tipografia, espaçamento, radius), componentes base e padrões de UX globais (validação inline, estados loading/empty/error, toasts, listas controladas, mobile-first, acessibilidade). Reusada por todas as features.
 2. **Por feature (na spec)** — cada `docs/spec/F{ID}` contém a seção **`## UX`** com:
    - **Fluxos**: happy path, validações e erros (comportamento).
-   - **Telas**: layout em **ASCII** + comportamento, referenciando os tokens da fundação.
+   - **Telas**: layout em **ASCII** + comportamento, referenciando os tokens da fundação — e um **link para o protótipo aprovado** (ver "Prototipação de Telas" abaixo), quando a tela é nova ou refeita.
 
-As telas são definidas no **spec** (fonte da verdade, revisado **antes** do código). O `/ssd-plan` transforma a UX do spec em tarefas; o `/ssd-code` implementa; o **gate de revisão humana valida a implementação contra a UX do spec**. Decisões visuais muito específicas (ícones, ilustrações, microanimações) vão em prosa na seção `## UX` ou ficam a critério razoável do agente.
+As telas são definidas no **spec** (fonte da verdade, revisado **antes** do código), mas o ASCII do
+spec **não substitui** a prototipação abaixo para telas novas/refeitas — ele documenta o resultado
+*depois* de aprovado, não é onde o layout é decidido pela primeira vez. O `/ssd-plan` transforma a UX
+(spec + protótipo aprovado) em tarefas; o `/ssd-code` implementa **replicando o protótipo aprovado**;
+o **gate de revisão humana valida a implementação contra o protótipo**, não contra a intuição do
+agente. Decisões visuais muito específicas (ícones, ilustrações, microanimações) que não mudam o
+layout aprovado vão em prosa na seção `## UX` ou ficam a critério razoável do agente.
+
+### Prototipação de Telas (obrigatória para telas novas ou refeitas)
+
+> Motivo: a F0002.7 mostrou o agente implementando UI diretamente em React/Next a partir só do texto
+> da spec, o usuário só via o resultado depois de pronto (em stage), e cada rodada de "está feio,
+> refaz" custava um ciclo inteiro de código + testes + deploy. Prototipar em HTML estático primeiro
+> resolve isso: iteração visual rápida, sem esperar build/deploy, **antes** de qualquer linha de
+> código de produção.
+
+**Regra**: nenhuma tela **nova** ou **substancialmente refeita** (rework visual, não ajuste pontual de
+cor/espaçamento) vai para `/ssd-code` sem um protótipo **aprovado explicitamente pelo usuário**.
+
+**Processo**:
+1. O agente monta a tela como **HTML/JS estático** (mesmo espírito do `templates/referencia/`: Tailwind via CDN,
+   sem framework, sem dados reais/API — só o visual), salvo em **`templates/prototipos/{slug}.html`**
+   (ex.: `templates/prototipos/login.html`).
+2. O protótipo é **apresentado ao usuário** (ex.: via Artifact, para visualização imediata sem precisar
+   rodar nada localmente).
+3. **Ciclo de refinamento**: o usuário dá feedback → o agente ajusta o HTML → repete até aprovação
+   **explícita** ("aprovado", "pode implementar", equivalente). Nenhuma suposição de aprovação
+   implícita — silêncio ou "tá melhor" não é aprovação.
+4. **Só depois da aprovação** o `/ssd-code` implementa a tela em React/Next, **replicando fielmente o
+   HTML aprovado** (mesma disciplina de fidelidade do `docs/10` em relação ao `templates/referencia/`).
+5. O protótipo aprovado **fica versionado** em `templates/prototipos/` — é o registro navegável da
+   decisão visual (substitui/complementa o ASCII da spec para essa tela).
+
+**Escopo**: aplica-se a toda tela nova (a partir de F0002.8 em diante) e a qualquer rework visual
+amplo de tela existente. **Retroativo à F0002.7**: as telas já entregues nessa fase (Login,
+Onboarding, Profissionais, App Shell, Dashboard) passam por este fluxo antes de F0002.8 começar — ver
+`docs/spec/F0002.7-ux-corrections.md`.
+
+**Gate no `/ssd-plan`**: se a spec envolve tela nova/refeita sem protótipo aprovado correspondente em
+`templates/prototipos/`, o `/ssd-plan` **não gera plano de implementação de UI** para essa tela — para
+e sinaliza que falta prototipação (é uma lacuna de DOR, igual a env var faltando).
 
 ## Diretrizes Gerais
 
