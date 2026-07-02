@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
-import SplitLayout from "@/components/SplitLayout";
+import PublicShell from "@/components/PublicShell";
 import { useToast } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,31 +94,16 @@ export default function OnboardingForm({
   }
 
   return (
-    <SplitLayout
-      mobileHeader={
-        <>
-          <span className="text-lg font-bold">◈ Atendaz</span>
-          <span className="text-sm text-indigo-100">Vamos começar</span>
-        </>
-      }
-      left={
-        <>
-          <p className="text-2xl font-bold">◈ Atendaz</p>
-          <p className="mt-10 text-sm text-indigo-100">
-            Leva menos de um minuto. Você entra com o sistema completo liberado no
-            período de teste — plano e pagamento ficam para depois.
-          </p>
-        </>
-      }
-    >
-      <h2 className="text-2xl font-bold text-foreground">
-        Vamos configurar seu negócio
-      </h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Só o essencial para você já começar a usar.
-      </p>
+    <PublicShell>
+      <div className="w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">
+          Vamos configurar seu negócio
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Só o essencial para você já começar a usar.
+        </p>
 
-      <Form {...form}>
+        <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-5">
           <FormField
             control={form.control}
@@ -216,13 +201,17 @@ export default function OnboardingForm({
             )}
           />
 
-          <div className="flex justify-end pt-2">
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Configurando…" : "Começar a usar"}
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
+            {form.formState.isSubmitting ? "Configurando…" : "Começar a usar"}
+          </Button>
         </form>
       </Form>
-    </SplitLayout>
+      </div>
+    </PublicShell>
   );
 }

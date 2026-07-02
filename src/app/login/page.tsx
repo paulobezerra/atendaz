@@ -1,15 +1,9 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { Check } from "lucide-react";
-import SplitLayout from "@/components/SplitLayout";
+import PublicShell from "@/components/PublicShell";
+import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-
-const BULLETS = [
-  "Agendamento online em 2 minutos",
-  "Cobrança via Pix e cartão sem esforço",
-  "NFS-e emitida automaticamente",
-];
 
 function GoogleIcon() {
   return (
@@ -24,52 +18,30 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   return (
-    <SplitLayout
-      mobileHeader={<span className="text-lg font-bold">◈ Atendaz</span>}
-      left={
-        <>
-          <p className="text-2xl font-bold">◈ Atendaz</p>
-          <div>
-            <h1 className="text-3xl font-bold leading-snug">
-              Agenda inteligente, cobrança automática e NFS-e integrada.
-            </h1>
-            <ul className="mt-10 space-y-4">
-              {BULLETS.map((b, i) => (
-                <li
-                  key={b}
-                  className="flex animate-fade-in-up items-start gap-3 text-indigo-100"
-                  style={{ animationDelay: `${i * 150}ms` }}
-                >
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-400/30">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <p className="text-sm text-indigo-200">500+ negócios já usam o Atendaz</p>
-        </>
-      }
-    >
-      <h2 className="text-2xl font-bold text-gray-900">Bom te ver por aqui</h2>
-      <p className="mt-2 text-sm text-gray-500">
-        Entre com sua conta para acessar o painel.
-      </p>
+    <PublicShell>
+      <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+        <Logo className="mx-auto h-8" />
+        <h1 className="mt-6 text-xl font-bold tracking-tight text-gray-900">
+          Acesse sua conta
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Entre com o Google para acessar o painel.
+        </p>
 
-      <Button
-        variant="outline"
-        size="lg"
-        onClick={() => signIn("google", { callbackUrl: "/" })}
-        className="mt-8 w-full gap-3"
-      >
-        <GoogleIcon />
-        Entrar com Google
-      </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+          className="mt-8 w-full gap-3"
+        >
+          <GoogleIcon />
+          Entrar com Google
+        </Button>
 
-      <p className="mt-6 text-xs text-gray-400">
-        Ao entrar, você concorda com os Termos de Uso e a Política de Privacidade.
-      </p>
-    </SplitLayout>
+        <p className="mt-6 text-xs text-gray-400">
+          Ao entrar, você concorda com os Termos de Uso e a Política de Privacidade.
+        </p>
+      </div>
+    </PublicShell>
   );
 }

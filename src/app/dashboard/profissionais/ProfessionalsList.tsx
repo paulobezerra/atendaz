@@ -43,6 +43,15 @@ export interface ProfessionalDTO {
 
 const QUERY_KEY = ["professionals"] as const;
 
+function initials(nome: string) {
+  return nome
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((n) => n[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
 async function fetchProfessionals(): Promise<ProfessionalDTO[]> {
   const res = await fetch("/api/professionals");
   if (!res.ok) throw new Error("Falha ao carregar profissionais.");
@@ -97,13 +106,18 @@ export default function ProfessionalsList({
         cell: ({ row }) => (
           <Link
             href={`/dashboard/profissionais/${row.original.id}`}
-            className="block min-w-0"
+            className="flex min-w-0 items-center gap-3"
           >
-            <span className="block truncate font-medium text-foreground">
-              {row.original.nome}
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+              {initials(row.original.nome)}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
-              /{row.original.slugInterno}
+            <span className="min-w-0">
+              <span className="block truncate font-medium text-foreground">
+                {row.original.nome}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                /{row.original.slugInterno}
+              </span>
             </span>
           </Link>
         ),

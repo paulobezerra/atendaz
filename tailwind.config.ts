@@ -18,6 +18,9 @@ const config: Config = {
   			},
   			'primary-hover': '#4338CA',
   			'primary-dark': '#3730A3',
+  			success: '#059669',
+  			warning: '#D97706',
+  			danger: '#DC2626',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

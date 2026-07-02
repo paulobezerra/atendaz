@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 import { Home, Users, type LucideIcon } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export interface NavItem {
   href: string;
@@ -51,8 +52,8 @@ export default function AppShell({ business, user, children }: AppShellProps) {
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar (desktop) */}
       <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-white lg:flex">
-        <div className="flex h-14 items-center px-6 text-lg font-bold text-primary">
-          ◈ Atendaz
+        <div className="flex h-16 items-center border-b border-gray-100 px-5">
+          <Logo className="h-7" />
         </div>
         <nav className="flex-1 space-y-1 px-3 py-4">
           {items.map((i) => {
@@ -88,7 +89,7 @@ export default function AppShell({ business, user, children }: AppShellProps) {
       {/* Conteúdo */}
       <div className="lg:pl-60">
         {/* Topbar */}
-        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 lg:px-8">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur lg:px-8">
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-gray-900">
               {business.nomeFantasia}
