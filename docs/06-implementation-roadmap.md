@@ -24,17 +24,14 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Onboarding vira **passo único** (identidade); trial libera o sistema completo; plano/Asaas saem do onboarding. **Altera** modelo (`planoId` nullable) e a rota de onboarding. Em produção.
 - Detalhes em: [docs/spec/F0002.6-onboarding-minimal.md](spec/F0002.6-onboarding-minimal.md)
 
-## Fase 2.7: Correções de UX (fidelidade ao `templates/referencia/`)
-- Passe **só visual** sobre as telas já implementadas (Login, Onboarding, Profissionais, App Shell/Dashboard) alinhando-as ao `templates/referencia/` como fonte da verdade (logo aprovado, cores, tipografia, componentes). **Não** altera modelo/API/regra (mesma natureza da F0002.5).
-- **Em andamento — bloqueada em prototipação**: 2 rodadas de código foram reprovadas no gate por falta
-  de fidelidade visual. Processo mudou para **prototipar em HTML estático (`templates/prototipos/`)
-  primeiro, aprovar com o usuário, só então codar** (ver `docs/00` → "Prototipação de Telas"). As 5
-  telas desta fase serão reprototipadas e reaprovadas por esse fluxo antes de a F2.8 começar.
+## [CONCLUÍDO] Fase 2.7: Correções de UX (fidelidade ao `templates/referencia/`)
+- Passe **só visual** sobre as telas já implementadas alinhando-as aos protótipos aprovados em `templates/prototipos/` (que seguem o `templates/referencia/`). **Login vira modal na Home** (`/`) — a rota `/login` deixou de existir; onboarding form-first; Profissionais/App Shell/Dashboard fiéis. **Não** altera modelo/API/regra (mesma natureza da F0002.5). Em produção.
+- Introduziu a **etapa obrigatória de prototipação** (HTML estático aprovado antes de codar — ver `docs/00` → "Prototipação de Telas"), após 2 rodadas de código reprovadas no gate por falta de fidelidade visual.
 - Detalhes em: [docs/spec/F0002.7-ux-corrections.md](spec/F0002.7-ux-corrections.md)
 
 ## Fase 2.8: Configurações + Meio de Pagamento e NFS-e
 - Menu de **Configurações** da clínica/empresa + tela "Configurar Meio de Pagamento e NFS-e" (Asaas) com **tutorial in-app**; endpoint próprio com `audit_log`.
-- **Bloqueada pela F2.7**: só começa (prototipação inclusive) depois que as 5 telas da F2.7 tiverem protótipo aprovado.
+- Telas novas passam pela **prototipação** (`docs/00` → "Prototipação de Telas") antes do código.
 - Detalhes em: [docs/spec/F0002.8-settings-payment.md](spec/F0002.8-settings-payment.md)
 
 ## Fase 3: Perfil, Serviços e Disponibilidade
