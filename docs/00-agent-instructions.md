@@ -19,7 +19,11 @@ Para evitar confusão de contexto, o agente deve SEMPRE distinguir as três cama
 
 ## Conceitos de Governança (DOR e DOD)
 
-- **DOR (Definition of Ready)**: Antes de iniciar o `/code`, a Spec e o Plano devem estar tão detalhados que não reste dúvida sobre a execução passo a passo. Se o agente encontrar um problema imprevisto no código, deve PARAR e solicitar revisão da documentação via `/doc`.
+- **DOR (Definition of Ready)**: Antes de iniciar o `/code`, a Spec e o Plano devem estar tão detalhados que não reste dúvida sobre a execução passo a passo. Se o agente encontrar um problema imprevisto no código, deve PARAR e solicitar revisão da documentação via `/doc`. O DOR de uma spec é composto por, no mínimo:
+  1. **Spec completa** (`docs/spec/F{ID}`) alinhada aos Guardrails (`docs/07`) e ao Modelo de Dados (`docs/04`), sem ambiguidade/conflito.
+  2. **Prototipação de UI** — se a feature tem **qualquer tela nova ou substancialmente refeita**, a spec **deve** conter o(s) protótipo(s) **aprovado(s)** e **linkados** na seção `## UX` (ver [Prototipação de Telas](#prototipação-de-telas-obrigatória-para-telas-novas-ou-refeitas)). Spec com UI **sem** protótipo aprovado **não passa no DOR**.
+  3. **Envs e infraestrutura** da fase identificadas (`docs/05`).
+  O DOR é **validado como portão de entrada no `/ssd-plan`** e **revalidado no `/ssd-code`**. Se qualquer item falhar, o comando **não prossegue** — para e devolve ao `/ssd-doc` para fechar a lacuna.
 - **DOD (Definition of Done)**: Uma feature só é "Done" após validação em produção. Isso deve ser comprovado por evidências (logs de sucesso, print de tela ou execução de testes automatizados de fumaça/E2E em produção).
 
 ## Memória e Contexto de Sessão
@@ -43,6 +47,7 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
 2. **Registro de Mudanças**: Qualquer alteração na lógica de negócio ou arquitetura deve ser refletida primeiro nos arquivos em `docs/` antes de tocar no código.
 3. **Comandos de Mini Agentes**: Os comandos do fluxo têm o prefixo `ssd-`. Os arquivos em `.claude/commands/` (ou configs de outros agentes) são **apenas atalhos/redirecionamentos** para as regras abaixo — ver [Fonte da Verdade dos Comandos](#fonte-da-verdade-dos-comandos). O comportamento de Git/branch/deploy de cada comando está em [Fluxo de Branches, Ambientes e Deploy](#fluxo-de-branches-ambientes-e-deploy).
    - `/ssd-plan {ID}`: Ativa o [Mini Agente de Planejamento](agent-plan-instructions.md). O agente deve:
+     - **Portão de DOR (primeiro passo, bloqueante)**: validar o DOR da spec **antes** de qualquer planejamento. Se a spec tem UI (tela nova/refeita) **sem protótipo aprovado e linkado** na seção `## UX`, o DOR **falha** → o agente **PARA imediatamente**, **não gera o plano** e devolve ao `/ssd-doc` para prototipar (ver [Prototipação de Telas](#prototipação-de-telas-obrigatória-para-telas-novas-ou-refeitas)). O mesmo vale para ambiguidade/conflito com Guardrails ou envs indefinidas. **Nunca** planejar sobre um DOR incompleto.
      - Criar a branch `feature/{ID}-{slug}` e, ao final, commitar **apenas** o plano `docs/plans/{ID}-*` nela (nunca tocar código).
      - **Validar a Spec**: analisar `docs/spec/F{ID}-...` contra toda a base (`docs/01` a `docs/09`). Em caso de ambiguidade/conflito com Guardrails, interromper e pedir clarificação via `/ssd-doc`.
      - **Auditoria de Segurança (DOR)**: planejar `npm audit` com **vulnerabilidade zero** e versões estáveis mais recentes.
@@ -50,6 +55,8 @@ Para evitar alucinações e perda de contexto em novas sessões, o agente deve:
      - **Check de Infraestrutura** e **Cronograma de Ações Manuais**: listar cronologicamente as ações que dependem do usuário, indicando o momento exato.
      - Ler **toda a documentação de suporte** para alinhamento total.
    - `/ssd-code {ID}`: Ativa o [Mini Agente de Implementação](agent-code-instructions.md). O agente deve:
+     - **Pré-condição de branch (bloqueante)**: o `/ssd-code` **só** roda numa branch `feature/{ID}-{slug}`. Se estiver na `master` (ou em branch errada), **PARA** e orienta a rodar `/ssd-plan {ID}` (que cria a branch) — nunca implementa fora da branch da feature.
+     - **Revalidar o DOR (bloqueante)**: reconferir spec + protótipo aprovado (para telas) + plano. Se encontrar **qualquer inconsistência** (spec ambígua/desatualizada, protótipo faltando ou divergente, plano incoerente com a spec), **NÃO implementa** — para e devolve ao `/ssd-doc` (lacuna de spec/UX) ou `/ssd-plan` (lacuna de plano). "Na dúvida, não codar."
      - Ler a spec e o plano correspondente; revalidar os Guardrails em `docs/07-guardrails.md`.
      - Trabalhar **na branch da feature**; o `push` publica em **stage (Preview)**.
      - **Bloqueio de Integridade**: PROIBIDO `git push` com `/ssd-test local` falhando — reportar e corrigir primeiro.
@@ -86,6 +93,42 @@ Regras operacionais para rodar o Cypress contra o **Preview** da Vercel sem cair
    ```
    Deve dar **200**. Se der **302** (Location `vercel.com/sso-api`), o problema é o bypass (aspas no secret, secret rotacionado ou ausente) — **não** o código.
 5. **Cobertura do headless é só o contrato público.** O Cypress headless cobre status/redirect/401 (rota protegida → `/login`, APIs internas → 401). **Fluxos autenticados** (login Google, criação de registros, billing) **não** são cobertos automaticamente — ficam para a validação **manual** do usuário no gate de revisão.
+
+## Encadeamento de Comandos e Fechamento (o que dizer ao terminar)
+
+O fluxo é uma **cadeia de portões**, cada um com um passo humano no meio. Ao **terminar qualquer
+comando**, o agente deve fechar de forma **factual e prescritiva**, nunca com linguagem de
+autoconclusão/hype.
+
+**PROIBIDO no fechamento** — declarar a feature "pronta/entregue" por conta própria, ou anunciar o
+próximo trabalho como se já estivesse autorizado. Ex. do que **não** dizer: *"Pronto, feature A
+implementada!"*, *"Tudo certo, seguindo para implementar a tela X"*, *"Feature concluída"*. Quem
+decide avançar é o **usuário** — o agente **não** presume aprovação nem emenda um comando no outro
+sozinho.
+
+**OBRIGATÓRIO no fechamento** — encerrar com estes três blocos, nesta ordem:
+1. **O que foi feito** — factual, sem adjetivo de sucesso ("implementei X", não "entreguei X com
+   sucesso"). Se houve desvio/decisão, declarar.
+2. **O que você (usuário) precisa validar/decidir agora** — a ação humana do gate.
+3. **Próximo comando** — o comando exato a rodar **depois** da validação (ou "aguardando sua
+   validação" quando o próximo passo é 100% humano). **Um** próximo comando, não um roteiro inteiro.
+
+### Cadeia por comando (próximo passo canônico)
+
+| Terminou | Passo humano | Próximo comando |
+| :--- | :--- | :--- |
+| `/ssd-doc` | Ler e **validar a documentação**. | `/ssd-plan {ID}` — **se** houve alteração de spec que exige (re)planejar. Senão, encerra aqui. |
+| `/ssd-plan` | **Validar o plano** (tarefas, arquivos, DOR). | `/ssd-code {ID}` |
+| `/ssd-code` | **Testar manualmente** no Preview + revisar o diff (Gate de Revisão Humana). | `/ssd-test {alvo}` se julgar necessário; e `/ssd-done {ID}` para fechar. |
+| `/ssd-test` | Ler a evidência (verde/vermelho). | Volta ao `/ssd-code` (se vermelho) ou segue para `/ssd-done` (se o gate humano aprovou). |
+| `/ssd-done` | — (fecha a feature). | Próxima feature na ordem do `docs/06`, via `/ssd-doc`/`/ssd-plan`. |
+
+**Pré-condições que o agente reafirma ao sugerir o próximo comando:**
+- `/ssd-plan` só roda com **DOR aprovado** (spec + protótipo de UI aprovado). Sem isso → `/ssd-doc`.
+- `/ssd-code` só roda **numa branch `feature/{ID}`** e com **DOR revalidado**. Fora disso → para.
+- `/ssd-done` só roda **depois** de um `/ssd-code` (ou `/ssd-test`) e **estando numa branch feature**;
+  é **decisão exclusiva do usuário** (o agente nunca dispara `/ssd-done` sozinho — ver Gate de
+  Revisão Humana).
 
 ## UX e Design System
 
@@ -134,9 +177,15 @@ amplo de tela existente. **Retroativo à F0002.7**: as telas já entregues nessa
 Onboarding, Profissionais, App Shell, Dashboard) passam por este fluxo antes de F0002.8 começar — ver
 `docs/spec/F0002.7-ux-corrections.md`.
 
-**Gate no `/ssd-plan`**: se a spec envolve tela nova/refeita sem protótipo aprovado correspondente em
-`templates/prototipos/`, o `/ssd-plan` **não gera plano de implementação de UI** para essa tela — para
-e sinaliza que falta prototipação (é uma lacuna de DOR, igual a env var faltando).
+**Dono do processo**: a prototipação é parte da **spec** e roda no **`/ssd-doc`** (fase de
+documentação/UX), **antes** do `/ssd-plan`. Um protótipo só conta como pronto quando o usuário o
+**aprova explicitamente** e o link dele está na seção `## UX` da spec.
+
+**Gate no `/ssd-plan` (bloqueante — para o comando inteiro)**: se a spec envolve tela nova/refeita
+**sem** protótipo aprovado e linkado na `## UX`, o `/ssd-plan` **NÃO prossegue** — não gera plano
+(nem de backend), **para** e devolve ao `/ssd-doc` para prototipar/aprovar. Não é "pular a UI e
+planejar o resto": é uma **falha de DOR** que interrompe o planejamento (igual a env var faltando ou
+conflito de Guardrail). Só depois de a spec estar com o protótipo aprovado é que o `/ssd-plan` roda.
 
 ## Diretrizes Gerais
 
