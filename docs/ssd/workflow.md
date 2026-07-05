@@ -1,75 +1,76 @@
-# SSD — Branches, Environments & Deploy
+# SSD — Branches, Ambientes & Deploy
 
-This is the board the game is played on. The mechanics below are **parameterizable**: SSD fixes
-the *shape* (one trunk, one branch per feature, three environments, deploy driven by git
-events), and each product fills in the concrete host and commands in `docs/project/`.
+Este é o tabuleiro onde o jogo acontece. A mecânica abaixo é **parametrizável**: o SSD fixa o
+*formato* (um tronco, uma branch por feature, três ambientes, deploy dirigido por eventos de
+git), e cada produto preenche o host e os comandos concretos em `docs/project/`.
 
 ## Branches
 
-- **Trunk** (`main`/`master`) — the **production** branch. Changed **only** by `ssd-done`
-  (the feature merge). Must always stay green and deployable.
-- **`feature/{ID}-{slug}`** — one per feature. **Created by `ssd-plan`**, **merged by
-  `ssd-done`**, and **never deleted** (it preserves the feature's history/audit trail).
+- **Tronco** (`main`/`master`) — a branch de **produção**. Alterada **apenas** pelo `ssd-done`
+  (o merge da feature). Deve permanecer sempre verde e deployável.
+- **`feature/{ID}-{slug}`** — uma por feature. **Criada pelo `ssd-plan`**, **mergeada pelo
+  `ssd-done`**, e **nunca deletada** (preserva o histórico/auditoria da feature).
 
-## Environments
+## Ambientes
 
-Three environments, each answering a different question:
+Três ambientes, cada um respondendo a uma pergunta diferente:
 
-| Environment | Question it answers | Fed by |
+| Ambiente | Pergunta que responde | Alimentado por |
 | :--- | :--- | :--- |
-| **local** | Does the logic hold in isolation? | The test suite against in-memory/mocked dependencies |
-| **staging** | Does the deployed feature behave? | A **preview** deploy, produced on every push to the feature branch |
-| **prod** | Is it correct for real users? | The **production** deploy, produced by the trunk merge |
+| **local** | A lógica se sustenta isolada? | A suíte de testes contra dependências em memória/mockadas |
+| **stage** | A feature deployada se comporta? | Um deploy de **preview**, gerado a cada push na branch da feature |
+| **prod** | Está correto para usuários reais? | O deploy de **produção**, gerado pelo merge no tronco |
 
-Staging is where a feature is validated **while deployed** before it touches production. The
-product binds "preview" and "production" to its actual host.
+O stage é onde uma feature é validada **enquanto deployada**, antes de tocar a produção. O produto
+liga "preview" e "produção" ao seu host real.
 
-## Deploy triggers per command
+## Gatilhos de deploy por comando
 
-| Command | Git / deploy effect |
+| Comando | Efeito de git / deploy |
 | :--- | :--- |
-| `ssd-doc` | Commit docs/specs straight to the trunk. **No deploy** (see [doc-only builds](#doc-only-commits-skip-the-build)). |
-| `ssd-plan` | Create `feature/{ID}-{slug}` off the trunk; commit **only** the plan to it. No code. |
-| `ssd-code` | Incremental commits on the branch; a push → **staging** deploy. Never touches the trunk. |
-| `ssd-test` | Runs tests only. Changes no git state. |
-| `ssd-done` | Requires green on `local` **and** `staging`. Merges into the trunk (keeping the branch) → **production** deploy → runs `ssd-test prod`. |
+| `ssd-doc` | Commit de docs/specs direto no tronco. **Sem deploy** (ver [builds só-de-doc](#commits-só-de-doc-pulam-o-build)). |
+| `ssd-plan` | Cria `feature/{ID}-{slug}` a partir do tronco; commita **apenas** o plano nela. Sem código. |
+| `ssd-code` | Commits incrementais na branch; um push → deploy de **stage**. Nunca toca o tronco. |
+| `ssd-test` | Só roda testes. Não altera estado do git. |
+| `ssd-done` | Exige verde em `local` **e** `stage`. Mergeia no tronco (mantendo a branch) → deploy de **produção** → roda `ssd-test prod`. |
 
-## Automatic commit & push
+## Commit & push automáticos
 
-Commands that produce changes have **standing authorization** to version their output: at the
-end of such a command, commit **and** push automatically, **without pausing to ask**.
+Comandos que produzem alterações têm **autorização permanente** para versionar sua saída: ao final
+de tal comando, commite **e** pushe automaticamente, **sem pausar para perguntar**.
 
-- `ssd-doc` → commit + push on the trunk.
-- `ssd-plan` → commit + push the plan on the feature branch.
-- `ssd-code` → commit(s) + push on the feature branch (publishes to staging).
-- `ssd-done` → merge + push on the trunk.
-- `ssd-test` does not version (it only runs tests).
+- `ssd-doc` → commit + push no tronco.
+- `ssd-plan` → commit + push do plano na branch da feature.
+- `ssd-code` → commit(s) + push na branch da feature (publica em stage).
+- `ssd-done` → merge + push no tronco.
+- `ssd-test` não versiona (só roda testes).
 
-This does **not** loosen the integrity gates: the `ssd-code` push happens only with `ssd-test
-local` green, and the `ssd-done` merge only with `local` and `staging` green. When the gate
-passes, proceed with commit/push directly — no extra confirmation.
+Isso **não** afrouxa os portões de integridade: o push do `ssd-code` só ocorre com `ssd-test
+local` verde, e o merge do `ssd-done` só com `local` e `stage` verdes. Quando o portão passa,
+prossiga com commit/push direto — sem confirmação extra.
 
-## The human review gate (between `ssd-code` and `ssd-done`)
+## O portão de revisão humana (entre `ssd-code` e `ssd-done`)
 
-After staging is published and **before** any `ssd-done`, the human: (1) tests manually on
-staging against the spec, (2) reviews the branch diff, and (3) decides — **approve** → proceed
-to `ssd-done`; **reject/adjust** → back to the correction cycle (`ssd-code`, or `ssd-doc` for a
-spec gap) on the same branch. You never run `ssd-done` on your own. Treat this gate as the main
-safeguard against off-track work — "the tests passed" is not "it is correct." (See
-[commands.md](commands.md#the-human-review-gate-between-ssd-code-and-ssd-done).)
+Depois que o stage é publicado e **antes** de qualquer `ssd-done`, o humano: (1) testa
+manualmente no stage contra a spec, (2) revisa o diff da branch, e (3) decide — **aprovar** →
+segue para `ssd-done`; **reprovar/ajustar** → volta ao ciclo de correção (`ssd-code`, ou
+`ssd-doc` se for lacuna de spec) na mesma branch. Você nunca roda `ssd-done` por conta própria.
+Trate este portão como a salvaguarda principal contra trabalho fora do rumo — "os testes
+passaram" não é "está correto". (Ver
+[commands.md](commands.md#o-portão-de-revisão-humana-entre-ssd-code-e-ssd-done).)
 
-## The DOD gate & correction cycle
+## O portão de DOD & ciclo de correção
 
-`ssd-done` marks the spec and roadmap as done (and archives the plan) **only if `ssd-test prod`
-passes**. If production fails, the feature is **not** done: return to the
-`ssd-code → ssd-test → ssd-done` cycle (or `ssd-doc` if the failure reveals a spec gap) on the
-**same branch** until green. Since staging was already validated, production failures tend to be
-environment-specific and fixed by *fix-forward*.
+O `ssd-done` marca a spec e o roadmap como concluídos (e arquiva o plano) **só se `ssd-test prod`
+passar**. Se produção falhar, a feature **não** está pronta: volta ao ciclo
+`ssd-code → ssd-test → ssd-done` (ou `ssd-doc` se a falha revelar lacuna de spec) na **mesma
+branch** até ficar verde. Como o stage já foi validado, falhas em produção tendem a ser
+específicas de ambiente e corrigidas por *fix-forward*.
 
-## Doc-only commits skip the build
+## Commits só-de-doc pulam o build
 
-So that **documentation-only** commits on the trunk (`ssd-doc`) do **not** trigger a production
-deploy, the host is configured with an **ignored-build step**: a small versioned script that
-**skips the build** when a commit only touched documentation/tooling paths. This is a
-deterministic check — it belongs in a script, not in an agent's judgement (see
+Para que commits **somente de documentação** no tronco (`ssd-doc`) **não** gerem deploy de
+produção, o host é configurado com um **ignored-build step**: um pequeno script versionado que
+**pula o build** quando um commit só tocou caminhos de documentação/tooling. É uma checagem
+determinística — pertence a um script, não ao julgamento de um agente (ver
 [automation.md](automation.md)).

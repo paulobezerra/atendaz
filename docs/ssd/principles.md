@@ -1,86 +1,86 @@
-# SSD — The Three Non-Negotiable Pillars
+# SSD — Os Três Pilares Inegociáveis
 
-These three rules are the reason SSD exists. They are **inviolable**: no deadline, no "just this
-once", and no agent convenience overrides them. If a situation seems to require breaking one,
-the situation is wrong — stop and fix the situation, not the rule.
+Estas três regras são a razão de o SSD existir. São **invioláveis**: nenhum prazo, nenhum "só
+desta vez" e nenhuma conveniência do agente as sobrepõe. Se uma situação parece exigir quebrar
+uma delas, a situação é que está errada — pare e conserte a situação, não a regra.
 
-Everything else in the framework (commands, gates, branch flow, automation) exists to **enforce**
-these three.
-
----
-
-## 1. Tests before touching code
-
-**Rule.** Code is not written and then tested; behavior is pinned by tests **first**, at the
-level of rigor the project already holds.
-
-- **Critical logic is test-first (TDD).** Anything where correctness is subtle — money math,
-  scheduling/slot math, idempotency, state transitions, permission/tenancy checks — gets its
-  test written *before* the implementation.
-- **A bug fix starts with the failing test** that reproduces it. The test goes red, then the
-  fix makes it green. A fix with no reproducing test is not accepted.
-- **Coverage travels with the change.** UI with logic ships with a render/interaction test of
-  the touched surface. "Green" that does not exercise the changed code is **not** "done" — it is
-  an untested change that happens to pass old tests.
-- **Determinism.** Tests must run without external services (in-memory / mocked dependencies)
-  so they are fast, isolated, and runnable by a git hook on every commit.
-
-**Why.** Tests are the executable half of the spec. They are how an agent's change is proven to
-match intended behavior instead of merely "looking right." They also make the git hooks
-(pillar-adjacent automation) meaningful — a hook that runs tests only protects you if the tests
-are real.
+Todo o resto do framework (comandos, portões, fluxo de branches, automação) existe para
+**garantir** estes três pilares.
 
 ---
 
-## 2. Interface prototyping before implementation
+## 1. Testes antes de tocar no código
 
-**Rule.** No **new** screen, and no **substantially reworked** screen, reaches production code
-without a **static prototype that the human approved first**.
+**Regra.** Código não é escrito e depois testado; o comportamento é fixado por testes
+**primeiro**, no nível de rigor que o projeto já pratica.
 
-- The prototype is built in a **cheap, fast medium** (plain HTML/CSS + a little vanilla JS —
-  no framework, no build, no real data or APIs). It captures layout, states, and interaction —
-  not production wiring.
-- It is **presented to the human and iterated** until an **explicit** approval ("approved",
-  "ship it"). Silence, or "looks better", is **not** approval.
-- The approved prototype is **versioned** and **linked from the spec's UX section**. It — not
-  the agent's intuition — is what the implementation must faithfully replicate, and what the
-  human review compares against.
-- Prototyping is part of the **spec** (it happens in `ssd-doc`) and is a **DOR requirement**: a
-  spec with UI but no approved prototype cannot enter `ssd-plan`.
+- **Lógica crítica é test-first (TDD).** Tudo onde a corretude é sutil — cálculo de dinheiro,
+  matemática de agenda/slots, idempotência, transições de estado, permissão/isolamento — tem o
+  teste escrito *antes* da implementação.
+- **A correção de bug começa pelo teste que falha** e o reproduz. O teste fica vermelho, então a
+  correção o deixa verde. Uma correção sem teste que reproduza não é aceita.
+- **A cobertura viaja com a mudança.** UI com lógica sai com teste de render/interação da parte
+  tocada. "Verde" que não exercita o código alterado **não** é "pronto" — é uma mudança sem
+  teste que por acaso passa nos testes antigos.
+- **Determinismo.** Testes rodam sem serviços externos (dependências em memória / mockadas), para
+  serem rápidos, isolados e executáveis por um git hook a cada commit.
 
-**Why.** Deciding visuals in production code is the most expensive place to iterate: every
-"that's ugly, redo it" round costs a full code + test + deploy cycle. Prototyping moves the
-visual decision *before* any production line is written, where a round costs seconds.
-
----
-
-## 3. Spec as the source of truth — not the code
-
-**Rule.** Behavior and architecture are decided in the **spec** first. The code is the spec made
-executable. When code and spec disagree, the **spec is right** and the code has a bug.
-
-- **Documentation before code.** No feature is implemented before its spec (`project/spec`) and
-  execution plan (`project/plans`) are aligned. Any change to business logic or architecture is
-  reflected in the docs **first**, then in code.
-- **The spec is where ambiguity is resolved.** If an agent hits an unforeseen question mid-code,
-  it **stops** and sends the question back to the spec (`ssd-doc`) — it does not improvise a
-  decision in code.
-- **The code never becomes the authority by default.** "The code does X, so X must be right" is
-  the failure mode SSD exists to prevent. If X isn't in the spec, X is unreviewed drift.
-- **Agent config is not the source of truth.** Command shortcut files (`.claude/`, IDE configs)
-  only redirect to these docs. Rules live here; switching agents loses nothing.
-
-**Why.** An AI agent will confidently generate plausible behavior that no one asked for. The
-only durable defense is a human-owned, human-readable statement of intent that outranks whatever
-the code happens to do — reviewed *before* the code exists, not reverse-engineered from it
-afterward.
+**Por quê.** Testes são a metade executável da spec. São como a mudança de um agente se prova
+alinhada ao comportamento pretendido, em vez de apenas "parecer certa". Também dão sentido aos
+git hooks — um hook que roda testes só protege se os testes forem reais.
 
 ---
 
-## How the pillars are enforced
+## 2. Prototipação de interface antes de implementar
 
-| Pillar | Enforced by |
+**Regra.** Nenhuma tela **nova**, e nenhuma tela **substancialmente refeita**, chega ao código
+de produção sem um **protótipo estático que o humano aprovou antes**.
+
+- O protótipo é feito num **meio barato e rápido** (HTML/CSS puro + um pouco de JS vanilla — sem
+  framework, sem build, sem dados ou APIs reais). Captura layout, estados e interação — não a
+  fiação de produção.
+- É **apresentado ao humano e iterado** até a aprovação **explícita** ("aprovado", "pode
+  implementar"). Silêncio, ou "tá melhor", **não** é aprovação.
+- O protótipo aprovado é **versionado** e **linkado na seção UX da spec**. É ele — não a
+  intuição do agente — que a implementação deve replicar fielmente, e contra ele que a revisão
+  humana compara.
+- A prototipação é parte da **spec** (acontece no `ssd-doc`) e é **requisito de DOR**: uma spec
+  com UI sem protótipo aprovado não entra no `ssd-plan`.
+
+**Por quê.** Decidir o visual em código de produção é o lugar mais caro de iterar: cada rodada de
+"tá feio, refaz" custa um ciclo inteiro de código + teste + deploy. Prototipar move a decisão
+visual para *antes* de qualquer linha de produção, onde uma rodada custa segundos.
+
+---
+
+## 3. Spec como fonte da verdade — não o código
+
+**Regra.** Comportamento e arquitetura são decididos na **spec** primeiro. O código é a spec
+tornada executável. Quando código e spec divergem, a **spec está certa** e o código tem um bug.
+
+- **Documentação antes do código.** Nenhuma feature é implementada antes de sua spec
+  (`project/spec`) e seu plano de execução (`project/plans`) estarem alinhados. Toda mudança de
+  regra de negócio ou arquitetura se reflete na doc **primeiro**, depois no código.
+- **A spec é onde a ambiguidade se resolve.** Se o agente esbarra numa dúvida imprevista durante
+  o código, ele **para** e devolve a pergunta à spec (`ssd-doc`) — não improvisa uma decisão no
+  código.
+- **O código nunca vira a autoridade por padrão.** "O código faz X, logo X deve estar certo" é o
+  modo de falha que o SSD existe para evitar. Se X não está na spec, X é deriva não revisada.
+- **A config do agente não é a fonte da verdade.** Arquivos de atalho de comando (`.claude/`,
+  configs de IDE) apenas redirecionam para estes docs. As regras vivem aqui; trocar de agente não
+  perde nada.
+
+**Por quê.** Um agente de IA vai gerar, com confiança, comportamento plausível que ninguém pediu.
+A única defesa durável é um enunciado de intenção legível e de posse do humano, que tem
+precedência sobre o que o código faz — revisado *antes* de o código existir, não engenharia-
+reversa dele depois.
+
+---
+
+## Como os pilares são garantidos
+
+| Pilar | Garantido por |
 | :--- | :--- |
-| Tests before code | `ssd-code` writes tests with the change; git hooks run the suite on commit/push; a red suite blocks the push ([`automation.md`](automation.md)). |
-| Prototype before implementation | DOR gate in `ssd-plan` (stops if UI unprototyped); human approval gate before `ssd-code` replicates a screen ([`commands.md`](commands.md)). |
-| Spec as source of truth | `ssd-doc` owns all behavior decisions; `ssd-plan`/`ssd-code` re-validate against the spec and refuse to proceed on inconsistency. |
+| Testes antes do código | O `ssd-code` escreve testes junto com a mudança; git hooks rodam a suíte no commit/push; uma suíte vermelha bloqueia o push ([`automation.md`](automation.md)). |
+| Protótipo antes de implementar | Portão de DOR no `ssd-plan` (para se a UI não estiver prototipada); portão de aprovação humana antes de o `ssd-code` replicar uma tela ([`commands.md`](commands.md)). |
+| Spec como fonte da verdade | O `ssd-doc` governa toda decisão de comportamento; `ssd-plan`/`ssd-code` revalidam contra a spec e se recusam a prosseguir com inconsistência. |

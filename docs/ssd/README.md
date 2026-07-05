@@ -1,104 +1,103 @@
 # SSD — Spec-Sourced Development
 
-> **SSD** is a personal, technology- and agent-agnostic framework for building software
-> **with** AI agents without losing control of the codebase. It works the same whether the
-> agent is Claude, Junie, Gemini, Cursor, or a human, and whether the stack is Next.js, Rails,
-> or Go. This folder (`docs/ssd/`) is the framework itself — copy it into any repository to run
-> the method. Everything specific to a given product lives elsewhere (see
-> [Repository layout](#repository-layout)).
+> O **SSD** é um framework pessoal, **agnóstico de tecnologia e de agente**, para construir
+> software **com** agentes de IA sem perder o controle do código. Ele funciona igual seja o
+> agente Claude, Junie, Gemini, Cursor ou um humano, e seja a stack Next.js, Rails ou Go. Esta
+> pasta (`docs/ssd/`) é o framework em si — copie-a para qualquer repositório para rodar o
+> método. Tudo que é específico de um produto vive em outro lugar (ver
+> [Organização do repositório](#organização-do-repositório)).
 >
-> **Read this as the rulebook.** If SSD were a tabletop RPG, `docs/ssd/` is the **Game Master's
-> guide**: it tells the AI *how the game is played* — how to build the docs, the specs, the
-> plans, and the implementation, in what order, through which gates, under which quality
-> policies. It deliberately says **nothing about which technology does what** (that is the
-> product's call, in `docs/project/`). It *does* constrain **how** technology is chosen when the
-> choice is really a quality decision — e.g. "always the latest stable/LTS release, never a
-> prerelease" is a quality rule, not a stack preference, so it lives here.
+> **Leia isto como o livro de regras.** Se o SSD fosse um RPG de mesa, `docs/ssd/` é o **livro
+> do mestre**: ensina a IA *como o jogo é jogado* — como construir a documentação, as specs, os
+> planos e a implementação, em que ordem, por quais portões, sob quais políticas de qualidade.
+> Ele deliberadamente **não diz qual tecnologia faz o quê** (isso é decisão do produto, em
+> `docs/project/`). Ele *guia*, sim, **como** uma tecnologia é escolhida quando a escolha é, na
+> verdade, uma decisão de qualidade — ex.: "sempre a release estável/LTS mais recente, nunca um
+> prerelease" é regra de qualidade, não preferência de stack, então mora aqui.
 
-> ℹ️ **Name — needs your confirmation.** "SSD" is used throughout as the command prefix
-> (`ssd-plan`, `ssd-code`, …). The expansion *"Spec-Sourced Development"* is a **placeholder**
-> chosen to match the pillars below — swap it for the real one if you already have a name in
-> mind.
+> ℹ️ **Nome — precisa da sua confirmação.** "SSD" é usado como prefixo dos comandos
+> (`ssd-plan`, `ssd-code`, …). A expansão *"Spec-Sourced Development"* é um **placeholder**
+> escolhido para combinar com os pilares abaixo — troque pelo nome real se você já tiver um.
 
-## Why SSD exists
+## Por que o SSD existe
 
-Coding agents are fast, but left unsupervised they drift: they invent behavior the spec never
-described, refactor things nobody asked for, and declare features "done" that were never
-verified. SSD keeps the human in control by making **the specification — not the code — the
-source of truth**, and by forcing every change through a small set of **named commands** with
-**explicit gates** between them. The agent executes; the human validates at each gate.
+Agentes de código são rápidos, mas sem supervisão eles derivam: inventam comportamento que a
+spec nunca descreveu, refatoram o que ninguém pediu e declaram "pronto" o que nunca foi
+verificado. O SSD mantém o humano no controle fazendo da **especificação — não do código — a
+fonte da verdade**, e forçando toda mudança por um conjunto pequeno de **comandos nomeados** com
+**portões explícitos** entre eles. O agente executa; o humano valida em cada portão.
 
-## The three non-negotiable pillars
+## Os três pilares inegociáveis
 
-These are the load-bearing rules. Everything else in the framework serves them. They do not
-bend for deadlines. See [`principles.md`](principles.md) for the full statement of each.
+Estas são as regras que sustentam tudo. O resto do framework serve a elas. Não dobram por prazo.
+Ver [`principles.md`](principles.md) para o enunciado completo de cada um.
 
-1. **Tests before touching code.** Critical logic is written test-first; a bug fix starts with
-   the failing test that reproduces it. "Green" that doesn't cover the changed surface is not
-   done.
-2. **Interface prototyping before implementation.** No new or reworked screen reaches
-   production code without an approved static prototype. Visual decisions are made in a cheap,
-   fast medium — not in framework code after a deploy.
-3. **Spec as the source of truth, not the code.** Behavior is decided in the spec first; code
-   is the spec made executable. When they disagree, the spec is right and the code is a bug.
+1. **Testes antes de tocar no código.** Lógica crítica é escrita test-first; a correção de bug
+   começa pelo teste que falha e a reproduz. "Verde" que não cobre a superfície alterada não é
+   pronto.
+2. **Prototipação de interface antes de implementar.** Nenhuma tela nova ou refeita chega ao
+   código de produção sem um protótipo estático aprovado. Decisões visuais se tomam num meio
+   barato e rápido — não em código de framework depois do deploy.
+3. **Spec como fonte da verdade, não o código.** O comportamento é decidido na spec primeiro; o
+   código é a spec tornada executável. Quando divergem, a spec está certa e o código tem um bug.
 
-## The commands
+## Os comandos
 
-SSD is driven by five prefixed commands. Each is a **hard boundary** on what may change, and
-each ends by handing off to the next with an explicit human gate in between. Full definitions
-in [`commands.md`](commands.md).
+O SSD é conduzido por cinco comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
+pode mudar, e cada um termina passando o bastão para o próximo, com um portão humano no meio.
+Definições completas em [`commands.md`](commands.md).
 
-| Command | Owns | Produces |
+| Comando | Governa | Produz |
 | :--- | :--- | :--- |
-| `ssd-doc` | All documentation & specs (incl. prototypes) | Updated docs / spec on the trunk |
-| `ssd-plan` | The execution plan | Feature branch + plan (no code) |
-| `ssd-code` | Source code | Commits on the feature branch → staging deploy |
-| `ssd-test` | Test runs | Evidence (local / staging / prod) |
-| `ssd-done` | The trunk merge | Feature closed after production proof |
+| `ssd-doc` | Toda documentação & specs (incl. protótipos) | Docs / spec atualizados no tronco |
+| `ssd-plan` | O plano de execução | Branch da feature + plano (sem código) |
+| `ssd-code` | Código-fonte | Commits na branch da feature → deploy de stage |
+| `ssd-test` | Execuções de teste | Evidência (local / stage / prod) |
+| `ssd-done` | O merge no tronco | Feature fechada após prova em produção |
 
-The canonical chain and the "how to close a command" rules (no hype, always name the next
-step) are in [`commands.md`](commands.md#command-chaining).
+A cadeia canônica e as regras de "como fechar um comando" (sem hype, sempre apontando o próximo
+passo) estão em [`commands.md`](commands.md#encadeamento-de-comandos).
 
-## What SSD automates vs. what the agent does
+## O que o SSD automatiza vs. o que o agente faz
 
-Repetitive, deterministic checks belong in **scripts and git hooks**, not in an agent's prompt.
-The agent orchestrates and reasons; husky/CI enforce the invariants (lint, tests, audit,
-build-skip rules) the same way every time. This keeps the agent cheap, fast, and unable to
-"forget" a gate. See [`automation.md`](automation.md).
+Checagens repetitivas e determinísticas pertencem a **scripts e git hooks**, não ao prompt de um
+agente. O agente orquestra e raciocina; husky/CI garantem os invariantes (lint, testes, audit,
+regra de pular build) sempre do mesmo jeito. Isso mantém o agente barato, rápido e incapaz de
+"esquecer" um portão. Ver [`automation.md`](automation.md).
 
-## Governance gates
+## Portões de governança
 
-- **DOR (Definition of Ready)** — a spec may enter `ssd-plan` only when it is unambiguous, its
-  UI is prototyped and approved, and its environment needs are known.
-- **DOD (Definition of Done)** — a feature is "done" only after it is verified **in
-  production**, with evidence.
+- **DOR (Definition of Ready)** — uma spec só entra no `ssd-plan` quando está sem ambiguidade,
+  com a UI prototipada e aprovada, e com as necessidades de ambiente conhecidas.
+- **DOD (Definition of Done)** — uma feature só é "pronta" após verificada **em produção**, com
+  evidência.
 
-## Quality policies
+## Políticas de qualidade
 
-The framework carries the **quality controls and engineering policies** that every product
-must obey regardless of stack — the testing policy, the dependency/versioning rules
-(latest stable/LTS only, no prerelease, zero known vulnerabilities in production dependencies),
-secrets & external-API discipline, idempotency & auditability, and the isolation/gating
-patterns. These are stated technology-neutrally in [`quality.md`](quality.md); a product maps
-each to its concrete stack in `docs/project/`.
+O framework carrega os **controles de qualidade e políticas de engenharia** que todo produto
+deve obedecer independentemente da stack — a política de testes, as regras de dependência/versão
+(só estável/LTS mais recente, sem prerelease, zero vulnerabilidades conhecidas em dependências de
+produção), disciplina de segredos & API externa, idempotência & auditabilidade, e os padrões de
+isolamento/gating. Estão enunciadas de forma neutra em [`quality.md`](quality.md); um produto
+mapeia cada uma para sua stack concreta em `docs/project/`.
 
-## Repository layout
+## Organização do repositório
 
 ```
 docs/
-├── ssd/          ← THIS framework (agnostic, English, copy into any repo)
-│   ├── README.md      — what SSD is (this file)
-│   ├── principles.md  — the three non-negotiable pillars, in full
-│   ├── commands.md    — command definitions, gates, chaining, closing rules
-│   ├── workflow.md    — branches, environments, deploy (parameterizable)
-│   ├── quality.md     — testing policy, dependency/versioning & security policies
-│   └── automation.md  — scripts/hooks over AI for repetitive checks
-└── project/      ← the specific product instance (may be in any language)
-    ├── base/          — vision, architecture, data model, guardrails, design system…
-    ├── spec/          — one spec per feature (source of truth)
-    └── plans/         — one execution plan per feature
+├── ssd/          ← ESTE framework (agnóstico, copie para qualquer repo)
+│   ├── README.md      — o que é o SSD (este arquivo)
+│   ├── principles.md  — os três pilares inegociáveis, por extenso
+│   ├── commands.md    — definições dos comandos, portões, encadeamento, fechamento
+│   ├── workflow.md    — branches, ambientes, deploy (parametrizável)
+│   ├── quality.md     — política de testes, dependências/versões & segurança
+│   └── automation.md  — scripts/hooks no lugar da IA para checagens repetitivas
+└── project/      ← a instância do produto específico (em qualquer idioma)
+    ├── base/          — visão, arquitetura, modelo de dados, guardrails, design system…
+    ├── spec/          — uma spec por feature (fonte da verdade)
+    └── plans/         — um plano de execução por feature
 ```
 
-The framework is **agnostic**; the `project/` folder is where a concrete product (its domain,
-stack, and rules) plugs in. Agent shortcut files (`.claude/`, IDE configs) only **redirect** to
-these documents — they never hold rules of their own.
+O framework é **agnóstico**; a pasta `project/` é onde um produto concreto (seu domínio, stack e
+regras) se pluga. Arquivos de atalho de agente (`.claude/`, configs de IDE) apenas
+**redirecionam** para estes documentos — nunca guardam regras próprias.

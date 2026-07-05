@@ -1,122 +1,125 @@
-# SSD — Quality Controls & Engineering Policies
+# SSD — Controles de Qualidade & Políticas de Engenharia
 
-These are the **rules of the game for quality**. They are technology-neutral: SSD states the
-*policy*; each product maps it to its concrete stack in `docs/project/`. Some of these policies
-**constrain technology choices** — not by naming a technology, but by setting the quality bar a
-choice must clear (e.g. "latest stable/LTS only"). Where a rule says "the product defines X",
-that binding lives in `docs/project/`, but the rule itself is non-negotiable.
-
----
-
-## Testing policy
-
-The test gate has **three layers**; none substitutes for another. "Green" counts **only** when
-the right layers cover the **surface the change touched**.
-
-1. **Integration / API** — exercise the real units of behavior (route handlers, services,
-   critical logic) against **in-memory or mocked** dependencies, so runs are fast, isolated, and
-   hook-runnable.
-2. **Component / render (UI)** — **every UI unit with logic** (conditional rendering, form
-   state, sections revealed by a control, input masking, branching by data type) needs a test
-   that **(a)** mounts without throwing and **(b)** exercises the **interactive branches**. A
-   component with conditional rendering is **not** done without it.
-3. **End-to-end** — the public contract (status / redirect / auth) against staging/prod.
-   **Critical authenticated flows** get E2E when feasible; the rest fall to the manual review
-   gate.
-
-**Hard rules:**
-- **Cover the changed surface.** Green tests do **not** satisfy the gate if they don't exercise
-  what the change touched. A render crash that still "passes" is a **testing-policy failure**,
-  not bad luck — the fix is to close the coverage gap, not just patch the symptom.
-- **Critical logic is test-first (TDD).** Anything where correctness is subtle — money math,
-  scheduling math, idempotency, state transitions, permission/isolation, config resolution —
-  gets its test written **before** the implementation.
-- **A bug fix starts with the failing test** that reproduces it, in the appropriate layer, then
-  the fix. A regression test is mandatory.
-
-See also [principles.md](principles.md) §1.
+Estas são as **regras do jogo para qualidade**. São neutras em relação à tecnologia: o SSD enuncia
+a *política*; cada produto a mapeia para sua stack concreta em `docs/project/`. Algumas destas
+políticas **restringem escolhas de tecnologia** — não nomeando uma tecnologia, mas fixando a barra
+de qualidade que a escolha precisa passar (ex.: "só estável/LTS mais recente"). Onde uma regra diz
+"o produto define X", esse vínculo mora em `docs/project/`, mas a regra em si é inegociável.
 
 ---
 
-## Dependency & versioning policy
+## Política de testes
 
-This is where quality **drives technology decisions**.
+O portão de testes tem **três camadas**; nenhuma substitui a outra. "Verde" só conta **quando** as
+camadas certas cobrem a **superfície que a mudança tocou**.
 
-- **Runtime on LTS.** Always run on the runtime's **LTS** line. Non-LTS is not an option — it is
-  a quality decision, not a preference.
-- **Latest stable only.** Use the most recent **stable** release (the `latest` dist-tag /
-  equivalent), close to LTS. Using a `beta`/`preview`/`rc`/`alpha`/`canary`/prerelease is
-  **forbidden**, in dev *and* prod — treat a prerelease as **worse than a known vulnerability**.
-- **Zero known vulnerabilities in production dependencies** before any push. The gate audits
-  **production** dependencies and must report **zero**. Vulnerabilities exclusive to
-  development/test tooling with **no non-breaking fix** and that **never ship** are recorded as
-  **known debt** (re-evaluated when a patch lands) — they do not block the push.
-- **Never "fix" an audit by downgrading.** Do not resolve a vulnerability by rolling a critical
-  dependency backward or forcing a break. Prefer the latest **patched stable**.
-- **Minimal, vetted dependencies.** Prefer proven, maintained libraries; avoid unmaintained or
-  single-purpose bloat. Every dependency is a liability you are choosing to own.
+1. **Integração / API** — exercitam as unidades reais de comportamento (route handlers, serviços,
+   lógica crítica) contra dependências **em memória ou mockadas**, para rodarem rápido, isoladas e
+   executáveis por hook.
+2. **Componente / render (UI)** — **todo componente de UI com lógica** (render condicional, estado
+   de formulário, seções reveladas por um controle, máscara de input, ramificação por tipo de
+   dado) precisa de um teste que **(a)** monte sem lançar e **(b)** exercite os **ramos
+   interativos**. Um componente com render condicional **não** é dado como pronto sem isso.
+3. **Ponta a ponta (E2E)** — o contrato público (status / redirect / auth) contra stage/prod.
+   **Fluxos autenticados críticos** ganham E2E quando viável; os demais caem no portão manual.
 
-The product lists its concrete pinned stack ("golden stack") and its audit command in
-`docs/project/`; the policy above governs how that list is allowed to move.
+**Regras duras:**
+- **Cobrir a superfície alterada.** Testes verdes **não** satisfazem o portão se não exercitam o
+  que a mudança tocou. Um crash de render que ainda assim "passa" é **falha de política de
+  testes**, não azar — a resposta é fechar a lacuna de cobertura, não só corrigir o sintoma.
+- **Lógica crítica é test-first (TDD).** Tudo onde a corretude é sutil — cálculo de dinheiro,
+  matemática de agenda, idempotência, transições de estado, permissão/isolamento, resolução de
+  config — tem o teste escrito **antes** da implementação.
+- **A correção de bug começa pelo teste que falha** e o reproduz, na camada adequada, e só então a
+  correção. Teste de regressão é obrigatório.
+
+Ver também [principles.md](principles.md) §1.
 
 ---
 
-## Build & integrity gate
+## Política de dependências & versões
 
-- **Commit/deploy only on a successful production build.** A type/compile error is a blocker,
-  not a warning — run the real build, not just the unit tests.
-- **A red suite blocks the push.** Enforced by a git hook, not by memory (see
+É aqui que a qualidade **dirige as decisões de tecnologia**.
+
+- **Runtime em LTS.** Sempre rodar na linha **LTS** do runtime. Non-LTS não é opção — é decisão de
+  qualidade, não preferência.
+- **Só a estável mais recente.** Usar a release **estável** mais recente (dist-tag `latest` /
+  equivalente), próxima de LTS. Usar `beta`/`preview`/`rc`/`alpha`/`canary`/prerelease é
+  **proibido**, em dev *e* prod — trate um prerelease como **pior que uma vulnerabilidade
+  conhecida**.
+- **Zero vulnerabilidades conhecidas em dependências de produção** antes de qualquer push. O
+  portão audita as dependências de **produção** e deve reportar **zero**. Vulnerabilidades
+  exclusivas de ferramentas de dev/teste, **sem fix não-quebrante** e que **nunca vão para
+  produção**, são registradas como **débito conhecido** (reavaliado quando houver patch) — não
+  bloqueiam o push.
+- **Nunca "consertar" audit com downgrade.** Não resolva uma vulnerabilidade rebaixando uma
+  dependência crítica ou forçando uma quebra. Prefira a **estável patcheada** mais recente.
+- **Dependências mínimas e avaliadas.** Prefira libs comprovadas e mantidas; evite bloat
+  não-mantido ou de propósito único. Toda dependência é um passivo que você está escolhendo
+  possuir.
+
+O produto lista sua stack concreta pinada ("golden stack") e seu comando de audit em
+`docs/project/`; a política acima governa como essa lista pode se mover.
+
+---
+
+## Portão de build & integridade
+
+- **Commit/deploy só com build de produção bem-sucedido.** Um erro de tipo/compilação é
+  bloqueante, não um aviso — rode o build real, não só os testes unitários.
+- **Uma suíte vermelha bloqueia o push.** Garantido por um git hook, não pela memória (ver
   [automation.md](automation.md)).
 
 ---
 
-## Secrets & security
+## Segredos & segurança
 
-- **Secrets live in environment variables**, never in code or the repo.
-- **Encrypt secrets at rest.** Third-party API keys / tokens are stored with **authenticated
-  encryption** (e.g. AES-256-GCM) derived from a master key held only in the environment —
-  encrypted **before** they are persisted.
-- **Never expose a secret in plaintext** — not in responses, logs, audit entries, or error
-  messages. Serialize only a safe fingerprint (e.g. last-4).
-
----
-
-## External API fidelity
-
-- **Never invent** fields, endpoints, or behaviors of a third-party API. Verify against the
-  official documentation, or **ask** — do not simulate what you have not confirmed exists.
-- Resolve all access to an external capability through a **single, central function**, so
-  overrides/inheritance and credentials are decided in one place, never assumed ad hoc.
+- **Segredos vivem em variáveis de ambiente**, nunca no código nem no repo.
+- **Criptografar segredos em repouso.** Chaves/tokens de API de terceiros são armazenados com
+  **criptografia autenticada** (ex.: AES-256-GCM) derivada de uma chave mestre guardada só no
+  ambiente — criptografados **antes** de serem persistidos.
+- **Nunca expor um segredo em texto plano** — nem em respostas, logs, entradas de auditoria ou
+  mensagens de erro. Serialize apenas um resumo seguro (ex.: últimos 4 dígitos).
 
 ---
 
-## Reliability: idempotency & auditability
+## Fidelidade a API externa
 
-- **Idempotent event handling.** Webhooks and event processors must be idempotent: a re-delivered
-  event must not duplicate effects (e.g. never emit two invoices for one payment). Check whether
-  the event was already handled before acting.
-- **Audit every meaningful state write.** Create/update/delete on financial, scheduling, or
-  otherwise consequential entities appends a record to an **audit log** — best-effort, never
-  containing secrets, never allowed to break the business operation.
+- **Nunca invente** campos, endpoints ou comportamentos de uma API de terceiros. Verifique contra
+  a documentação oficial, ou **pergunte** — não simule o que você não confirmou que existe.
+- Resolva todo acesso a uma capacidade externa por uma **única função central**, para que
+  overrides/herança e credenciais sejam decididos num só lugar, nunca assumidos ad hoc.
 
 ---
 
-## Isolation & gating patterns
+## Confiabilidade: idempotência & auditabilidade
 
-For products where they apply, these are non-negotiable:
-
-- **Owner isolation (multi-tenant).** If data is owned per tenant/account, **every** query is
-  scoped by the owner id; one owner can **never** read another's data.
-- **Capability gating.** A disabled feature/module returns a **not-found (404)** at the route,
-  not merely a hidden button. Absence must be indistinguishable from "never existed."
-- **Identifier hygiene.** Public identifiers/slugs are validated against a reserved list and
-  unique within their scope.
+- **Tratamento idempotente de eventos.** Webhooks e processadores de eventos devem ser
+  idempotentes: um evento reentregue não pode duplicar efeitos (ex.: nunca emitir duas notas para
+  um pagamento). Verifique se o evento já foi tratado antes de agir.
+- **Auditar toda escrita relevante de estado.** Create/update/delete em entidades financeiras, de
+  agendamento ou de outra forma consequentes acrescenta um registro a um **log de auditoria** —
+  best-effort, nunca contendo segredos, nunca podendo derrubar a operação de negócio.
 
 ---
 
-## Privacy by default
+## Padrões de isolamento & gating
 
-- Store **only** what the feature strictly needs. Avoid whole classes of sensitive data the
-  product does not require (e.g. health/clinical records for a scheduling-and-billing tool).
-- Prefer the most privacy-preserving option by default; do not put personal data where it does
-  not belong (URLs, logs, third parties not asked for).
+Para produtos onde se aplicam, são inegociáveis:
+
+- **Isolamento por dono (multi-tenant).** Se os dados são de posse por tenant/conta, **toda**
+  query é escopada pelo id do dono; um dono **nunca** pode ler dados de outro.
+- **Gating de capacidade.** Uma feature/módulo desativado retorna **not-found (404)** na rota, não
+  apenas um botão escondido. A ausência deve ser indistinguível de "nunca existiu".
+- **Higiene de identificadores.** Identificadores/slugs públicos são validados contra uma lista de
+  reservados e únicos no seu escopo.
+
+---
+
+## Privacidade por padrão
+
+- Armazene **apenas** o que a feature estritamente precisa. Evite classes inteiras de dados
+  sensíveis que o produto não requer (ex.: prontuários/dados de saúde para uma ferramenta de
+  agenda-e-cobrança).
+- Prefira a opção mais preservadora de privacidade por padrão; não coloque dado pessoal onde ele
+  não pertence (URLs, logs, terceiros não solicitados).

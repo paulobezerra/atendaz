@@ -1,56 +1,55 @@
-# SSD — Automation: Scripts Over AI
+# SSD — Automação: Scripts no Lugar da IA
 
-**Repetitive, deterministic work belongs in scripts and git hooks — not in an agent's prompt.**
-The agent *orchestrates and reasons*; the machinery *enforces the invariants* the same way every
-time. This keeps the agent cheap and fast, and makes it **impossible to "forget" a gate**: a
-human or an AI can skip a checklist item, but a pre-commit hook cannot.
+**Trabalho repetitivo e determinístico pertence a scripts e git hooks — não ao prompt de um
+agente.** O agente *orquestra e raciocina*; a maquinaria *garante os invariantes* sempre do mesmo
+jeito. Isso mantém o agente barato e rápido, e torna **impossível "esquecer" um portão**: um
+humano ou uma IA pode pular um item de checklist, mas um pre-commit hook não pode.
 
-## The dividing line
+## A linha divisória
 
-Ask of any step: *"Does this need judgement, or just execution?"*
+Pergunte de qualquer passo: *"Isto exige julgamento, ou só execução?"*
 
-| Do it in a **script / hook** (deterministic) | Do it with the **agent** (judgement) |
+| Faça num **script / hook** (determinístico) | Faça com o **agente** (julgamento) |
 | :--- | :--- |
-| Run the test suite | Decide *what* to test and write the tests |
-| Lint / format | Resolve a design or architecture question |
-| Audit dependencies for vulnerabilities | Choose which dependency to adopt |
-| Run the production build / type-check | Interpret a build failure and fix the cause |
-| Skip the deploy build for doc-only commits | Write the documentation |
-| Block a push when the suite is red | Diagnose *why* the suite went red |
+| Rodar a suíte de testes | Decidir *o que* testar e escrever os testes |
+| Lint / format | Resolver uma dúvida de design ou arquitetura |
+| Auditar dependências por vulnerabilidades | Escolher qual dependência adotar |
+| Rodar o build de produção / type-check | Interpretar uma falha de build e corrigir a causa |
+| Pular o build de deploy em commits só-de-doc | Escrever a documentação |
+| Bloquear um push quando a suíte está vermelha | Diagnosticar *por que* a suíte ficou vermelha |
 
-If a step is the same every time and has a binary pass/fail, it should be a script. The agent's
-job is to react to the script's verdict, not to re-perform the check by hand.
+Se um passo é igual toda vez e tem um pass/fail binário, deve ser um script. O trabalho do agente
+é reagir ao veredito do script, não refazer a checagem na mão.
 
-## Where the checks live
+## Onde as checagens vivem
 
-- **Pre-commit hook** — the fast integrity checks (at minimum, the test suite). A red result
-  aborts the commit.
-- **Pre-push hook** — the gate that protects shared branches (the suite, and the
-  production-dependency vulnerability audit). A failure **blocks the push by design**.
-- **Ignored-build step** — a versioned script that tells the host to **skip the build** when a
-  commit only touched documentation/tooling paths, so `ssd-doc` commits don't deploy.
-- **CI (optional)** — the same scripts, re-run on the server as a backstop.
+- **Pre-commit hook** — as checagens rápidas de integridade (no mínimo, a suíte de testes). Um
+  resultado vermelho aborta o commit.
+- **Pre-push hook** — o portão que protege branches compartilhadas (a suíte, e o audit de
+  vulnerabilidade das dependências de produção). Uma falha **bloqueia o push por design**.
+- **Ignored-build step** — um script versionado que diz ao host para **pular o build** quando um
+  commit só tocou caminhos de documentação/tooling, para que commits de `ssd-doc` não deployem.
+- **CI (opcional)** — os mesmos scripts, re-executados no servidor como rede de segurança.
 
-Every hook is just a thin wrapper that calls a **versioned script** in the repo, so the logic is
-reviewable, testable, and identical for every contributor and every agent.
+Todo hook é apenas um invólucro fino que chama um **script versionado** no repo, para que a lógica
+seja revisável, testável e idêntica para todo contribuidor e todo agente.
 
-## Prefer hooks over doing it in a command
+## Prefira hooks a fazer no comando
 
-A command like `ssd-done` should **not** re-implement CI/CD by hand in the agent's reasoning.
-It should **rely on the hooks/scripts** to have already enforced the invariants, and concern
-itself only with the judgement part (is this the right thing to merge? did production actually
-behave?). Concretely: push the checks **down** into husky/CI wherever they are deterministic, and
-let the commands assume them. The less the agent re-derives a mechanical check, the less it can
-get it wrong.
+Um comando como o `ssd-done` **não** deve reimplementar CI/CD na mão, no raciocínio do agente.
+Deve **confiar** que os hooks/scripts já garantiram os invariantes, e se ocupar só da parte de
+julgamento (é a coisa certa a mergear? produção de fato se comportou?). Concretamente: empurre as
+checagens **para baixo**, para husky/CI, sempre que forem determinísticas, e deixe os comandos as
+assumirem. Quanto menos o agente re-deriva uma checagem mecânica, menos ele pode errá-la.
 
-## Rules
+## Regras
 
-1. **A new repetitive check is a script first.** If you find yourself doing the same mechanical
-   verification across features, propose moving it into a hook/script (via `ssd-code`, since
-   scripts are code) rather than baking it into a prompt.
-2. **Hooks are load-bearing, not advisory.** A failing gate blocks the action; it is never
-   "warn and continue."
-3. **Scripts are versioned and reviewable.** No hidden local-only automation — the whole team
-   (and every agent) runs the identical checks.
-4. **The agent trusts the script's verdict.** On green, proceed; on red, diagnose the cause —
-   do not re-run the check manually to "double-check" what the script already decided.
+1. **Uma nova checagem repetitiva é script primeiro.** Se você se pega fazendo a mesma verificação
+   mecânica entre features, proponha movê-la para um hook/script (via `ssd-code`, já que scripts
+   são código) em vez de embuti-la num prompt.
+2. **Hooks são estruturais, não consultivos.** Um portão que falha bloqueia a ação; nunca é
+   "avisa e continua".
+3. **Scripts são versionados e revisáveis.** Sem automação escondida só-local — o time inteiro (e
+   todo agente) roda as checagens idênticas.
+4. **O agente confia no veredito do script.** No verde, prossegue; no vermelho, diagnostica a
+   causa — não re-roda a checagem na mão para "conferir" o que o script já decidiu.
