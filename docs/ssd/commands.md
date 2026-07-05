@@ -15,12 +15,21 @@ Trate o comando com que você foi invocado como um muro que não pode transpor:
 
 | Comando | Pode mudar | NÃO pode |
 | :--- | :--- | :--- |
-| `ssd-doc` | Documentação **base/transversal** (visão, arquitetura, modelo de dados, decisões) | Tocar código; criar/editar a spec de uma feature |
-| `ssd-spec` | A **spec de uma feature** + seus **protótipos navegáveis** (UI + contrato de dados) | Tocar código de produção; pular a aprovação do protótipo |
+| `ssd-doc` | Documentação **base/transversal** (visão, arquitetura, modelo de dados, decisões) | Tocar código; **criar/editar a spec de uma feature ou seus protótipos** |
+| `ssd-spec` | A **spec de uma feature** + seus **protótipos navegáveis** (UI + contrato de dados) | Tocar código de produção; **editar a documentação base/transversal**; pular a aprovação do protótipo |
 | `ssd-plan` | Apenas o plano de execução | Escrever/editar/deletar código; rodar testes que mudem estado; corrigir código quebrado (registra como débito) |
 | `ssd-code` | Código-fonte (única porta de entrada para isso) | Trabalhar fora da branch da feature; mergear no tronco |
 | `ssd-test` | Nada (roda testes, reporta) | Alterar estado do git |
 | `ssd-done` | O tronco (apenas merge) | Rodar sem prova em produção |
+
+### Fronteira dura entre `ssd-doc` e `ssd-spec`
+
+A separação é **bidirecional e sem exceção**: **`ssd-doc` não altera spec, e `ssd-spec` não
+altera doc base.** Cada um toca **só o seu artefato** — `ssd-doc` mexe na documentação
+base/transversal (nunca numa spec de feature nem em protótipo); `ssd-spec` mexe na spec de uma
+feature e seus protótipos (nunca na doc base). Se, trabalhando numa spec, você descobrir uma
+lacuna na doc base (ou vice-versa), **pare e passe o bastão** para o outro comando — não
+atravesse a fronteira "de passagem".
 
 ## `ssd-doc {tópico}` — documentação base & transversal
 
@@ -50,8 +59,19 @@ real** (ver [principles.md](principles.md) §2). Você deve:
 4. Commit no tronco (spec + protótipos), **sem deploy**. Não cria branch — a branch é do
    `ssd-plan`.
 
-Uma feature sem esse protótipo navegável aprovado (UI **e** contrato de dados, conforme a feature)
-**não passa no DOR** e não pode ir ao `ssd-plan`.
+**Baixo custo, descartável (regra dura).** O protótipo é barato e **descartável** — não gaste
+tempo/tokens buscando perfeição, e **jamais** o reaproveite como código de produção. Ele deve ser
+realista o bastante para dar uma **impressão nítida** do resultado final, e nada além disso (ver
+[principles.md](principles.md) §2).
+
+**Quando recomendar NÃO prototipar.** Se um protótipo barato não consegue dar essa impressão
+nítida (um protótipo fiel custaria quase o mesmo que o código real, ou a fronteira não tem
+superfície que valha previsualizar), **recomende explicitamente não prototipar** e **grave essa
+decisão, com justificativa, no DOR da spec**. Isso torna a ausência de protótipo uma escolha
+consciente e aprovada pelo humano — não uma lacuna.
+
+Uma feature sem protótipo navegável aprovado (UI **e** contrato de dados, conforme o caso) **—
+e sem essa justificativa registrada no DOR —** **não passa no DOR** e não pode ir ao `ssd-plan`.
 
 ## `ssd-plan {ID}` — o plano de execução
 
@@ -108,7 +128,9 @@ O **único** comando que altera o tronco, e uma **decisão exclusivamente humana
 - **DOR (Definition of Ready)** — uma spec está pronta só quando: (1) foi produzida no `ssd-spec`,
   está completa e sem ambiguidade, alinhada às políticas de qualidade e ao modelo de domínio;
   (2) **toda tela nova/refeita e todo contrato de dados** têm **protótipo navegável aprovado e
-  linkado**; (3) suas necessidades de ambiente/infraestrutura estão identificadas. O DOR é
+  linkado** — **ou** uma **justificativa registrada no DOR** de que prototipar não agregaria
+  (baixo valor / não daria impressão nítida a baixo custo); (3) suas necessidades de
+  ambiente/infraestrutura estão identificadas. O DOR é
   **validado como portão de entrada do `ssd-plan`** e **revalidado no `ssd-code`**. Qualquer item
   falho **para o comando** e retorna ao `ssd-spec`/`ssd-doc`.
 - **DOD (Definition of Done)** — uma feature está pronta só após verificada **em produção**,

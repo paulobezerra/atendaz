@@ -57,14 +57,32 @@ melhor", **não** é aprovação. O protótipo aprovado é **versionado** (em `t
 **linkado na spec**; é ele — não a intuição do agente — que a implementação replica e contra ele
 que a revisão humana compara.
 
+**Baixo custo e descartável.** O protótipo é **deliberadamente barato**: não gaste tempo nem
+tokens fazendo algo perfeito. Ele é **descartável** e **nunca**, em hipótese alguma, faz parte da
+solução final — não é reaproveitado como código de produção; serve para **decidir a fronteira** e
+depois é jogado fora. O objetivo é a decisão, não o artefato.
+
+**Realista o bastante.** Ainda assim deve ser **realista e condizente com o resultado final** —
+dar uma **impressão nítida** do que se pode obter. O equilíbrio é o ponto: barato **e** fiel o
+suficiente para que a decisão tomada sobre ele seja válida. Fidelidade além disso é desperdício.
+
+**Quando NÃO vale prototipar.** Se um protótipo barato **não** consegue dar essa impressão nítida
+— porque um protótipo fiel custaria quase o mesmo que o código real, ou porque a fronteira não tem
+superfície que valha previsualizar — **recomende explicitamente não prototipar** e **registre essa
+decisão (com a justificativa) no DOR da spec**. Assim a ausência de protótipo é uma escolha
+consciente e aprovada, não uma lacuna. Prototipar por prototipar, sem ganho de decisão, é
+desperdício e viola o "baixo custo".
+
 **Onde vive.** A prototipação é o coração do `ssd-spec` e é **requisito de DOR**: uma feature com
-UI e/ou contrato de dados sem protótipo navegável aprovado **não** entra no `ssd-plan`.
+UI e/ou contrato de dados sem protótipo navegável aprovado **— ou sem a justificativa registrada
+de que não vale prototipar —** **não** entra no `ssd-plan`.
 
 **Por quê.** Um contrato errado — visual ou de dados — é o erro mais caro de descobrir depois do
 código: cada "tá feio/tá errado, refaz" custa um ciclo inteiro de código + teste + deploy.
 Prototipar a fronteira move a decisão para *antes* de qualquer linha de produção, onde uma rodada
 custa segundos, e dá ao humano **controle total do que entra e sai da aplicação** — testando tudo
-via protótipo antes de qualquer código real.
+via protótipo antes de qualquer código real. Mas o protótipo é **meio, não fim**: barato,
+descartável, e dispensável quando não agrega à decisão.
 
 ---
 

@@ -37,8 +37,9 @@ Ver [`principles.md`](principles.md) para o enunciado completo de cada um.
    pronto.
 2. **Prototipação da fronteira (interface e contrato de dados) antes de implementar.** Tudo que
    entra e sai da aplicação — telas **e** contratos de API — é prototipado de forma **navegável**
-   (protótipo clicável + OpenAPI/API fake) e aprovado antes de qualquer código real. O humano tem
-   controle total das fronteiras da app, testando-as via protótipo primeiro.
+   (protótipo clicável + OpenAPI/API fake) e aprovado antes de qualquer código real. O protótipo é
+   **barato e descartável** (nunca vira parte da solução) e realista o bastante para dar impressão
+   nítida do resultado; quando nem isso compensa, o certo é **não prototipar** e registrar no DOR.
 3. **Spec como fonte da verdade, não o código.** O comportamento é decidido na spec primeiro; o
    código é a spec tornada executável. Quando divergem, a spec está certa e o código tem um bug.
 
