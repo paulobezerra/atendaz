@@ -28,7 +28,8 @@ liga "preview" e "produção" ao seu host real.
 
 | Comando | Efeito de git / deploy |
 | :--- | :--- |
-| `ssd-doc` | Commit de docs/specs direto no tronco. **Sem deploy** (ver [builds só-de-doc](#commits-só-de-doc-pulam-o-build)). |
+| `ssd-doc` | Commit de documentação base/transversal direto no tronco. **Sem deploy** (ver [builds só-de-doc](#commits-só-de-doc-pulam-o-build)). |
+| `ssd-spec` | Commit da spec + protótipos navegáveis (UI + OpenAPI/API fake) direto no tronco. **Sem deploy.** Não cria branch. |
 | `ssd-plan` | Cria `feature/{ID}-{slug}` a partir do tronco; commita **apenas** o plano nela. Sem código. |
 | `ssd-code` | Commits incrementais na branch; um push → deploy de **stage**. Nunca toca o tronco. |
 | `ssd-test` | Só roda testes. Não altera estado do git. |
@@ -40,6 +41,7 @@ Comandos que produzem alterações têm **autorização permanente** para versio
 de tal comando, commite **e** pushe automaticamente, **sem pausar para perguntar**.
 
 - `ssd-doc` → commit + push no tronco.
+- `ssd-spec` → commit + push da spec + protótipos no tronco.
 - `ssd-plan` → commit + push do plano na branch da feature.
 - `ssd-code` → commit(s) + push na branch da feature (publica em stage).
 - `ssd-done` → merge + push no tronco.
@@ -71,6 +73,7 @@ específicas de ambiente e corrigidas por *fix-forward*.
 
 Para que commits **somente de documentação** no tronco (`ssd-doc`) **não** gerem deploy de
 produção, o host é configurado com um **ignored-build step**: um pequeno script versionado que
-**pula o build** quando um commit só tocou caminhos de documentação/tooling. É uma checagem
+**pula o build** quando um commit só tocou caminhos de documentação/protótipos/tooling — para que
+commits de `ssd-doc` **e `ssd-spec`** (specs + protótipos navegáveis) não deployem. É uma checagem
 determinística — pertence a um script, não ao julgamento de um agente (ver
 [automation.md](automation.md)).

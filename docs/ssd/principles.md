@@ -31,25 +31,40 @@ git hooks — um hook que roda testes só protege se os testes forem reais.
 
 ---
 
-## 2. Prototipação de interface antes de implementar
+## 2. Prototipação da fronteira (interface **e** contrato de dados) antes de implementar
 
-**Regra.** Nenhuma tela **nova**, e nenhuma tela **substancialmente refeita**, chega ao código
-de produção sem um **protótipo estático que o humano aprovou antes**.
+**Regra.** Tudo que **entra e sai** da aplicação é prototipado de forma **navegável** e aprovado
+pelo humano **antes** de qualquer código real. Prototipação **não é só de tela** — cobre as
+**duas** fronteiras da aplicação:
 
-- O protótipo é feito num **meio barato e rápido** (HTML/CSS puro + um pouco de JS vanilla — sem
-  framework, sem build, sem dados ou APIs reais). Captura layout, estados e interação — não a
-  fiação de produção.
-- É **apresentado ao humano e iterado** até a aprovação **explícita** ("aprovado", "pode
-  implementar"). Silêncio, ou "tá melhor", **não** é aprovação.
-- O protótipo aprovado é **versionado** e **linkado na seção UX da spec**. É ele — não a
-  intuição do agente — que a implementação deve replicar fielmente, e contra ele que a revisão
-  humana compara.
-- A prototipação é parte da **spec** (acontece no `ssd-doc`) e é **requisito de DOR**: uma spec
-  com UI sem protótipo aprovado não entra no `ssd-plan`.
+- **Interface (UI).** Toda tela **nova** ou **substancialmente refeita** vira um protótipo
+  estático navegável (HTML/CSS + JS vanilla — sem framework, sem build, sem dados/APIs reais).
+  Captura layout, estados e interação.
+- **Contrato de dados (API).** Todo contrato de troca de dados que a aplicação **expõe ou
+  consome** — REST, GraphQL, gRPC, eventos/webhooks — vira um artefato navegável: uma **doc
+  OpenAPI** e/ou uma **API fake executável** (mock server) que o humano consegue **chamar** e ver
+  as requisições/respostas reais. Para outros protocolos, o equivalente (ex.: gRPC → o `.proto` +
+  um stub que responde). O humano precisa **ter certeza de como os dados são estruturados** antes
+  de existir implementação.
 
-**Por quê.** Decidir o visual em código de produção é o lugar mais caro de iterar: cada rodada de
-"tá feio, refaz" custa um ciclo inteiro de código + teste + deploy. Prototipar move a decisão
-visual para *antes* de qualquer linha de produção, onde uma rodada custa segundos.
+**Navegável = interativo.** O protótipo não é uma imagem nem um ASCII: é algo com que o humano
+**interage** (clica na tela, chama o endpoint fake) — e a **spec final emerge dessa interação**,
+validada, não adivinhada. É o que separa o trabalho de *spec* do de *documentação* (ver o comando
+[`ssd-spec`](commands.md)).
+
+**Aprovação explícita.** É apresentado e iterado até o "aprovado" explícito. Silêncio, ou "tá
+melhor", **não** é aprovação. O protótipo aprovado é **versionado** (em `templates/…`) e
+**linkado na spec**; é ele — não a intuição do agente — que a implementação replica e contra ele
+que a revisão humana compara.
+
+**Onde vive.** A prototipação é o coração do `ssd-spec` e é **requisito de DOR**: uma feature com
+UI e/ou contrato de dados sem protótipo navegável aprovado **não** entra no `ssd-plan`.
+
+**Por quê.** Um contrato errado — visual ou de dados — é o erro mais caro de descobrir depois do
+código: cada "tá feio/tá errado, refaz" custa um ciclo inteiro de código + teste + deploy.
+Prototipar a fronteira move a decisão para *antes* de qualquer linha de produção, onde uma rodada
+custa segundos, e dá ao humano **controle total do que entra e sai da aplicação** — testando tudo
+via protótipo antes de qualquer código real.
 
 ---
 
@@ -82,5 +97,5 @@ reversa dele depois.
 | Pilar | Garantido por |
 | :--- | :--- |
 | Testes antes do código | O `ssd-code` escreve testes junto com a mudança; git hooks rodam a suíte no commit/push; uma suíte vermelha bloqueia o push ([`automation.md`](automation.md)). |
-| Protótipo antes de implementar | Portão de DOR no `ssd-plan` (para se a UI não estiver prototipada); portão de aprovação humana antes de o `ssd-code` replicar uma tela ([`commands.md`](commands.md)). |
+| Protótipo da fronteira antes de implementar | Produzido no `ssd-spec` (UI + contrato de dados, navegáveis); portão de DOR no `ssd-plan` (para se UI ou API não estiverem prototipadas e aprovadas); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
 | Spec como fonte da verdade | O `ssd-doc` governa toda decisão de comportamento; `ssd-plan`/`ssd-code` revalidam contra a spec e se recusam a prosseguir com inconsistência. |

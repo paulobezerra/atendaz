@@ -35,21 +35,23 @@ Ver [`principles.md`](principles.md) para o enunciado completo de cada um.
 1. **Testes antes de tocar no código.** Lógica crítica é escrita test-first; a correção de bug
    começa pelo teste que falha e a reproduz. "Verde" que não cobre a superfície alterada não é
    pronto.
-2. **Prototipação de interface antes de implementar.** Nenhuma tela nova ou refeita chega ao
-   código de produção sem um protótipo estático aprovado. Decisões visuais se tomam num meio
-   barato e rápido — não em código de framework depois do deploy.
+2. **Prototipação da fronteira (interface e contrato de dados) antes de implementar.** Tudo que
+   entra e sai da aplicação — telas **e** contratos de API — é prototipado de forma **navegável**
+   (protótipo clicável + OpenAPI/API fake) e aprovado antes de qualquer código real. O humano tem
+   controle total das fronteiras da app, testando-as via protótipo primeiro.
 3. **Spec como fonte da verdade, não o código.** O comportamento é decidido na spec primeiro; o
    código é a spec tornada executável. Quando divergem, a spec está certa e o código tem um bug.
 
 ## Os comandos
 
-O SSD é conduzido por cinco comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
+O SSD é conduzido por seis comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
 pode mudar, e cada um termina passando o bastão para o próximo, com um portão humano no meio.
 Definições completas em [`commands.md`](commands.md).
 
 | Comando | Governa | Produz |
 | :--- | :--- | :--- |
-| `ssd-doc` | Toda documentação & specs (incl. protótipos) | Docs / spec atualizados no tronco |
+| `ssd-doc` | Documentação base/transversal | Docs atualizados no tronco |
+| `ssd-spec` | A spec da feature via **prototipação navegável** (UI + contrato de dados) | Spec + protótipos (clicável + OpenAPI/API fake) no tronco |
 | `ssd-plan` | O plano de execução | Branch da feature + plano (sem código) |
 | `ssd-code` | Código-fonte | Commits na branch da feature → deploy de stage |
 | `ssd-test` | Execuções de teste | Evidência (local / stage / prod) |
