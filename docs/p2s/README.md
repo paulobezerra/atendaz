@@ -59,10 +59,11 @@ Ver [`principles.md`](principles.md) para o enunciado completo de cada um.
 3. **Spec como fonte da verdade, não o código.** O comportamento é decidido na spec primeiro; o
    código é a spec tornada executável. Quando divergem, a spec está certa e o código tem um bug.
 
-E um **pilar de apoio** (segundo nível): **automação.** Todo trabalho determinístico (rodar testes,
-lint, build, audit, pular o deploy de um commit só-de-doc) vive em **scripts e git hooks**, não no
-prompt — economiza tokens e torna impossível "esquecer" um portão. Ele **serve** aos três
-inegociáveis; ver [`principles.md`](principles.md).
+E um **pilar de apoio** (segundo nível): **DRY & automação.** Regra-base: **nunca faça duas vezes a
+mesma coisa** — reuse/referencie (fonte única da verdade) e automatize o determinístico (testes,
+lint, build, audit) em **scripts e git hooks**, fora do prompt. Economiza tokens/esforço e torna
+impossível "esquecer" um portão; inclui otimizações opcionais de **compactação de contexto**. Ele
+**serve** aos três inegociáveis; ver [`principles.md`](principles.md) e [`automation.md`](automation.md).
 
 ## Os comandos
 

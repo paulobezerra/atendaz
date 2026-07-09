@@ -1,8 +1,9 @@
 # P2S — Automação: Scripts no Lugar da IA
 
-> Este é o **pilar de apoio** do P2S (segundo nível, a serviço dos três inegociáveis — ver
-> [`principles.md`](principles.md#pilar-de-apoio-automação)). Seu valor: **economia de tokens** e
-> **integridade**.
+> Este é o **pilar de apoio** do P2S — **DRY & automação** (segundo nível, a serviço dos três
+> inegociáveis — ver [`principles.md`](principles.md#pilar-de-apoio-dry--automação)). Regra-base:
+> **nunca faça duas vezes a mesma coisa** — reuse/referencie, e o que for determinístico, automatize.
+> Ganhos: **economia de tokens/esforço** e **integridade**.
 
 **Trabalho repetitivo e determinístico pertence a scripts e git hooks — não ao prompt de um
 agente.** O agente *orquestra e raciocina*; a maquinaria *garante os invariantes* sempre do mesmo
@@ -60,3 +61,31 @@ assumirem. Quanto menos o agente re-deriva uma checagem mecânica, menos ele pod
    todo agente) roda as checagens idênticas.
 4. **O agente confia no veredito do script.** No verde, prossegue; no vermelho, diagnostica a
    causa — não re-roda a checagem na mão para "conferir" o que o script já decidiu.
+
+## Economia de tokens & compactação de contexto (opcional)
+
+DRY vale também para o **contexto**: não re-alimente nem re-derive o que já existe. Estas são
+otimizações **opcionais e plugáveis** — o P2S fica agnóstico, apenas as recomenda. Três famílias:
+
+1. **Compressão de prompt/contexto.** Um modelo pequeno descarta tokens de baixo valor antes do
+   modelo grande (ex.: **LLMLingua / LLMLingua-2**, open-source; ~2–5× típico). Bom para contexto
+   longo/RAG.
+2. **Multiagente com sumarização.** Um subagente especialista faz a varredura pesada (ler muitos
+   arquivos, digerir logs, pesquisar) e **retorna só um resumo compacto** — a saída bruta **nunca
+   entra** no contexto principal. É a opção **nativa do harness** (subagentes/forks) e **sem
+   dependência externa** — ver abaixo.
+3. **Gestão nativa de contexto.** Evicção de tool-results obsoletos, *prompt caching*, memória/RAG
+   (carregar doc sob demanda) e auto-compactação em fronteiras de subtarefa.
+
+**Regra dura — nunca compacte a fonte da verdade.** Compacta-se o **transitório e verboso** (tool
+output, logs, histórico, resultados intermediários). **Jamais** a spec, os protótipos/contratos
+aprovados, os guardrails ou a constitution — comprimir o load-bearing viola o pilar 3 (spec como
+fonte da verdade). Compressão é apoio; se apaga o que decide comportamento, quebrou.
+
+## O subagente sumarizador (instalado neste repo)
+
+Este repositório traz o subagente **`summarizer`** (`.claude/agents/summarizer.md`) — a
+implementação da família 2 acima. Delegue a ele varreduras amplas e read-only (ler spec×plan×código
+para o `p2s-review`, digerir logs, pesquisa exploratória): ele roda em modelo barato, mantém a saída
+bruta fora do seu contexto e devolve um **resumo denso** (fatos load-bearing, `arquivo:linha`, a
+resposta), nunca um dump. É o "filtro" de token do projeto, honrando a regra dura acima.

@@ -121,20 +121,27 @@ reversa dele depois.
 
 ---
 
-## Pilar de apoio: automação
+## Pilar de apoio: DRY & automação
 
-Além dos três inegociáveis, há um **pilar de apoio**. Ele **não é um fim em si** — é a alavanca que
-torna os outros três **baratos e à prova de esquecimento**: **todo trabalho determinístico vai para
-scripts e git hooks, nunca para o prompt de um agente.**
+Além dos três inegociáveis, há um **pilar de apoio**, e sua regra-base é o **DRY (Don't Repeat
+Yourself)**: **nunca faça duas vezes a mesma coisa — reuse, tenha fonte única da verdade, e o que
+for repetição determinística, automatize.** Ele **não é um fim em si** — é a alavanca que torna os
+outros três **baratos e à prova de esquecimento**.
 
-**Regra.** Se um passo é igual toda vez e tem um veredito binário (rodar testes, lint, build, audit,
-pular o deploy de um commit só-de-doc), ele é um **script/hook** — não uma instrução que a IA
-reexecuta de cabeça. O agente **orquestra e lê o veredito**; a maquinaria garante o invariante.
+**DRY tem duas faces:**
 
-**Por quê.** Dois ganhos: **economia de tokens** (a IA não gasta contexto refazendo checagem
-mecânica) e **integridade** (um humano ou uma IA pode pular um item de checklist; um pre-commit hook
-não pode). É de **segundo nível** porque **serve** aos três pilares — sem ele os pilares ainda
-valem, só custam mais caro e falham mais. Detalhes em [`automation.md`](automation.md).
+- **Referenciar, não duplicar.** Uma informação vive em **um** lugar; os demais **apontam** para ela
+  (a spec referencia a constitution; o plano referencia a política de qualidade; a doc de produto
+  referencia a política do framework). Duplicar é criar duas verdades que vão divergir.
+- **Automatizar o repetido.** Todo trabalho **determinístico e recorrente** (rodar testes, lint,
+  build, audit, pular o deploy de um commit só-de-doc) vai para **scripts e git hooks**, nunca para
+  o prompt. O agente **orquestra e lê o veredito**; a maquinaria garante o invariante.
+
+**Por quê.** Dois ganhos: **economia de tokens/esforço** (não se re-deriva nem se recopia o que já
+existe) e **integridade** (uma fonte única não diverge; um pre-commit hook não "esquece" um portão).
+É de **segundo nível** porque **serve** aos três pilares — sem ele eles ainda valem, só custam mais
+caro e falham mais. Inclui otimizações **opcionais** de **economia de tokens e compactação de
+contexto** (compressão, subagentes-sumarizadores, caching) — ver [`automation.md`](automation.md).
 
 ---
 
@@ -145,4 +152,4 @@ valem, só custam mais caro e falham mais. Detalhes em [`automation.md`](automat
 | Testes antes do código | O `p2s-code` escreve testes junto com a mudança (TDD nas áreas críticas); git hooks rodam a suíte; o `p2s-review` lê o veredito e revisa a consistência ([`automation.md`](automation.md)). |
 | Protótipo da fronteira antes de implementar | Produzido no `p2s-spec` (UX, API, dados e integrações, navegáveis) sobre a linguagem visual do `p2s-design`; portão de DOR no `p2s-plan` (para se alguma fronteira não estiver prototipada e aprovada); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
 | Spec como fonte da verdade | `p2s-discovery` (produto) e `p2s-spec` (feature) governam as decisões de comportamento; `p2s-plan`/`p2s-code` revalidam contra a spec e se recusam a prosseguir com inconsistência; `p2s-doc` só reconcilia a doc com a realidade. |
-| *Apoio:* automação | Hooks/scripts (husky/CI) garantem os invariantes determinísticos; os comandos confiam no veredito em vez de re-derivá-lo ([`automation.md`](automation.md)). |
+| *Apoio:* DRY & automação | Fonte única + referência em vez de duplicar; hooks/scripts (husky/CI) garantem os invariantes determinísticos; os comandos confiam no veredito em vez de re-derivá-lo. Otimizações opcionais de economia de tokens ([`automation.md`](automation.md)). |
