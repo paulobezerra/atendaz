@@ -91,3 +91,18 @@ definição — nunca a copia (Claude: `.claude/agents/summarizer.md`; Junie: `.
 Delegue a ele varreduras amplas e read-only (ler spec×plan×código para o `p2s-review`, digerir logs,
 pesquisa exploratória): roda barato, mantém a saída bruta fora do contexto principal e devolve um
 resumo denso. **Padrão numa instalação, mas opcional** (ver [`install.md`](install.md)).
+
+## Trava do framework (opcional)
+
+O próprio framework (`docs/p2s/`) é um bom candidato a **invariante determinístico protegido por
+hook**: um projeto pode querer que o P2S **só mude de forma explícita**, nunca por deriva de um
+agente no meio de outra tarefa. O padrão (agnóstico de agente):
+
+- Um **git pre-commit hook** rejeita qualquer commit que altere `docs/p2s/**`, **a não ser** que uma
+  chave de destravamento explícita esteja presente (ex.: uma variável de ambiente como
+  `P2S_UNLOCK=1`, ou um marcador combinado na mensagem de commit).
+- É **agnóstico** porque roda no git, não numa IA — protege igual seja Claude, Junie, Cursor ou um
+  humano. E honra o pilar: o portão vive num **script/hook**, não na memória do agente.
+- O agente **nunca** destrava por conta própria; destravar é uma decisão **explícita do humano**.
+
+O projeto declara se adota a trava, e como, no seu `docs/project/base/workflow.md`.

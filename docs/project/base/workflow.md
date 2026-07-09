@@ -33,11 +33,24 @@ A **mecânica concreta** de git, ambientes e deploy deste projeto. O framework P
 
 ## Automação (hooks & deploy)
 
-- **husky pre-commit**: `npm test`. **pre-push**: `npm run test:local`. Falha **bloqueia** por design.
+- **husky pre-commit**: **trava do P2S** (`scripts/guard-p2s.sh`) + `npm test`. **pre-push**:
+  `npm run test:local`. Falha **bloqueia** por design.
 - **Ignored-build step (Vercel)**: `scripts/vercel-ignore-build.sh` — **pula** o build/deploy quando
   o commit só tocou `docs/**`, `*.md`, `.claude/**`, `templates/referencia/**`, `templates/prototipos/**`
   (docs, protótipos, tooling). Assim commits de doc/discovery/design/spec no `master` **não** deployam.
 - **`npm audit --omit=dev` = 0** antes do push (Guardrail 8).
+
+## Trava do framework P2S
+
+Este projeto **trava o framework** (`docs/p2s/`): ele **só muda de forma explícita** (ver o padrão
+agnóstico em [`docs/p2s/automation.md`](../../p2s/automation.md#trava-do-framework-opcional)).
+
+- **Mecanismo:** `scripts/guard-p2s.sh` no **pre-commit** rejeita qualquer commit que altere
+  `docs/p2s/**`, a não ser que a variável **`P2S_UNLOCK=1`** esteja setada.
+- **Para mexer no framework (decisão explícita do humano):**
+  `P2S_UNLOCK=1 git commit -m "doc(p2s): ..."`.
+- **O agente nunca destrava sozinho.** Só usa `P2S_UNLOCK=1` quando o humano pedir explicitamente
+  para alterar o P2S; fora isso, mudança em `docs/p2s/` é bloqueada por design.
 
 ## Política de commit & push (solo)
 
