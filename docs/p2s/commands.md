@@ -114,13 +114,23 @@ total do que entra e sai da aplicação, testando tudo via protótipo antes de q
      `templates/prototipos/{tela}.html`, **seguindo a linguagem visual do `p2s-design`**
      (`templates/referencia/`) — não reinvente a aparência aqui.
    - **Contrato de API** — para cada troca que a feature expõe ou consome: **doc OpenAPI** em
-     `templates/prototipos/api/{feature}.yaml` e/ou uma **API fake executável** que o humano chama.
-     Outros protocolos: o equivalente (gRPC → `.proto` + stub).
+     `templates/prototipos/api/{feature}.yaml`, um **viewer navegável** (`{feature}.html`, ex.: Redoc)
+     **e** uma **API fake EXECUTÁVEL** — um mock que o humano **chama de verdade** e vê os
+     status/corpos (ex.: `npx @stoplight/prism-cli mock {feature}.yaml`). Um `.yaml` cru, ou só o
+     viewer, **não** cumpre o "navegável": o humano tem de conseguir **invocar** e receber
+     200/400/404 com exemplos. **Valide o artefato antes de servir** (o YAML tem de parsear, senão o
+     viewer quebra). Outros protocolos: o equivalente (gRPC → `.proto` + stub executável).
    - **Formato dos dados persistidos** — o schema previsualizado como **diagrama ER navegável** (ex.:
-     Mermaid `erDiagram`) antes de existir modelo real.
+     Mermaid `erDiagram`) antes de existir modelo real. **Informe explicitamente** o que **já existe**
+     (leia os models/tabelas reais) vs o que a feature **cria/altera** — o humano precisa saber o
+     delta, não adivinhar.
    - **Integrações externas** — o contrato com cada terceiro, contra a doc oficial (nunca presumido —
      [fidelidade a API externa](quality.md#fidelidade-a-api-externa)).
-2. **Apresentar e iterar** até a **aprovação explícita** do humano. Silêncio não é aprovação.
+2. **Validar UMA fronteira por vez.** Apresente e itere **cada** fronteira (ordem natural: dados →
+   API → UX → integração) e **espere o "ok" explícito de cada uma** antes de passar à próxima.
+   **Nunca empacote** tudo numa aprovação só — um "ok" a um item **não** é aprovação do resto (foi
+   assim que uma spec passou com o protótipo de API quebrado). Silêncio não é aprovação; dê ao humano
+   **tempo e oportunidade de validar cada ponto**.
 3. **Registrar a spec** como o resultado do que foi aprovado — **todo protótipo aprovado vira spec**:
    fluxos, telas, contratos de API, formato dos dados e integrações, com **links** para os protótipos
    versionados em `templates/…`. Alinhar aos [guardrails/qualidade](quality.md) e ao modelo de domínio.
