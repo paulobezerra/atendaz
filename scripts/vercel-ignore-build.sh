@@ -7,7 +7,7 @@
 # — mantendo a master como fonte da verdade dos docs sem gerar deploys de
 # produção desnecessários.
 # templates/referencia/ é a referência visual fixa de design; templates/prototipos/ é o
-# workspace vivo de protótipos por tela (docs/00 — "Prototipação de Telas");
+# workspace vivo de protótipos de fronteira (docs/p2s/principles.md §2);
 # ambos são HTML estático fora do build do app.
 #
 # Configurar no painel: Project Settings → Git → Ignored Build Step →

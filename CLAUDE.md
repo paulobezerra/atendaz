@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-**Atendaz** — a modular multi-tenant SaaS for appointment scheduling + automated billing (via Asaas) + Brazilian electronic invoices (NFS-e). The codebase is currently at **Phase 0 (skeleton)**; most features described in `docs/` are specced but not yet built. Docs and code are in Portuguese.
+**Atendaz** — a modular multi-tenant SaaS for appointment scheduling + automated billing (via Asaas) + Brazilian electronic invoices (NFS-e). The codebase is currently at **Phase 0 (skeleton)**; most features described in `docs/project/` are specced but not yet built. Docs and code are in Portuguese.
 
 ## Commands
 
@@ -46,9 +46,9 @@ Next.js App Router (`src/app`). API routes only so far; all under `src/app/api/`
 2. **Tenant / Business** — the paying company (barbershop, clinic). Owns the data.
 3. **Cliente** — the Tenant's end customer (patient).
 
-The `Plano` defines which **modules** (`agenda`, `agendaPublica`, `cobranca`, `nfse`) a Business gets; a Business copies `modulos` from its Plano on signup. The full data model (business, professional, service, appointment, payment, invoice, etc.) lives in `docs/04-data-model.md` and should be treated as the source of truth before adding models.
+The `Plano` defines which **modules** (`agenda`, `agendaPublica`, `cobranca`, `nfse`) a Business gets; a Business copies `modulos` from its Plano on signup. The full data model (business, professional, service, appointment, payment, invoice, etc.) lives in `docs/project/base/04-data-model.md` and should be treated as the source of truth before adding models.
 
-## Non-negotiable guardrails (`docs/07-guardrails.md`)
+## Non-negotiable guardrails (`docs/project/base/07-guardrails.md`)
 
 These shape most feature code — read the full file before implementing, but the load-bearing ones:
 
@@ -61,12 +61,12 @@ These shape most feature code — read the full file before implementing, but th
 - **Zero vulnerabilities**: `npm audit` must be clean before pushing.
 - **Privacy**: no clinical/health data stored. No WhatsApp Business API — use `wa.me` links only. Transactional email via Resend, logged in `notification_log`.
 
-## Documentation-driven workflow
+## Documentation-driven workflow (P2S)
 
-The README defines an agent workflow where **docs are the source of truth**. `docs/` is structured as `00`–`09` base docs, `spec/F{ID}-*.md` per-feature specs, and `plans/{ID}-*.md` execution plans (`plans/archive/` once done). `docs/06-implementation-roadmap.md` is the ordered phase list and marks `[CONCLUÍDO]` features.
+This repo runs on **P2S (Prototype-to-Spec)** — a personal, tech/agent-agnostic framework whose rulebook lives in [`docs/p2s/`](docs/p2s/) (read `docs/p2s/README.md` first). Product-specific data lives in `docs/project/`: `base/` (`01`–`10` vision, architecture, data model, guardrails, design system…), `spec/F{ID}-*.md` per-feature specs, and `plans/{ID}-*.md` execution plans (`plans/archive/` once done). `docs/project/base/06-implementation-roadmap.md` is the ordered phase list and marks `[CONCLUÍDO]` features.
 
-The README's `/plan`, `/code`, `/doc`, `/test`, `/done` are a **convention from this repo's own agent process**, not Claude Code slash commands. If asked to act on them, follow `docs/00-agent-instructions.md`. Key constraints from that doc: a "plan" step must not modify code; "done" requires production-verified evidence; features are built strictly in roadmap order; logic/architecture changes go into `docs/` before code.
+The workflow is **six prefixed commands** — `p2s-doc`, `p2s-spec`, `p2s-plan`, `p2s-code`, `p2s-test`, `p2s-done` — surfaced as slash commands / skills (thin redirects in `.claude/commands/`); their rules live **only** in `docs/p2s/commands.md`, never in the command files. Load-bearing constraints: every boundary (UX, API, persisted-data shape, external integrations) is prototyped and approved **before** code, and an **approved prototype becomes the spec** (`docs/p2s/principles.md` §2); `p2s-plan` creates the feature branch and must not modify code; `p2s-code` only runs on that branch after re-validating the DOR; `p2s-done` is the only command that touches `master` and requires production-verified evidence; features are built strictly in roadmap order; behavior/architecture changes go into the spec/docs before code.
 
 ## Environment variables
 
-Defined in `docs/05-environment-variables.md` with a per-phase requirement table. Phase 0 needs only `MONGODB_URI`. Later phases add Google OAuth + `AUTH_SECRET` (F1), `CRYPTO_MASTER_KEY` + `ASAAS_BASE_URL` (F1), `RESEND_API_KEY`/`EMAIL_FROM` (F5), `PLATFORM_ASAAS_API_KEY` (F11). Local config goes in `.env.local`; production in the Vercel panel.
+Defined in `docs/project/base/05-environment-variables.md` with a per-phase requirement table. Phase 0 needs only `MONGODB_URI`. Later phases add Google OAuth + `AUTH_SECRET` (F1), `CRYPTO_MASTER_KEY` + `ASAAS_BASE_URL` (F1), `RESEND_API_KEY`/`EMAIL_FROM` (F5), `PLATFORM_ASAAS_API_KEY` (F11). Local config goes in `.env.local`; production in the Vercel panel.
