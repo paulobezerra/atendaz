@@ -110,9 +110,13 @@ tornada executável. Quando código e spec divergem, a **spec está certa** e o 
   código.
 - **O código nunca vira a autoridade por padrão.** "O código faz X, logo X deve estar certo" é o
   modo de falha que o P2S existe para evitar. Se X não está na spec, X é deriva não revisada.
-- **A config do agente não é a fonte da verdade.** Arquivos de atalho de comando (`.claude/`,
-  configs de IDE) apenas redirecionam para estes docs. As regras vivem aqui; trocar de agente não
-  perde nada.
+- **A config do agente não é a fonte da verdade (P2S é multiagente).** O framework (`docs/p2s/`) é
+  agnóstico de agente — não depende de Claude, Codex, Cursor, Junie ou de qualquer harness. Cada
+  agente tem **apenas adaptadores finos** que *referenciam* o framework (Claude: `.claude/`; Junie:
+  `.junie/`; etc.) — **nunca** cópias das regras, nem mesmo dos agentes de apoio (esses vivem em
+  [`agents.md`](agents.md)). **Trocar de agente não perde nada** (ex.: acabaram os tokens do Claude,
+  segue no Junie): basta gerar os adaptadores do novo agente via [`install.md`](install.md). Se um
+  adaptador "explica" uma regra, ele está errado — corte para uma referência.
 
 **Por quê.** Um agente de IA vai gerar, com confiança, comportamento plausível que ninguém pediu.
 A única defesa durável é um enunciado de intenção legível e de posse do humano, que tem

@@ -133,7 +133,9 @@ docs/
 │   ├── commands.md          — definições dos comandos, portões, encadeamento, fechamento
 │   ├── workflow.md          — branches, ambientes, deploy, ciclo de vida do descartável
 │   ├── quality.md           — política de testes, dependências/versões & segurança
-│   ├── automation.md        — scripts/hooks no lugar da IA para checagens repetitivas
+│   ├── automation.md        — DRY & automação; economia de tokens/compactação
+│   ├── agents.md            — agentes de apoio (ex.: summarizer), agnósticos de agente
+│   ├── install.md           — bootstrap: como qualquer agente liga o P2S (adaptadores finos)
 │   └── project-structure.md — o MANIFESTO: quais arquivos o produto deve ter e para quê
 └── project/      ← a instância do produto específico (em qualquer idioma)
     ├── base/          — a "lei" durável do produto (ver project-structure.md)
@@ -145,11 +147,22 @@ docs/
     │   └── workflow.md        — git flow & ambientes CONCRETOS do projeto
     ├── spec/          — uma spec por feature (fonte da verdade)
     └── plans/         — um plano de execução por feature (descartável)
+
+.claude/ · .junie/ · …   ← ADAPTADORES DE AGENTE: só referências, zero regras
 ```
 
 > A estrutura de `project/` é um **contrato definido pelo framework** (ver
 > [`project-structure.md`](project-structure.md)): abrir `project/base` de qualquer produto P2S
 > deve trazer os **mesmos arquivos com os mesmos papéis** — previsibilidade e portabilidade.
+
+## Multiagente & instalação
+
+O P2S é **agnóstico de agente**: `docs/p2s/` (framework) e `docs/project/` (produto) são a fonte da
+verdade; pastas como `.claude/`, `.junie/`, config de Cursor/Codex contêm **apenas adaptadores
+finos** que *referenciam* o framework — nunca cópias de regras, nem mesmo dos agentes de apoio
+(definidos em [`agents.md`](agents.md)). **Trocar de agente não perde nada.** Para ligar o P2S num
+agente (ou migrar para outro), rode o bootstrap descrito em [`install.md`](install.md): o agente lê o
+framework e **prepara os próprios adaptadores** (comandos + o `summarizer` opcional, padrão).
 
 O framework é **agnóstico**; a pasta `project/` é onde um produto concreto (seu domínio, stack e
 regras) se pluga. Arquivos de atalho de agente (`.claude/`, configs de IDE) apenas

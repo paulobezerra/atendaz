@@ -69,6 +69,8 @@ The workflow is **eight prefixed commands in two phases** — upstream (re-runna
 
 The support pillar is **DRY & automation**: single source of truth (reference, don't duplicate) + deterministic work in scripts/git hooks. For context/token economy this repo ships a `summarizer` subagent (`.claude/agents/summarizer.md`) — delegate broad read-only sweeps (e.g. the `p2s-review` spec×plan×code×doc read, digesting long logs) to it so raw output stays out of the main context; it returns a dense gist. Hard rule: compress the transient (logs, tool output), **never** the source of truth (spec, approved contracts, guardrails, constitution).
 
+**P2S is agent-agnostic (multi-agent).** The framework (`docs/p2s/`) is the single source of truth; `.claude/` and `.junie/` hold **only thin references**, never rules — including support agents, whose definitions live in `docs/p2s/agents.md`. Switching agents loses nothing: to onboard another agent (e.g. Junie in JetBrains when Claude tokens run out), run the bootstrap in `docs/p2s/install.md` (`/p2s-install`), which has the agent generate its own adapters. If an adapter *explains* a rule, it's wrong — trim it to a pointer.
+
 ## Environment variables
 
 Defined in `docs/project/base/environment.md` with a per-phase requirement table. Phase 0 needs only `MONGODB_URI`. Later phases add Google OAuth + `AUTH_SECRET` (F1), `CRYPTO_MASTER_KEY` + `ASAAS_BASE_URL` (F1), `RESEND_API_KEY`/`EMAIL_FROM` (F5), `PLATFORM_ASAAS_API_KEY` (F11). Local config goes in `.env.local`; production in the Vercel panel.

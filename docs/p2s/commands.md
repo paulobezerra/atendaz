@@ -11,6 +11,9 @@ decide quando avançar. Nunca funda dois comandos em um por conta própria.
 - **Downstream — por feature** (o loop): `p2s-spec` → `p2s-plan` → `p2s-code` → `p2s-review` →
   `p2s-done`.
 
+Antes dos oito, há um **bootstrap** (`p2s-install`) que liga o P2S a um agente — ver
+[`install.md`](install.md). Ele não é um comando do fluxo; prepara os adaptadores finos do agente.
+
 > `{ID}` é o identificador da feature e `{slug}` um nome curto em kebab-case.
 
 ## Agnóstico de git flow (regra estrutural)

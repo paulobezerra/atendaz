@@ -8,7 +8,7 @@ Este projeto roda sobre o **P2S**, um framework pessoal, **agnóstico de tecnolo
 
 ### Os oito comandos (duas fases)
 
-O P2S é **agnóstico de git flow**: a mecânica concreta (branch/merge/PR/deploy) deste projeto está em [`docs/project/base/workflow.md`](docs/project/base/workflow.md); a IA **nunca** mergeia no tronco por conta própria.
+O P2S é **multiagente e agnóstico de agente**: `docs/p2s/` é a fonte da verdade; `.claude/` e `.junie/` só têm **adaptadores finos** (referências). Para ligar/migrar de agente (ex.: Junie no JetBrains quando acabam os tokens do Claude), rode o bootstrap `/p2s-install` ([`docs/p2s/install.md`](docs/p2s/install.md)). É também **agnóstico de git flow**: a mecânica concreta (branch/merge/PR/deploy) deste projeto está em [`docs/project/base/workflow.md`](docs/project/base/workflow.md); a IA **nunca** mergeia no tronco por conta própria.
 
 **Upstream (partida & manutenção):**
 

@@ -82,10 +82,12 @@ output, logs, histórico, resultados intermediários). **Jamais** a spec, os pro
 aprovados, os guardrails ou a constitution — comprimir o load-bearing viola o pilar 3 (spec como
 fonte da verdade). Compressão é apoio; se apaga o que decide comportamento, quebrou.
 
-## O subagente sumarizador (instalado neste repo)
+## O subagente sumarizador
 
-Este repositório traz o subagente **`summarizer`** (`.claude/agents/summarizer.md`) — a
-implementação da família 2 acima. Delegue a ele varreduras amplas e read-only (ler spec×plan×código
-para o `p2s-review`, digerir logs, pesquisa exploratória): ele roda em modelo barato, mantém a saída
-bruta fora do seu contexto e devolve um **resumo denso** (fatos load-bearing, `arquivo:linha`, a
-resposta), nunca um dump. É o "filtro" de token do projeto, honrando a regra dura acima.
+A família 2 acima é implementada pelo agente de apoio **`summarizer`**, **definido de forma agnóstica
+de agente** em [`agents.md`](agents.md#summarizer) (função, contrato de saída denso, "nunca comprima
+a fonte da verdade"). Cada ferramenta o **liga** com um adaptador **fino** que só referencia essa
+definição — nunca a copia (Claude: `.claude/agents/summarizer.md`; Junie: `.junie/guidelines.md`).
+Delegue a ele varreduras amplas e read-only (ler spec×plan×código para o `p2s-review`, digerir logs,
+pesquisa exploratória): roda barato, mantém a saída bruta fora do contexto principal e devolve um
+resumo denso. **Padrão numa instalação, mas opcional** (ver [`install.md`](install.md)).
