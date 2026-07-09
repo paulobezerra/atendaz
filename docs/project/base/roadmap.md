@@ -34,9 +34,23 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Telas novas passam pela **prototipação** (`docs/p2s/principles.md` → pilar 2) antes do código.
 - Detalhes em: [docs/project/spec/F0002.8-settings-payment.md](../spec/F0002.8-settings-payment.md)
 
-## Fase 3: Perfil, Serviços e Disponibilidade
-- Configuração da agenda do profissional.
-- Detalhes em: [docs/project/spec/F0003-profile-services.md](../spec/F0003-profile-services.md)
+## Fase 3: Perfil, Serviços e Disponibilidade — **fatiada em F3.1–F3.3**
+
+Configuração da agenda do profissional. Todas as fatias são **habilitadas por `modulos.agenda`**
+(404 se off) e vivem em **abas sob o profissional** (`/dashboard/profissionais/[id]`:
+Perfil · Serviços · Disponibilidade). As specs são produzidas via `p2s-spec` (ainda não criadas).
+
+### Fase 3.1: Perfil do profissional
+- Bio, redes sociais e **foto** — upload via **Vercel Blob** (nova integração + env `BLOB_READ_WRITE_TOKEN`). Aba "Perfil".
+- Spec a produzir: `docs/project/spec/F0003.1-perfil.md` (via `p2s-spec 3.1`).
+
+### Fase 3.2: Serviços
+- CRUD de `service` (nome, duração em min, valor, `ativo`). Model novo. Aba "Serviços".
+- Spec a produzir: `docs/project/spec/F0003.2-servicos.md` (via `p2s-spec 3.2`).
+
+### Fase 3.3: Disponibilidade
+- CRUD de `availability` (dia da semana, horário início/fim, slot) com **rejeição de sobreposição** (lógica testável — TDD). Model novo. Aba "Disponibilidade".
+- Spec a produzir: `docs/project/spec/F0003.3-disponibilidade.md` (via `p2s-spec 3.3`).
 
 ## Fase 4: Agenda Pública e Manual
 - Fluxo de agendamento por clientes e interno.
