@@ -48,6 +48,10 @@ function jsonReq(body: unknown) {
 const jpg = (bytes = 10) => new File([new Uint8Array(bytes)], "f.jpg", { type: "image/jpeg" });
 
 describe("F3.1 — foto & perfil do profissional", () => {
+  beforeAll(() => {
+    // @vercel/blob é mockado; o valor não importa, só a presença (o upload checa a env).
+    process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_test";
+  });
   beforeEach(() => {
     mockedAuth.mockReset();
     mockedPut.mockReset().mockResolvedValue({ url: "https://blob.example/prof.jpg" });

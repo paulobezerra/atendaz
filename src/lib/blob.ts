@@ -14,6 +14,10 @@ export async function uploadFoto(
   professionalId: string,
   file: File
 ): Promise<string> {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    // Erro claro em vez do genérico do SDK ("Access denied"): a env não chegou ao deploy.
+    throw new HttpError(500, "BLOB_READ_WRITE_TOKEN ausente no ambiente (confira o nome da variável na Vercel e faça um redeploy).");
+  }
   if (!file || typeof file.arrayBuffer !== "function") {
     throw new HttpError(400, "Arquivo ausente.");
   }
