@@ -1,0 +1,63 @@
+openapi: 3.0.3
+info:
+  title: F0002.8 — Meio de Pagamento (Configurações)
+  version: 0.1.0-prototype
+  description: >-
+    Protótipo DESCARTÁVEL do contrato da tela "Pagamentos e NFS-e" (p2s-spec, fronteira de API).
+    Decisões: só o token Asaas (D2); rota HABILITADA POR MÓDULO (D1 — 404 se cobranca/nfse off);
+    sem desconectar (D3, sem DELETE). Não é implementação — é a fronteira aprovada que o p2s-code
+    deve replicar. A chave Asaas NUNCA trafega de volta (DTO seguro).
+paths:
+  /api/settings/pagamentos:
+    get:
+      summary: Estado da conexão do meio de pagamento
+      description: DTO seguro — nunca retorna a chave; só um booleano + os últimos 4 dígitos.
+      responses:
+        '200':
+          description: Estado atual
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentStatus' }
+              examples:
+                conectado: { value: { connected: true, last4: "4821" } }
+                desconectado: { value: { connected: false, last4: null } }
+        '401': { description: Não autenticado }
+        '404':
+          description: Módulo (cobranca/nfse) desabilitado para o business — a rota não existe (Guardrail 2, habilitação por módulo)
+    post:
+      summary: Conecta/atualiza o token Asaas
+      description: Valida a chave no Asaas (validateAsaasKey) e criptografa (AES-256-GCM) antes de persistir em Business.billingConfigPadrao. audit_log sem a chave em claro.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentConnectInput' }
+            examples:
+              conectar: { value: { apiKey: "$aact_hmlg_00000000-0000-0000-0000-000000000000::exemplo" } }
+      responses:
+        '200':
+          description: Conectado; retorna o DTO seguro (sem a chave)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentStatus' }
+              examples:
+                ok: { value: { connected: true, last4: "4821" } }
+        '400': { description: Token ausente ou inválido no Asaas (validateAsaasKey falhou) }
+        '401': { description: Não autenticado }
+        '404': { description: Módulo desabilitado — a rota não existe }
+components:
+  schemas:
+    PaymentStatus:
+      type: object
+      description: DTO seguro. A chave NUNCA aparece — só o estado e os últimos 4 dígitos.
+      properties:
+        connected: { type: boolean }
+        last4: { type: string, nullable: true, example: "4821" }
+      required: [connected]
+    PaymentConnectInput:
+      type: object
+      properties:
+        apiKey:
+          type: string
+          description: Token de API do Asaas ($aact_hmlg_* sandbox / $aact_prod_* produção). Validado e criptografado; nunca retornado.
+      required: [apiKey]
