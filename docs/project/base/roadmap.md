@@ -29,7 +29,7 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Introduziu a **etapa obrigatória de prototipação** (protótipo navegável aprovado antes de codar — ver `docs/p2s/principles.md` → pilar 2, prototipação da fronteira), após 2 rodadas de código reprovadas no gate por falta de fidelidade visual.
 - Detalhes em: [docs/project/spec/F0002.7-ux-corrections.md](../spec/F0002.7-ux-corrections.md)
 
-## Fase 2.8: Configurações + Meio de Pagamento e NFS-e
+## [CONCLUÍDO] Fase 2.8: Configurações + Meio de Pagamento e NFS-e
 - Menu de **Configurações** da clínica/empresa + tela "Configurar Meio de Pagamento e NFS-e" (Asaas) com **tutorial in-app**; endpoint próprio com `audit_log`.
 - Telas novas passam pela **prototipação** (`docs/p2s/principles.md` → pilar 2) antes do código.
 - Detalhes em: [docs/project/spec/F0002.8-settings-payment.md](../spec/F0002.8-settings-payment.md)
