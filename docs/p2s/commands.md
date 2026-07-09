@@ -185,6 +185,10 @@ O portão de qualidade antes do fechamento. Você deve:
 4. Você **não aprova no lugar do humano** — reporta evidência e achados; a aprovação é do portão de
    revisão humana. A **validação de ambiente** exigida é a **definida pelo projeto**
    ([`workflow.md`](workflow.md)), não uma fixa.
+5. **Registrar o review num `.md`** — evidência, achados por severidade e desfecho ficam num
+   documento versionado (ex.: `docs/project/reviews/{ID}-*.md`), para o **histórico**. É um
+   **artefato descartável** (mesmo ciclo de vida de plano/protótipo — arquivável após o `p2s-done`,
+   podendo ser descartado; ver [ciclo de vida](workflow.md#ciclo-de-vida-dos-artefatos-descartáveis)).
 
 ## `p2s-done {ID}` — fechar a feature
 

@@ -146,7 +146,8 @@ docs/
     │   ├── design-system.md   — fundação de UX (saída do p2s-design)
     │   └── workflow.md        — git flow & ambientes CONCRETOS do projeto
     ├── spec/          — uma spec por feature (fonte da verdade)
-    └── plans/         — um plano de execução por feature (descartável)
+    ├── plans/         — um plano de execução por feature (descartável)
+    └── reviews/       — um registro de review por feature (descartável)
 
 .claude/ · .junie/ · …   ← ADAPTADORES DE AGENTE: só referências, zero regras
 ```

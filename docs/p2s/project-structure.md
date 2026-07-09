@@ -48,6 +48,12 @@ Um plano por feature (`{ID}-{slug}.md`), produzido pelo `p2s-plan`. **Descartáv
 `archive/` é candidato a exclusão a qualquer momento (ver
 [ciclo de vida](workflow.md#ciclo-de-vida-dos-artefatos-descartáveis)).
 
+## `project/reviews/` — descartável
+
+Um registro de review por feature (`{ID}-{slug}.md`), produzido pelo `p2s-review` — evidência,
+achados por severidade e desfecho, para o **histórico**. **Descartável** (mesmo ciclo do plano):
+arquivável após o `p2s-done` e descartável depois; a decisão durável já vive na spec/base/código.
+
 ## Protótipos (fora de `docs/`, mas parte do contrato)
 
 - `templates/referencia/` — a **linguagem visual** do produto (saída do `p2s-design`).
