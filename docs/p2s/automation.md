@@ -1,5 +1,9 @@
 # P2S — Automação: Scripts no Lugar da IA
 
+> Este é o **pilar de apoio** do P2S (segundo nível, a serviço dos três inegociáveis — ver
+> [`principles.md`](principles.md#pilar-de-apoio-automação)). Seu valor: **economia de tokens** e
+> **integridade**.
+
 **Trabalho repetitivo e determinístico pertence a scripts e git hooks — não ao prompt de um
 agente.** O agente *orquestra e raciocina*; a maquinaria *garante os invariantes* sempre do mesmo
 jeito. Isso mantém o agente barato e rápido, e torna **impossível "esquecer" um portão**: um

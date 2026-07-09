@@ -6,11 +6,12 @@ Sistema modular para gestão de agendamentos, cobranças automatizadas via Asaas
 
 Este projeto roda sobre o **P2S**, um framework pessoal, **agnóstico de tecnologia e de agente**, onde a **especificação é a fonte da verdade** e **toda fronteira (UX, API, formato dos dados, integrações) é prototipada e aprovada antes de qualquer código** — o **protótipo aprovado vira a spec**. O livro de regras do framework vive em **[`docs/p2s/`](docs/p2s/)**; os dados específicos do produto (visão, arquitetura, guardrails, specs, planos) em **[`docs/project/`](docs/project/)**. Os comandos são slash commands / skills com prefixo `p2s-` (redirects em `.claude/commands/` que apenas apontam para `docs/p2s/` — nunca guardam regras).
 
-### Os seis comandos
+### Os sete comandos
 
 | Comando | Governa | Produz |
 | :--- | :--- | :--- |
 | `/p2s-doc {tópico}` | Documentação base/transversal (**não** toca spec) | Docs em `docs/project/base/` no tronco (sem deploy) |
+| `/p2s-discovery` | A **linguagem visual/UX** (a partir de links + imagens) | Referência navegável em `templates/referencia/` + design-system |
 | `/p2s-spec {ID}` | A spec da feature via **prototipação navegável** (UX, API, dados, integrações) | Spec em `docs/project/spec/` + protótipos em `templates/prototipos/` |
 | `/p2s-plan {ID}` | O plano de execução | Branch `feature/{ID}-{slug}` + plano em `docs/project/plans/` (**sem código**) |
 | `/p2s-code {ID}` | Código-fonte | Commits na branch → deploy de **stage** (Preview) |

@@ -29,6 +29,7 @@ liga "preview" e "produção" ao seu host real.
 | Comando | Efeito de git / deploy |
 | :--- | :--- |
 | `p2s-doc` | Commit de documentação base/transversal direto no tronco. **Sem deploy** (ver [builds só-de-doc](#commits-só-de-doc-pulam-o-build)). |
+| `p2s-discovery` | Commit da referência visual (`templates/referencia/`) + `design-system` direto no tronco. **Sem deploy.** Não cria branch. |
 | `p2s-spec` | Commit da spec + protótipos navegáveis (UI + OpenAPI/API fake) direto no tronco. **Sem deploy.** Não cria branch. |
 | `p2s-plan` | Cria `feature/{ID}-{slug}` a partir do tronco; commita **apenas** o plano nela. Sem código. |
 | `p2s-code` | Commits incrementais na branch; um push → deploy de **stage**. Nunca toca o tronco. |
@@ -41,6 +42,7 @@ Comandos que produzem alterações têm **autorização permanente** para versio
 de tal comando, commite **e** pushe automaticamente, **sem pausar para perguntar**.
 
 - `p2s-doc` → commit + push no tronco.
+- `p2s-discovery` → commit + push da referência visual + design-system no tronco.
 - `p2s-spec` → commit + push da spec + protótipos no tronco.
 - `p2s-plan` → commit + push do plano na branch da feature.
 - `p2s-code` → commit(s) + push na branch da feature (publica em stage).
@@ -69,11 +71,29 @@ passar**. Se produção falhar, a feature **não** está pronta: volta ao ciclo
 branch** até ficar verde. Como o stage já foi validado, falhas em produção tendem a ser
 específicas de ambiente e corrigidas por *fix-forward*.
 
+## Ciclo de vida dos artefatos descartáveis
+
+Protótipos (`templates/prototipos/`, `templates/referencia/`) e planos (`plans/`) são
+**descartáveis por design** (pilar 2). Têm um ciclo de vida explícito:
+
+1. **Vivos** — enquanto a feature está em construção, são a referência do gate de revisão humana
+   (a implementação é comparada com o protótipo aprovado; o plano guia o `p2s-code`).
+2. **Arquiváveis** — quando a feature fecha (DOD) **e** suas regras de negócio já foram
+   **consolidadas na spec/base** (a fonte durável), o artefato cumpriu seu papel. Planos vão para
+   `plans/archive/`; protótipos podem ir para um `archive/` equivalente.
+3. **Deletáveis** — **`archive/` = candidato a exclusão a qualquer momento.** Mover para `archive/`
+   é declarar "isto não é mais fonte da verdade de nada; pode sumir". A única pré-condição para
+   arquivar (e portanto poder deletar) é: **a regra de negócio já vive na spec/base**, não só no
+   artefato.
+
+**A spec não entra neste ciclo** — ela é a fonte da verdade, não um descartável; nunca é arquivada
+"por limpeza". Arquiva-se o *meio* (protótipo, plano), nunca o *fim* (a spec).
+
 ## Commits só-de-doc pulam o build
 
 Para que commits **somente de documentação** no tronco (`p2s-doc`) **não** gerem deploy de
 produção, o host é configurado com um **ignored-build step**: um pequeno script versionado que
 **pula o build** quando um commit só tocou caminhos de documentação/protótipos/tooling — para que
-commits de `p2s-doc` **e `p2s-spec`** (specs + protótipos navegáveis) não deployem. É uma checagem
-determinística — pertence a um script, não ao julgamento de um agente (ver
-[automation.md](automation.md)).
+commits de `p2s-doc`, **`p2s-discovery`** (referência visual) **e `p2s-spec`** (specs + protótipos
+navegáveis) não deployem. É uma checagem determinística — pertence a um script, não ao julgamento de
+um agente (ver [automation.md](automation.md)).

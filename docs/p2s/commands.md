@@ -1,6 +1,6 @@
 # P2S — Comandos, Portões & Encadeamento
 
-Esta é a estrutura de turnos do jogo. O P2S roda por **seis comandos prefixados**. Cada um é uma
+Esta é a estrutura de turnos do jogo. O P2S roda por **sete comandos prefixados**. Cada um é uma
 **fronteira rígida** sobre o que você (o agente) pode mudar, e cada um termina passando o bastão
 para o próximo por um **portão humano explícito**. Você executa dentro de um comando; o humano
 decide quando ir para o próximo. Nunca funda dois comandos em um por conta própria.
@@ -16,6 +16,7 @@ Trate o comando com que você foi invocado como um muro que não pode transpor:
 | Comando | Pode mudar | NÃO pode |
 | :--- | :--- | :--- |
 | `p2s-doc` | Documentação **base/transversal** (visão, arquitetura, modelo de dados, decisões) | Tocar código; **criar/editar a spec de uma feature ou seus protótipos** |
+| `p2s-discovery` | A **linguagem visual/UX** do produto — referência navegável em `templates/referencia/` + `design-system` | Tocar código; especificar uma feature; prototipar telas de feature (isso é do `p2s-spec`) |
 | `p2s-spec` | A **spec de uma feature** + seus **protótipos navegáveis** (UX, API, dados, integrações) | Tocar código de produção; **editar a documentação base/transversal**; pular a aprovação do protótipo |
 | `p2s-plan` | Apenas o plano de execução | Escrever/editar/deletar código; rodar testes que mudem estado; corrigir código quebrado (registra como débito) |
 | `p2s-code` | Código-fonte (única porta de entrada para isso) | Trabalhar fora da branch da feature; mergear no tronco |
@@ -38,6 +39,32 @@ de dados, guardrails, design system, decisões e o próprio framework. A spec po
 para o `p2s-spec` (é lá que a prototipação navegável acontece). Commit direto no tronco, sem
 deploy.
 
+## `p2s-discovery` — a linguagem visual & UX do produto
+
+Estabelece (ou revê) a **fundação visual** que todas as features vão seguir — feita **uma vez** e
+reusada, não por feature. É a resposta à lição mais cara deste método: **definir UX direto no
+código, ou a partir de ASCII, faz o time perder ciclos inteiros** até o humano *ver* o resultado e
+dizer "não é isso". O discovery move essa decisão para **antes**, num protótipo navegável barato.
+
+O que o diferencia do `p2s-spec`: o **discovery olha para `templates/referencia/`** (a referência
+visual **fixa** — a "cara" do produto: landing/dashboard de exemplo, tokens, componentes); o
+**`p2s-spec` olha para `templates/prototipos/`** (as telas **de cada feature**, construídas *sobre*
+essa referência). Discovery define a linguagem; spec a aplica.
+
+Você deve, de forma **interativa**:
+
+1. **Receber as referências** que o humano trouxer — **links** (sites/produtos de inspiração) e
+   **imagens** (prints, mockups, marca) — e extrair delas a direção visual.
+2. **Produzir um protótipo navegável** da linguagem visual em `templates/referencia/` (HTML/CSS + JS
+   vanilla): telas-âncora (ex.: uma pública e uma logada), tokens (cor, tipografia, espaçamento,
+   radius, sombra) e os componentes-base. **Barato e descartável** como todo protótipo (pilar 2).
+3. **Iterar até a aprovação explícita** do humano — é um processo de ida e volta, não um chute.
+4. **Consolidar** a linguagem aprovada no `design-system` do produto (`docs/project/base/`). Commit
+   no tronco, **sem deploy**. Não cria branch.
+
+Uma feature não deveria ir ao `p2s-spec` sem uma referência visual aprovada existindo — senão cada
+spec reinventa a aparência e o gate de revisão vira loteria.
+
 ## `p2s-spec {ID}` — a spec da feature (por prototipação navegável)
 
 O que **diferencia a spec da documentação comum**: a spec **gera prototipação navegável** e a
@@ -48,13 +75,15 @@ real** (ver [principles.md](principles.md) §2). Você deve:
 1. **Prototipar cada fronteira da feature** (ver [principles.md](principles.md) §2), de forma
    **navegável/interativa** — a IA **propõe**, o humano **testa e aprova**:
    - **UX/UI** — um protótipo estático navegável (HTML/CSS + JS vanilla) de cada tela nova/refeita,
-     em `templates/prototipos/{tela}.html`.
+     em `templates/prototipos/{tela}.html`, **seguindo a linguagem visual aprovada no
+     `p2s-discovery`** (`templates/referencia/`) — não reinvente a aparência aqui.
    - **Contrato de API** — para cada troca que a feature **expõe ou consome**: uma **doc OpenAPI**
      em `templates/prototipos/api/{feature}.yaml` e/ou uma **API fake executável** (mock server)
      que o humano consegue chamar e ver as requisições/respostas. Outros protocolos: o equivalente
      (gRPC → `.proto` + stub).
    - **Formato dos dados persistidos** — o schema/estrutura no armazenamento (tipos, relações,
-     índices, invariantes), previsualizado antes de existir modelo real.
+     índices, invariantes), previsualizado como **diagrama ER navegável** (ex.: Mermaid `erDiagram`)
+     antes de existir modelo real.
    - **Integrações externas** — o contrato de troca com cada terceiro, sempre contra a doc oficial
      (nunca presumido — [fidelidade a API externa](quality.md#fidelidade-a-api-externa)).
 2. **Apresentar e iterar** até a **aprovação explícita** do humano — clicando na tela, chamando o
@@ -92,9 +121,17 @@ Transforma uma spec **pronta** num plano passo a passo. Você deve:
    `p2s-doc` (lacuna de doc base). Nunca planeje sobre um DOR incompleto.
 2. Criar a branch da feature e, ao final, commitar **apenas** o documento do plano nela. Nunca
    tocar código. Problemas de código que você notar viram **débito técnico no plano**.
-3. Produzir: checklist de tarefas atômicas, arquivos a criar/modificar, estratégia de testes da
-   feature, check de ambiente/infraestrutura e uma lista cronológica de **ações manuais** que o
-   humano precisa tomar (e exatamente quando).
+3. Produzir:
+   - **Cenários testáveis (BDD, `Given/When/Then`)** derivados da spec — são eles que guiam o TDD do
+     `p2s-code` (cada cenário vira teste **antes** do código). O plano raciocina em *comportamento
+     verificável*, não em passos soltos.
+   - **Inventário de código: o que será criado, alterado e excluído** (arquivos/módulos), para o
+     humano ver o impacto real antes de qualquer linha.
+   - Estratégia de testes por camada (quais cenários são integração/API, componente, E2E — ver
+     [política de testes](quality.md#política-de-testes)), check de ambiente/infraestrutura e uma
+     lista cronológica de **ações manuais** que o humano precisa tomar (e exatamente quando).
+   Não repita o que já está nos princípios/qualidade — **referencie**. O plano é *o que muda e como
+   se prova*, não um resumo do framework.
 
 ## `p2s-code {ID}` — implementação
 
@@ -119,6 +156,13 @@ A **única** porta de entrada para execuções de teste. Reporta resultados como
 DOD. "Verde" só é evidência válida **se** as camadas certas cobrirem a **superfície alterada**
 (ver [política de testes](quality.md#política-de-testes)); um verde que não exercita o que mudou é
 um portão incompleto, reportado como lacuna — não uma aprovação.
+
+**Reforço de automação (pilar de apoio).** Rodar a suíte é trabalho **determinístico** — é do
+script/hook, não seu. Aqui você **dispara e lê o veredito**; não reimplemente a checagem "na mão",
+não reescreva o que o runner já faz, não gaste tokens reinterpretando o que um hook decide de forma
+binária. Se falta uma checagem repetitiva, o certo é **movê-la para um script/hook** (via
+`p2s-code`), não embuti-la no seu raciocínio (ver [automation.md](automation.md)). Seu julgamento
+entra só onde há julgamento: *por que* ficou vermelho, e se o verde realmente cobre o que mudou.
 
 ## `p2s-done {ID}` — fechar a feature
 
@@ -166,7 +210,8 @@ não presume aprovação nem emenda um comando no outro sozinho.
 
 | Terminou | Passo humano | Próximo comando |
 | :--- | :--- | :--- |
-| `p2s-doc` | Ler e **validar a doc base**. | `p2s-spec {ID}` (ao iniciar uma feature) — ou encerra aqui. |
+| `p2s-doc` | Ler e **validar a doc base**. | `p2s-discovery` (se falta linguagem visual) / `p2s-spec {ID}` (ao iniciar uma feature) — ou encerra aqui. |
+| `p2s-discovery` | **Navegar a referência visual** e **aprovar a linguagem/UX**. | `p2s-spec {ID}` |
 | `p2s-spec` | **Interagir com o protótipo** (tela + API fake) e **aprovar a spec**. | `p2s-plan {ID}` |
 | `p2s-plan` | **Validar o plano** (tarefas, arquivos, DOR). | `p2s-code {ID}` |
 | `p2s-code` | **Testar manualmente** no stage + revisar o diff (portão de revisão humana). | `p2s-test {alvo}` se necessário; e `p2s-done {ID}` para fechar. |

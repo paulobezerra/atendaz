@@ -59,15 +59,21 @@ Ver [`principles.md`](principles.md) para o enunciado completo de cada um.
 3. **Spec como fonte da verdade, não o código.** O comportamento é decidido na spec primeiro; o
    código é a spec tornada executável. Quando divergem, a spec está certa e o código tem um bug.
 
+E um **pilar de apoio** (segundo nível): **automação.** Todo trabalho determinístico (rodar testes,
+lint, build, audit, pular o deploy de um commit só-de-doc) vive em **scripts e git hooks**, não no
+prompt — economiza tokens e torna impossível "esquecer" um portão. Ele **serve** aos três
+inegociáveis; ver [`principles.md`](principles.md).
+
 ## Os comandos
 
-O P2S é conduzido por seis comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
+O P2S é conduzido por sete comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
 pode mudar, e cada um termina passando o bastão para o próximo, com um portão humano no meio.
 Definições completas em [`commands.md`](commands.md).
 
 | Comando | Governa | Produz |
 | :--- | :--- | :--- |
 | `p2s-doc` | Documentação base/transversal | Docs atualizados no tronco |
+| `p2s-discovery` | A **linguagem visual/UX** (a partir de links + imagens) | Referência navegável em `templates/referencia/` + design-system |
 | `p2s-spec` | A spec da feature via **prototipação navegável** (UX, API, dados, integrações) | Spec + protótipos (clicável + OpenAPI/API fake) no tronco |
 | `p2s-plan` | O plano de execução | Branch da feature + plano (sem código) |
 | `p2s-code` | Código-fonte | Commits na branch da feature → deploy de stage |
@@ -105,17 +111,27 @@ mapeia cada uma para sua stack concreta em `docs/project/`.
 ```
 docs/
 ├── p2s/          ← ESTE framework (agnóstico, copie para qualquer repo)
-│   ├── README.md      — o que é o P2S (este arquivo)
-│   ├── principles.md  — os três pilares inegociáveis, por extenso
-│   ├── commands.md    — definições dos comandos, portões, encadeamento, fechamento
-│   ├── workflow.md    — branches, ambientes, deploy (parametrizável)
-│   ├── quality.md     — política de testes, dependências/versões & segurança
-│   └── automation.md  — scripts/hooks no lugar da IA para checagens repetitivas
+│   ├── README.md            — o que é o P2S (este arquivo)
+│   ├── principles.md        — os três pilares inegociáveis + o de apoio, por extenso
+│   ├── commands.md          — definições dos comandos, portões, encadeamento, fechamento
+│   ├── workflow.md          — branches, ambientes, deploy, ciclo de vida do descartável
+│   ├── quality.md           — política de testes, dependências/versões & segurança
+│   ├── automation.md        — scripts/hooks no lugar da IA para checagens repetitivas
+│   └── project-structure.md — o MANIFESTO: quais arquivos o produto deve ter e para quê
 └── project/      ← a instância do produto específico (em qualquer idioma)
-    ├── base/          — visão, arquitetura, modelo de dados, guardrails, design system…
+    ├── base/          — a "lei" durável do produto (ver project-structure.md)
+    │   ├── constitution.md    — domínio/tenancy, arquitetura, stack, guardrails, escopo
+    │   ├── data-model.md      — modelo de dados (gerado por protótipo ER navegável)
+    │   ├── roadmap.md         — ordem das features
+    │   ├── environment.md     — variáveis de ambiente por fase
+    │   └── design-system.md   — fundação de UX (saída do p2s-discovery)
     ├── spec/          — uma spec por feature (fonte da verdade)
-    └── plans/         — um plano de execução por feature
+    └── plans/         — um plano de execução por feature (descartável)
 ```
+
+> A estrutura de `project/` é um **contrato definido pelo framework** (ver
+> [`project-structure.md`](project-structure.md)): abrir `project/base` de qualquer produto P2S
+> deve trazer os **mesmos arquivos com os mesmos papéis** — previsibilidade e portabilidade.
 
 O framework é **agnóstico**; a pasta `project/` é onde um produto concreto (seu domínio, stack e
 regras) se pluga. Arquivos de atalho de agente (`.claude/`, configs de IDE) apenas

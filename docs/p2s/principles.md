@@ -49,6 +49,8 @@ decide sozinha** nenhuma fronteira — ela **propõe um protótipo para ser test
 - **Formato dos dados persistidos.** Como o dado é estruturado no banco/armazenamento — schema,
   tipos, relações, índices, invariantes — é prototipado e aprovado **antes** de existir modelo
   real. É a fronteira app↔persistência, que fecha o par completo de **input e output** do dado.
+  Prototipe-o como um **diagrama ER navegável em notação descartável** (ex.: Mermaid `erDiagram`,
+  que renderiza inline no próprio markdown, sem ferramenta externa).
 - **Integrações externas.** Todo serviço de terceiro que a aplicação chama ou do qual recebe
   eventos tem seu contrato de troca prototipado (contra a doc oficial — ver
   [fidelidade a API externa](quality.md#fidelidade-a-api-externa)), nunca presumido.
@@ -119,10 +121,28 @@ reversa dele depois.
 
 ---
 
+## Pilar de apoio: automação
+
+Além dos três inegociáveis, há um **pilar de apoio**. Ele **não é um fim em si** — é a alavanca que
+torna os outros três **baratos e à prova de esquecimento**: **todo trabalho determinístico vai para
+scripts e git hooks, nunca para o prompt de um agente.**
+
+**Regra.** Se um passo é igual toda vez e tem um veredito binário (rodar testes, lint, build, audit,
+pular o deploy de um commit só-de-doc), ele é um **script/hook** — não uma instrução que a IA
+reexecuta de cabeça. O agente **orquestra e lê o veredito**; a maquinaria garante o invariante.
+
+**Por quê.** Dois ganhos: **economia de tokens** (a IA não gasta contexto refazendo checagem
+mecânica) e **integridade** (um humano ou uma IA pode pular um item de checklist; um pre-commit hook
+não pode). É de **segundo nível** porque **serve** aos três pilares — sem ele os pilares ainda
+valem, só custam mais caro e falham mais. Detalhes em [`automation.md`](automation.md).
+
+---
+
 ## Como os pilares são garantidos
 
 | Pilar | Garantido por |
 | :--- | :--- |
 | Testes antes do código | O `p2s-code` escreve testes junto com a mudança; git hooks rodam a suíte no commit/push; uma suíte vermelha bloqueia o push ([`automation.md`](automation.md)). |
-| Protótipo da fronteira antes de implementar | Produzido no `p2s-spec` (UX, API, dados e integrações, navegáveis); portão de DOR no `p2s-plan` (para se alguma fronteira não estiver prototipada e aprovada); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
+| Protótipo da fronteira antes de implementar | Produzido no `p2s-spec` (UX, API, dados e integrações, navegáveis) sobre a linguagem visual do `p2s-discovery`; portão de DOR no `p2s-plan` (para se alguma fronteira não estiver prototipada e aprovada); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
 | Spec como fonte da verdade | O `p2s-doc` governa toda decisão de comportamento; `p2s-plan`/`p2s-code` revalidam contra a spec e se recusam a prosseguir com inconsistência. |
+| *Apoio:* automação | Hooks/scripts (husky/CI) garantem os invariantes determinísticos; os comandos confiam no veredito em vez de re-derivá-lo ([`automation.md`](automation.md)). |
