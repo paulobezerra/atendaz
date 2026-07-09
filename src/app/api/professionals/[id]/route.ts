@@ -65,13 +65,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (data.nome !== undefined) prof.nome = data.nome;
     if (data.whatsapp !== undefined) prof.whatsapp = data.whatsapp;
-    if (data.bio !== undefined) prof.bio = data.bio;
 
-    // Perfil (F3.1) — redes sociais só com módulo agenda (habilitação → 404).
+    // Perfil (F3.1) — bio e redes só existem com o módulo agenda (habilitação → 404).
+    const mexeNoPerfil = data.bio !== undefined || data.redesSociais !== undefined;
+    if (mexeNoPerfil && !business.modulos.agenda) {
+      return NextResponse.json({ error: "Recurso não disponível." }, { status: 404 });
+    }
+    if (data.bio !== undefined) prof.bio = data.bio;
     if (data.redesSociais !== undefined) {
-      if (!business.modulos.agenda) {
-        return NextResponse.json({ error: "Recurso não disponível." }, { status: 404 });
-      }
       prof.redesSociais = data.redesSociais;
       prof.markModified("redesSociais");
     }
@@ -126,7 +127,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       entidadeId: String(prof._id),
       acao: data.ativo === false ? "deactivate" : data.ativo === true ? "activate" : "update",
       businessId: String(business._id),
-      payloadResumido: { nome: prof.nome, ativo: prof.ativo, billingMode: prof.billingConfig ? "own" : "inherit" },
+      payloadResumido: { nome: prof.nome, ativo: prof.ativo, billingMode: prof.billingConfig ? "own" : "inherit", perfilAlterado: mexeNoPerfil },
     });
 
     return NextResponse.json(serializeProfessional(prof));

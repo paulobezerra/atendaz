@@ -70,6 +70,14 @@ describe("F3.1 — foto & perfil do profissional", () => {
     expect((await fotoPOST(fotoReq(jpg()), ctx(String(prof._id)))).status).toBe(404);
   });
 
+  it("404 sem modulos.agenda (DELETE foto)", async () => {
+    const biz = await makeBusiness("g-off", "off", NO_AGENDA);
+    const prof = await Professional.create({ businessId: biz._id, nome: "P", slugInterno: "p", ativo: true, fotoUrl: "https://blob.example/x.jpg" });
+    login(biz.googleId);
+    const res = await fotoDELETE(new Request("http://localhost/x", { method: "DELETE" }), ctx(String(prof._id)));
+    expect(res.status).toBe(404);
+  });
+
   it("upload válido → salva fotoUrl, audita, chama put()", async () => {
     const biz = await makeBusiness("g-a", "a");
     const prof = await Professional.create({ businessId: biz._id, nome: "P", slugInterno: "p", ativo: true });
@@ -142,6 +150,13 @@ describe("F3.1 — foto & perfil do profissional", () => {
     const prof = await Professional.create({ businessId: biz._id, nome: "P", slugInterno: "p", ativo: true });
     login(biz.googleId);
     expect((await PATCH(jsonReq({ redesSociais: { instagram: "x" } }), ctx(String(prof._id)))).status).toBe(404);
+  });
+
+  it("PATCH bio sem agenda → 404 (bio agora restrita ao módulo)", async () => {
+    const biz = await makeBusiness("g-off", "off", NO_AGENDA);
+    const prof = await Professional.create({ businessId: biz._id, nome: "P", slugInterno: "p", ativo: true });
+    login(biz.googleId);
+    expect((await PATCH(jsonReq({ bio: "olá" }), ctx(String(prof._id)))).status).toBe(404);
   });
 
   it("bio > 280 → 400", async () => {

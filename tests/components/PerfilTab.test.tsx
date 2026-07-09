@@ -57,4 +57,13 @@ describe("PerfilTab", () => {
     expect(body.bio).toBe("Barbeiro");
     expect(body.redesSociais.instagram).toBe("instagram.com/eu");
   });
+
+  it("erro ao salvar → avisa por toast", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false, json: async () => ({ error: "Falhou." }) });
+    const user = userEvent.setup();
+    render(<PerfilTab initial={BASE} />);
+    await user.type(screen.getByLabelText("Bio"), "x");
+    await user.click(screen.getByRole("button", { name: /Salvar perfil/ }));
+    expect(mockToast).toHaveBeenCalledWith(expect.stringMatching(/Falhou/i), "error");
+  });
 });
