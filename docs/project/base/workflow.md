@@ -44,10 +44,27 @@ Pré-condições do gatilho de `p2s-done` (só mergeia com tudo isto): revisão 
 - **`p2s-code`**: push na branch → Preview (stage). Um `npm test` local vermelho **bloqueia** o push
   (husky pre-push).
 
+## Scripts do fluxo (o agente invoca — não re-deriva)
+
+Sequências de git/doc **determinísticas e repetitivas** vivem em scripts (pilar DRY & automação —
+[`docs/p2s/automation.md`](../../p2s/automation.md)). Nos comandos abaixo, o agente **chama o
+script** em vez de re-montar os passos à mão (menos re-derivação = menos erro):
+
+| Comando | Invoca | O que faz |
+| :--- | :--- | :--- |
+| `p2s-plan` | `scripts/p2s/branch.sh {ID}-{slug}` | Cria a branch da feature a partir da `master` (`--reset` reconcilia). |
+| `p2s-done` | `scripts/p2s/promote.sh {ID}-{slug}` | `merge --no-ff` na `master` + push (dispara prod). |
+| `p2s-done` | `scripts/p2s/archive.sh {plan\|review} {ID}-{slug}` | `git mv` para `archive/` **+ corrige a profundidade dos links** (+1 `../`). |
+| qualquer | `scripts/check-doc-links.sh` | Verifica que todos os links de `docs/` resolvem (roda também no **pre-commit**). |
+
+> Se surgir uma nova sequência mecânica repetida, o certo é **virar script** (via `p2s-code`), não
+> reimplementá-la no prompt.
+
 ## Automação (hooks & deploy)
 
-- **husky pre-commit**: **trava do P2S** (`scripts/guard-p2s.sh`) + `npm test`. **pre-push**:
-  `npm run test:local`. Falha **bloqueia** por design.
+- **husky pre-commit**: **trava do P2S** (`scripts/guard-p2s.sh`) + **check de links** de doc
+  (`scripts/check-doc-links.sh`) + `npm test`. **pre-push**: `npm run test:local`. Falha
+  **bloqueia** por design.
 - **Ignored-build step (Vercel)**: `scripts/vercel-ignore-build.sh` — **pula** o build/deploy quando
   o commit só tocou `docs/**`, `*.md`, `.claude/**`, `templates/referencia/**`, `templates/prototipos/**`
   (docs, protótipos, tooling). Assim commits de doc/discovery/design/spec no `master` **não** deployam.

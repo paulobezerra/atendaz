@@ -1,2 +1,3 @@
 bash scripts/guard-p2s.sh
+bash scripts/check-doc-links.sh
 npm test
