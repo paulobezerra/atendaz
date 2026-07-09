@@ -10,8 +10,8 @@ A **mecânica concreta** de git, ambientes e deploy deste projeto. O framework P
 
 - **Tronco = `master`** — é a **produção**. Alterado ao **fechar** uma feature (merge, preservando a
   branch). Deve permanecer sempre verde e deployável.
-- **`feature/{ID}-{slug}`** — uma por feature, criada ao iniciar a implementação, **nunca deletada**
-  (preserva histórico/auditoria).
+- **`feature/{ID}-{slug}`** — uma por feature, **criada no `p2s-plan`** (gatilho de branch),
+  **nunca deletada** (preserva histórico/auditoria).
 
 ## Ambientes → mapeamento P2S
 
@@ -23,13 +23,26 @@ A **mecânica concreta** de git, ambientes e deploy deste projeto. O framework P
 
 **Validação de DOD deste projeto:** produção (Vercel) — smoke/E2E (Cypress) verde em prod.
 
-## Promoção
+## Promoção — gatilhos de git deste projeto
+
+O git flow do Atendaz define **dois gatilhos** (é o "caminho de promoção declarado" que o P2S deixa
+a cargo do projeto — [`docs/p2s/workflow.md`](../../p2s/workflow.md)):
+
+- **`p2s-plan` → cria a branch** `feature/{ID}-{slug}` a partir da `master`.
+- **`p2s-done` → mergeia** `--no-ff` na `master` + push (dispara o **deploy de produção**),
+  preservando a branch. **Automático:** o `p2s-done` **não para para pedir o merge** — executá-lo é o
+  fluxo declarado deste projeto.
+
+Como é um contexto **solo com tronco direto**, o merge é **local** (num fluxo de PR, este gatilho
+seria "abrir o PR"). Por ser o git flow **declarado e autorizado** aqui, o agente **executa** o merge
+do `p2s-done` — isso **não** é "mergear por conta própria" (o que o framework proíbe é *improvisar*
+um merge fora de um fluxo declarado). É **autorização permanente** do usuário para este projeto.
+
+Pré-condições do gatilho de `p2s-done` (só mergeia com tudo isto): revisão humana aprovada +
+`p2s-review` sem bloqueantes + `stage` (Preview) verde. Após o deploy, valida prod (DOD).
 
 - **`p2s-code`**: push na branch → Preview (stage). Um `npm test` local vermelho **bloqueia** o push
   (husky pre-push).
-- **`p2s-done`**: com revisão humana aprovada + `p2s-review` sem bloqueantes + `stage` verde → **merge
-  `--no-ff` em `master`** (mantém a branch) → deploy de produção → validação em prod. Como é solo com
-  tronco direto, o merge é local (num contexto de PR, seria um Pull Request).
 
 ## Automação (hooks & deploy)
 
