@@ -1,1 +1,2 @@
+bash scripts/guard-p2s.sh
 npm test
