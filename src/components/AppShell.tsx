@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
-import { Home, Users, LogOut, type LucideIcon } from "lucide-react";
+import { Home, Users, Settings, LogOut, type LucideIcon } from "lucide-react";
 import Logo from "@/components/Logo";
 import { initials } from "@/lib/initials";
 
@@ -34,6 +34,9 @@ export interface AppShellProps {
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Início", icon: Home },
   { href: "/dashboard/profissionais", label: "Profissionais", icon: Users },
+  // Configurações é sempre visível (sem `module`); o card "Pagamentos e NFS-e"
+  // dentro dela é que é habilitado por módulo (F0002.8 / D1).
+  { href: "/dashboard/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 function visibleItems(modulos: AppShellProps["business"]["modulos"]) {

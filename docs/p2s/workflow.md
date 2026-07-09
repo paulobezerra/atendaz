@@ -66,18 +66,18 @@ achados por severidade, (2) revisa o diff, e (3) decide — **aprovar** → segu
 
 ## Ciclo de vida dos artefatos descartáveis
 
-Protótipos (`templates/prototipos/`, `templates/referencia/`) e planos (`plans/`) são
-**descartáveis por design** (pilar 2):
+Protótipos (`templates/prototipos/`, `templates/referencia/`), planos (`plans/`) e **reviews**
+(`reviews/`) são **descartáveis por design** (pilar 2):
 
 1. **Vivos** — enquanto a feature está em construção, são a referência do gate de revisão humana.
 2. **Arquiváveis** — quando a feature fecha (DOD) **e** suas regras já foram **consolidadas na
-   spec/base**, o artefato cumpriu seu papel. Planos vão para `plans/archive/`; protótipos podem ir
-   para um `archive/` equivalente.
+   spec/base**, o artefato cumpriu seu papel. Planos e reviews vão para `plans/archive/` /
+   `reviews/archive/`; protótipos podem ir para um `archive/` equivalente.
 3. **Deletáveis** — **`archive/` = candidato a exclusão a qualquer momento.** Arquivar é declarar
    "isto não é mais fonte da verdade de nada". Pré-condição única: **a regra já vive na spec/base**.
 
 **A spec não entra neste ciclo** — é a fonte da verdade, nunca arquivada "por limpeza". Arquiva-se o
-*meio* (protótipo, plano), nunca o *fim* (a spec).
+*meio* (protótipo, plano, review), nunca o *fim* (a spec).
 
 ## Não deployar por mudança só-de-doc
 
