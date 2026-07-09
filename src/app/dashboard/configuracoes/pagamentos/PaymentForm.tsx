@@ -40,6 +40,7 @@ export default function PaymentForm({ initial }: { initial: PaymentStatus }) {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
+    mode: "onBlur", // valida ao sair do campo (plano T7), não só no submit
     defaultValues: { apiKey: "" },
   });
 

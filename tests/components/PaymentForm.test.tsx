@@ -6,14 +6,16 @@ import PaymentForm from "@/app/dashboard/configuracoes/pagamentos/PaymentForm";
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
 }));
+const mockToast = jest.fn();
 jest.mock("@/components/Toast", () => ({
-  useToast: () => ({ toast: jest.fn() }),
+  useToast: () => ({ toast: mockToast }),
 }));
 
 const DISCONNECTED = { connected: false, last4: null };
 
 describe("PaymentForm", () => {
   beforeEach(() => {
+    mockToast.mockClear();
     // @ts-expect-error mock global fetch
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -67,5 +69,30 @@ describe("PaymentForm", () => {
     await user.click(screen.getByRole("button", { name: /Como conectar/ }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText(/Crie sua conta no Asaas/)).toBeInTheDocument();
+  });
+
+  it("submit com erro do POST: mantém o form e avisa por toast", async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Chave Asaas inválida ou sem permissão." }),
+    });
+    const user = userEvent.setup();
+    render(<PaymentForm initial={DISCONNECTED} />);
+    await user.type(screen.getByPlaceholderText("$aact_..."), "$aact_ruim");
+    await user.click(screen.getByRole("button", { name: /Salvar e conectar/ }));
+
+    // não avançou para o estado conectado
+    expect(screen.getByRole("button", { name: /Salvar e conectar/ })).toBeInTheDocument();
+    expect(screen.queryByText(/Conectado/)).not.toBeInTheDocument();
+    expect(mockToast).toHaveBeenCalledWith(expect.stringMatching(/inválida/i), "error");
+  });
+
+  it("valida onBlur: campo vazio mostra erro ao sair do campo", async () => {
+    const user = userEvent.setup();
+    render(<PaymentForm initial={DISCONNECTED} />);
+    const input = screen.getByPlaceholderText("$aact_...");
+    await user.click(input);
+    await user.tab(); // blur sem preencher
+    expect(await screen.findByText(/Informe o token de API do Asaas/)).toBeInTheDocument();
   });
 });
