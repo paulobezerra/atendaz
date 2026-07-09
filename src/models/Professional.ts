@@ -1,6 +1,13 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 import type { IBillingConfig } from "./Business";
 
+export interface IRedesSociais {
+  instagram?: string;
+  facebook?: string;
+  tiktok?: string;
+  site?: string;
+}
+
 export interface IProfessional extends Document {
   businessId: Types.ObjectId;
   nome: string;
@@ -8,6 +15,7 @@ export interface IProfessional extends Document {
   whatsapp?: string;
   bio?: string;
   fotoUrl?: string;
+  redesSociais?: IRedesSociais;
   /** Override de billing; null = herda do business. */
   billingConfig?: (IBillingConfig & { cpfCnpj?: string }) | null;
   ativo: boolean;
@@ -28,6 +36,13 @@ const ProfessionalSchema = new Schema<IProfessional>(
     whatsapp: { type: String },
     bio: { type: String },
     fotoUrl: { type: String },
+    redesSociais: {
+      type: new Schema<IRedesSociais>(
+        { instagram: String, facebook: String, tiktok: String, site: String },
+        { _id: false }
+      ),
+      default: undefined,
+    },
     billingConfig: { type: Schema.Types.Mixed, default: null },
     ativo: { type: Boolean, default: true },
   },
