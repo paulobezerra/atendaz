@@ -6,27 +6,38 @@ Sistema modular para gestão de agendamentos, cobranças automatizadas via Asaas
 
 Este projeto roda sobre o **P2S**, um framework pessoal, **agnóstico de tecnologia e de agente**, onde a **especificação é a fonte da verdade** e **toda fronteira (UX, API, formato dos dados, integrações) é prototipada e aprovada antes de qualquer código** — o **protótipo aprovado vira a spec**. O livro de regras do framework vive em **[`docs/p2s/`](docs/p2s/)**; os dados específicos do produto (visão, arquitetura, guardrails, specs, planos) em **[`docs/project/`](docs/project/)**. Os comandos são slash commands / skills com prefixo `p2s-` (redirects em `.claude/commands/` que apenas apontam para `docs/p2s/` — nunca guardam regras).
 
-### Os sete comandos
+### Os oito comandos (duas fases)
+
+O P2S é **agnóstico de git flow**: a mecânica concreta (branch/merge/PR/deploy) deste projeto está em [`docs/project/base/workflow.md`](docs/project/base/workflow.md); a IA **nunca** mergeia no tronco por conta própria.
+
+**Upstream (partida & manutenção):**
 
 | Comando | Governa | Produz |
 | :--- | :--- | :--- |
-| `/p2s-doc {tópico}` | Documentação base/transversal (**não** toca spec) | Docs em `docs/project/base/` no tronco (sem deploy) |
-| `/p2s-discovery` | A **linguagem visual/UX** (a partir de links + imagens) | Referência navegável em `templates/referencia/` + design-system |
-| `/p2s-spec {ID}` | A spec da feature via **prototipação navegável** (UX, API, dados, integrações) | Spec em `docs/project/spec/` + protótipos em `templates/prototipos/` |
-| `/p2s-plan {ID}` | O plano de execução | Branch `feature/{ID}-{slug}` + plano em `docs/project/plans/` (**sem código**) |
-| `/p2s-code {ID}` | Código-fonte | Commits na branch → deploy de **stage** (Preview) |
-| `/p2s-test {local\|stage\|prod}` | Execuções de teste | Evidência (Jest local · Cypress no Preview/Prod) |
-| `/p2s-done {ID}` | O merge no tronco | Feature fechada após prova em produção (portão do DOD) |
+| `/p2s-discovery` | Descoberta de **produto** | constitution + roadmap |
+| `/p2s-design` | Descoberta de **design/UX** (links + imagens) | Referência em `templates/referencia/` + design-system |
+
+**Transversal:** `/p2s-doc` — docs ↔ realidade (engenharia reversa / reconciliação pós-implementação).
+
+**Downstream (loop por feature):**
+
+| Comando | Governa | Produz |
+| :--- | :--- | :--- |
+| `/p2s-spec {ID}` | A spec via **prototipação navegável** (UX, API, dados, integrações) | Spec + protótipos em `templates/prototipos/` |
+| `/p2s-plan {ID}` | O plano (**cenários BDD** + inventário cria/altera/exclui) | Plano em `docs/project/plans/` (**sem código**) |
+| `/p2s-code {ID}` | Código-fonte | Implementação (TDD) na branch da feature |
+| `/p2s-review {ID}` | QA: testes (script) + revisão holística | Achados por severidade (bloqueante/major/medium/minor) |
+| `/p2s-done {ID}` | **Fechamento lógico** (arquiva, marca concluído) | Feature pronta; promoção entregue ao git flow |
 
 Definições completas, portões e encadeamento: **[`docs/p2s/commands.md`](docs/p2s/commands.md)**.
 
 ### Portões
 
 1. **DOR** (entrada do `/p2s-plan`): spec sem ambiguidade + **protótipo navegável aprovado de cada fronteira** (ou justificativa registrada de que não vale prototipar) + necessidades de ambiente conhecidas.
-2. **Revisão humana** (entre `/p2s-code` e `/p2s-done`): com a feature em **stage (Preview)**, o usuário **testa manualmente e revisa o diff** — "os testes passaram" **não** é "está correto". Só após aprovação se avança; senão, volta ao ciclo de correção.
-3. **DOD** (`/p2s-done`): único comando que altera a `master` — merge `--no-ff` (mantém a branch) → deploy de **produção** → `/p2s-test prod`. Só marca `[CONCLUÍDO]` com prova em produção.
+2. **Revisão humana** (entre `/p2s-review` e `/p2s-done`): o usuário lê evidência + achados, **testa no ambiente do projeto e revisa o diff** — "os testes passaram" **não** é "está correto". Só após aprovação se avança.
+3. **DOD** (`/p2s-done`): fecha logicamente (arquiva + marca `[CONCLUÍDO]`) **se** o `/p2s-review` não tem bloqueantes e a **validação definida pelo projeto** passou. A promoção (merge/deploy) segue o git flow do projeto.
 
-> **Branches & deploy**: `master` = Produção (só muda no `/p2s-done`); `feature/{ID}-{slug}` = criada no `/p2s-plan`, nunca deletada. Commits só de docs/protótipos na `master` (`/p2s-doc`, `/p2s-spec`) não deployam (Vercel *Ignored Build Step* → `scripts/vercel-ignore-build.sh`). Ver [`docs/p2s/workflow.md`](docs/p2s/workflow.md).
+> **Git flow deste projeto** (solo + Vercel): `master` = Produção; `feature/{ID}-{slug}` nunca deletada; commits só de docs/protótipos no `master` não deployam (Vercel *Ignored Build Step*). Detalhes e mapeamento em [`docs/project/base/workflow.md`](docs/project/base/workflow.md).
 
 ## 📖 Documentação Importante
 
@@ -35,6 +46,7 @@ Definições completas, portões e encadeamento: **[`docs/p2s/commands.md`](docs
 - [Modelo de Dados](docs/project/base/data-model.md) — com diagrama ER (Mermaid)
 - [Roadmap de Implementação](docs/project/base/roadmap.md)
 - [Design System & UX](docs/project/base/design-system.md)
+- [Git Flow & Ambientes (concreto do projeto)](docs/project/base/workflow.md)
 - [Manifesto da estrutura do produto (P2S)](docs/p2s/project-structure.md)
 
 ## 💎 Golden Stack (Estável — nunca beta/preview)
@@ -62,7 +74,7 @@ A Política de Testes canônica está em [`docs/p2s/quality.md`](docs/p2s/qualit
 **Regra dura**: "verde" não conta se não cobre a **superfície alterada**. Um crash de render não pode passar nos testes.
 
 ## ⚡ Fluxo Acelerado (Vapt-Vupt)
-1. **DOR**: `/p2s-plan {ID}` -> cria a branch + auditoria de segurança + check de envs.
-2. **Warm-up**: no início do `/p2s-code`, o agente garante a Golden Stack e `npm audit` limpo.
-3. **Execução**: implementação TDD + `/p2s-test local` -> `push` -> `/p2s-test stage` (Preview).
-4. **DOD**: `/p2s-done {ID}` -> merge na `master` -> build limpo na Vercel -> `/p2s-test prod` verde.
+1. **DOR**: `/p2s-plan {ID}` -> plano (cenários BDD + inventário) + auditoria de segurança + check de envs.
+2. **Warm-up**: no início do `/p2s-code`, o agente garante a Golden Stack e `npm audit` limpo; implementa TDD na branch da feature (`push` -> Preview/stage).
+3. **QA**: `/p2s-review {ID}` -> roda os testes (script) + revisão holística + achados por severidade.
+4. **DOD**: aprovado no gate humano, `/p2s-done {ID}` fecha (arquiva + `[CONCLUÍDO]`); a promoção (merge na `master` -> deploy Vercel -> Cypress em prod) segue o [git flow do projeto](docs/project/base/workflow.md).

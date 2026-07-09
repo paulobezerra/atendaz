@@ -15,15 +15,18 @@ Pergunte de qualquer passo: *"Isto exige julgamento, ou só execução?"*
 
 | Faça num **script / hook** (determinístico) | Faça com o **agente** (julgamento) |
 | :--- | :--- |
-| Rodar a suíte de testes | Decidir *o que* testar e escrever os testes |
+| Rodar a suíte de testes (o `p2s-review` a **invoca**, não a reimplementa) | Decidir *o que* testar e escrever os testes; revisar consistência |
 | Lint / format | Resolver uma dúvida de design ou arquitetura |
 | Auditar dependências por vulnerabilidades | Escolher qual dependência adotar |
 | Rodar o build de produção / type-check | Interpretar uma falha de build e corrigir a causa |
 | Pular o build de deploy em commits só-de-doc | Escrever a documentação |
 | Bloquear um push quando a suíte está vermelha | Diagnosticar *por que* a suíte ficou vermelha |
+| **Mecânica de git/promoção** (branch, merge, PR, deploy) — do git flow do projeto | Decidir *quando* a feature está logicamente pronta para promover |
 
 Se um passo é igual toda vez e tem um pass/fail binário, deve ser um script. O trabalho do agente
-é reagir ao veredito do script, não refazer a checagem na mão.
+é reagir ao veredito do script, não refazer a checagem na mão. **Não existe `p2s-test`**: rodar
+testes é script — o `p2s-review` dispara e lê o veredito. E a **promoção ao tronco** (merge/PR) é do
+projeto/automação: a IA nunca a executa por conta própria.
 
 ## Onde as checagens vivem
 

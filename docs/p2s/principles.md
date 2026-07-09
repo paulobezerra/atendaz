@@ -142,7 +142,7 @@ valem, só custam mais caro e falham mais. Detalhes em [`automation.md`](automat
 
 | Pilar | Garantido por |
 | :--- | :--- |
-| Testes antes do código | O `p2s-code` escreve testes junto com a mudança; git hooks rodam a suíte no commit/push; uma suíte vermelha bloqueia o push ([`automation.md`](automation.md)). |
-| Protótipo da fronteira antes de implementar | Produzido no `p2s-spec` (UX, API, dados e integrações, navegáveis) sobre a linguagem visual do `p2s-discovery`; portão de DOR no `p2s-plan` (para se alguma fronteira não estiver prototipada e aprovada); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
-| Spec como fonte da verdade | O `p2s-doc` governa toda decisão de comportamento; `p2s-plan`/`p2s-code` revalidam contra a spec e se recusam a prosseguir com inconsistência. |
+| Testes antes do código | O `p2s-code` escreve testes junto com a mudança (TDD nas áreas críticas); git hooks rodam a suíte; o `p2s-review` lê o veredito e revisa a consistência ([`automation.md`](automation.md)). |
+| Protótipo da fronteira antes de implementar | Produzido no `p2s-spec` (UX, API, dados e integrações, navegáveis) sobre a linguagem visual do `p2s-design`; portão de DOR no `p2s-plan` (para se alguma fronteira não estiver prototipada e aprovada); revisão humana compara a implementação com o protótipo ([`commands.md`](commands.md)). |
+| Spec como fonte da verdade | `p2s-discovery` (produto) e `p2s-spec` (feature) governam as decisões de comportamento; `p2s-plan`/`p2s-code` revalidam contra a spec e se recusam a prosseguir com inconsistência; `p2s-doc` só reconcilia a doc com a realidade. |
 | *Apoio:* automação | Hooks/scripts (husky/CI) garantem os invariantes determinísticos; os comandos confiam no veredito em vez de re-derivá-lo ([`automation.md`](automation.md)). |

@@ -1,6 +1,6 @@
 # [CONCLUÍDO] Especificação: F0002 — Profissionais e Billing Override
 
-> **Status:** F2 concluída e **em produção** (validada via `/p2s-done 2` — `/p2s-test prod` 9/9). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/project/base/design-system.md`).
+> **Status:** F2 concluída e **em produção** (fechada via `p2s-done 2`; validação em prod 9/9 — Cypress). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/project/base/design-system.md`).
 
 ## Escopo
 - Gestão (CRUD) de múltiplos `professional` (agendas/identidades) dentro de um `business`.

@@ -66,36 +66,52 @@ inegociáveis; ver [`principles.md`](principles.md).
 
 ## Os comandos
 
-O P2S é conduzido por sete comandos prefixados. Cada um é uma **fronteira rígida** sobre o que
-pode mudar, e cada um termina passando o bastão para o próximo, com um portão humano no meio.
-Definições completas em [`commands.md`](commands.md).
+O P2S é conduzido por **oito comandos prefixados, em duas fases**. Cada um é uma **fronteira
+rígida**, e cada um passa o bastão por um portão humano. Definições completas em
+[`commands.md`](commands.md). O framework é **agnóstico de git flow**: mecânica de
+branch/merge/PR/push é do projeto, e a IA **nunca** muta o tronco por conta própria.
+
+**Upstream — partida & manutenção** (re-executáveis):
 
 | Comando | Governa | Produz |
 | :--- | :--- | :--- |
-| `p2s-doc` | Documentação base/transversal | Docs atualizados no tronco |
-| `p2s-discovery` | A **linguagem visual/UX** (a partir de links + imagens) | Referência navegável em `templates/referencia/` + design-system |
-| `p2s-spec` | A spec da feature via **prototipação navegável** (UX, API, dados, integrações) | Spec + protótipos (clicável + OpenAPI/API fake) no tronco |
-| `p2s-plan` | O plano de execução | Branch da feature + plano (sem código) |
-| `p2s-code` | Código-fonte | Commits na branch da feature → deploy de stage |
-| `p2s-test` | Execuções de teste | Evidência (local / stage / prod) |
-| `p2s-done` | O merge no tronco | Feature fechada após prova em produção |
+| `p2s-discovery` | Descoberta de **produto** | constitution + roadmap |
+| `p2s-design` | Descoberta de **design/UX** (links + imagens) | Referência navegável em `templates/referencia/` + design-system |
 
-A cadeia canônica e as regras de "como fechar um comando" (sem hype, sempre apontando o próximo
-passo) estão em [`commands.md`](commands.md#encadeamento-de-comandos).
+**Transversal:**
+
+| Comando | Governa | Produz |
+| :--- | :--- | :--- |
+| `p2s-doc` | Docs ↔ **realidade** (engenharia reversa / reconciliação) | Base docs fiéis ao que existe |
+
+**Downstream — o loop por feature:**
+
+| Comando | Governa | Produz |
+| :--- | :--- | :--- |
+| `p2s-spec` | A spec via **prototipação navegável** (UX, API, dados, integrações) | Spec + protótipos |
+| `p2s-plan` | O plano (**cenários BDD** + inventário cria/altera/exclui) | Plano (sem código) |
+| `p2s-code` | Código-fonte | Implementação (TDD) no fluxo de branch do projeto |
+| `p2s-review` | QA: **testes (script) + revisão holística** | Achados por severidade (bloqueante/major/medium/minor) |
+| `p2s-done` | **Fechamento lógico** (arquiva, marca concluído) | Feature pronta; promoção entregue ao git flow do projeto |
+
+A cadeia canônica e as regras de "como fechar um comando" (sem hype) estão em
+[`commands.md`](commands.md#encadeamento-de-comandos).
 
 ## O que o P2S automatiza vs. o que o agente faz
 
-Checagens repetitivas e determinísticas pertencem a **scripts e git hooks**, não ao prompt de um
-agente. O agente orquestra e raciocina; husky/CI garantem os invariantes (lint, testes, audit,
-regra de pular build) sempre do mesmo jeito. Isso mantém o agente barato, rápido e incapaz de
-"esquecer" um portão. Ver [`automation.md`](automation.md).
+Checagens repetitivas e determinísticas — e a **mecânica de git/promoção** — pertencem a **scripts,
+git hooks e ao git flow do projeto**, não ao prompt de um agente. O agente orquestra e raciocina;
+husky/CI garantem os invariantes (lint, testes, audit, pular build). **Não há `p2s-test`**: rodar
+testes é script, disparado e lido pelo `p2s-review`. Ver [`automation.md`](automation.md).
 
 ## Portões de governança
 
 - **DOR (Definition of Ready)** — uma spec só entra no `p2s-plan` quando está sem ambiguidade,
-  com a UI prototipada e aprovada, e com as necessidades de ambiente conhecidas.
-- **DOD (Definition of Done)** — uma feature só é "pronta" após verificada **em produção**, com
-  evidência.
+  com **cada fronteira prototipada e aprovada** (ou justificativa de não prototipar), e com as
+  necessidades de ambiente conhecidas.
+- **DOD (Definition of Done)** — **agnóstico de ambiente**: a feature é "pronta" quando o
+  `p2s-review` não tem bloqueantes **e** a **validação definida pelo projeto** passou (produção
+  quando há; ou QA/homologação/stage) — não "produção" hardcoded.
 
 ## Políticas de qualidade
 
@@ -124,7 +140,8 @@ docs/
     │   ├── data-model.md      — modelo de dados (gerado por protótipo ER navegável)
     │   ├── roadmap.md         — ordem das features
     │   ├── environment.md     — variáveis de ambiente por fase
-    │   └── design-system.md   — fundação de UX (saída do p2s-discovery)
+    │   ├── design-system.md   — fundação de UX (saída do p2s-design)
+    │   └── workflow.md        — git flow & ambientes CONCRETOS do projeto
     ├── spec/          — uma spec por feature (fonte da verdade)
     └── plans/         — um plano de execução por feature (descartável)
 ```

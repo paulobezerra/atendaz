@@ -21,7 +21,8 @@ Um conjunto **fixo e enxuto** de arquivos. Consolidar aqui (em vez de espalhar e
 | `data-model.md` | O **modelo de dados** durável | O schema consolidado, **gerado a partir de um protótipo ER navegável** (ex.: Mermaid `erDiagram`) aprovado no fluxo de spec | Um dump de migrations; DDL de produção |
 | `roadmap.md` | A **ordem** das features | Lista de fases/features, marcando as concluídas | Planejamento técnico de uma feature (isso é `plans/`) |
 | `environment.md` | As **variáveis de ambiente** por fase | Quais envs cada fase exige e onde configurá-las | Segredos (esses vivem só no ambiente) |
-| `design-system.md` | A **fundação de UX** | Tokens, componentes e padrões — **saída do `p2s-discovery`** | Protótipo de uma tela específica (isso é `templates/prototipos/`) |
+| `design-system.md` | A **fundação de UX** | Tokens, componentes e padrões — **saída do `p2s-design`** | Protótipo de uma tela específica (isso é `templates/prototipos/`) |
+| `workflow.md` | O **git flow & ambientes** do projeto | Branches, ambientes reais, promoção (merge/PR), hooks, deploy — o **concreto** que o framework deixa aberto | O fluxo lógico (isso é do P2S, em `docs/p2s/workflow.md`) |
 
 Um produto pode **acrescentar** um doc de base se um domínio realmente exigir, mas o default é
 manter este conjunto — quanto mais previsível, mais portável.
@@ -49,6 +50,6 @@ Um plano por feature (`{ID}-{slug}.md`), produzido pelo `p2s-plan`. **Descartáv
 
 ## Protótipos (fora de `docs/`, mas parte do contrato)
 
-- `templates/referencia/` — a **linguagem visual** do produto (saída do `p2s-discovery`).
+- `templates/referencia/` — a **linguagem visual** do produto (saída do `p2s-design`).
 - `templates/prototipos/` — protótipos **por tela** de cada feature (`p2s-spec`), incluindo
   `templates/prototipos/api/` para contratos (OpenAPI/API fake). Ambos **descartáveis**.
