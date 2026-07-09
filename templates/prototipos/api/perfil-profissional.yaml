@@ -1,0 +1,173 @@
+openapi: 3.0.3
+info:
+  title: F3.1 — Perfil do profissional (bio, redes, foto)
+  version: 0.1.0-prototype
+  description: >-
+    Protótipo DESCARTÁVEL do contrato da aba "Perfil" (p2s-spec 3.1). Habilitado por
+    modulos.agenda (404 se off). Foto via Vercel Blob (server-upload put, access public),
+    fiel à doc oficial do Blob (não inventar campos). Isolado por businessId; audit_log.
+paths:
+  /api/professionals/{id}:
+    patch:
+      summary: "Atualiza o perfil (estende o PATCH da F2 com bio + redes)"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PerfilInput"
+            examples:
+              perfil:
+                value:
+                  bio: "Barbeiro há 10 anos."
+                  redesSociais:
+                    instagram: "instagram.com/maria"
+                    site: "https://maria.com"
+      responses:
+        "200":
+          description: "Profissional atualizado (DTO seguro — nunca a chave Asaas)"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileDTO"
+              examples:
+                atualizado:
+                  value:
+                    id: "665000000000000000000001"
+                    nome: "Maria Silva"
+                    bio: "Barbeiro há 10 anos."
+                    fotoUrl: "https://store.public.blob.vercel-storage.com/prof-abc.jpg"
+                    redesSociais:
+                      instagram: "instagram.com/maria"
+                      facebook: null
+                      tiktok: null
+                      site: "https://maria.com"
+                    ativo: true
+        "400":
+          description: "Dados inválidos (schema)"
+        "401":
+          description: "Não autenticado"
+        "404":
+          description: "Profissional de outro business, ou módulo agenda desabilitado"
+  /api/professionals/{id}/foto:
+    post:
+      summary: "Envia/atualiza a foto (server para Vercel Blob, salva fotoUrl)"
+      description: >-
+        multipart/form-data com o campo file (JPG/PNG/WebP, ate 2 MB). O servidor chama
+        put(name, file, { access: 'public' }) do @vercel/blob e persiste a URL em
+        professional.fotoUrl.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "200":
+          description: "Foto salva"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FotoResult"
+              examples:
+                ok:
+                  value:
+                    fotoUrl: "https://store.public.blob.vercel-storage.com/prof-abc.jpg"
+        "400":
+          description: "Arquivo ausente, tipo não permitido, ou maior que 2 MB"
+        "401":
+          description: "Não autenticado"
+        "404":
+          description: "Profissional de outro business, ou módulo agenda desabilitado"
+    delete:
+      summary: "Remove a foto (limpa fotoUrl; apaga o blob best-effort)"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Foto removida (fotoUrl vira null)"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FotoResult"
+              examples:
+                removida:
+                  value:
+                    fotoUrl: null
+        "401":
+          description: "Não autenticado"
+        "404":
+          description: "Profissional de outro business, ou módulo agenda desabilitado"
+components:
+  schemas:
+    RedesSociais:
+      type: object
+      description: "NOVO campo em professional (F3.1). Todos opcionais."
+      properties:
+        instagram:
+          type: string
+          nullable: true
+        facebook:
+          type: string
+          nullable: true
+        tiktok:
+          type: string
+          nullable: true
+        site:
+          type: string
+          nullable: true
+    PerfilInput:
+      type: object
+      properties:
+        bio:
+          type: string
+          maxLength: 280
+          nullable: true
+        redesSociais:
+          $ref: "#/components/schemas/RedesSociais"
+    FotoResult:
+      type: object
+      properties:
+        fotoUrl:
+          type: string
+          nullable: true
+          description: "URL pública do Blob (ou null após DELETE)"
+      required: [fotoUrl]
+    ProfileDTO:
+      type: object
+      description: "Profissional retornado após atualizar o perfil (sem a chave Asaas)."
+      properties:
+        id:
+          type: string
+        nome:
+          type: string
+        bio:
+          type: string
+          nullable: true
+        fotoUrl:
+          type: string
+          nullable: true
+        redesSociais:
+          $ref: "#/components/schemas/RedesSociais"
+        ativo:
+          type: boolean

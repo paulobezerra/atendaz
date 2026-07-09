@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atendaz — Profissional ▸ Perfil</title>
+  <meta name="description" content="Protótipo de referência visual (não é produção). F3.1 — aba Perfil do profissional (bio, redes, foto via Vercel Blob)." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      colors: { primary: { DEFAULT: "#4F46E5", hover: "#4338CA", 50: "#EEF2FF" }, success: "#059669", warning: "#D97706", danger: "#DC2626" },
+      fontFamily: { sans: ["Inter", "ui-sans-serif", "system-ui"] } } } };
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+<div class="flex min-h-screen">
+  <!-- SIDEBAR -->
+  <aside class="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-gray-200 bg-white lg:flex">
+    <div class="flex h-16 items-center border-b border-gray-100 px-5"><img src="../referencia/assets/atendaz-logo.svg" alt="Atendaz" class="h-7 w-auto" /></div>
+    <nav class="flex-1 space-y-1 px-3 py-4">
+      <a href="dashboard.html" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"><i data-lucide="home" class="h-4 w-4"></i> Início</a>
+      <a href="profissionais.html" class="flex items-center gap-3 rounded-lg bg-indigo-50 px-3 py-2 text-sm font-medium text-primary"><i data-lucide="users" class="h-4 w-4"></i> Profissionais</a>
+      <a href="configuracoes.html" class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"><i data-lucide="settings" class="h-4 w-4"></i> Configurações</a>
+    </nav>
+  </aside>
+
+  <div class="flex w-full flex-col lg:pl-60">
+    <header class="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur lg:px-8">
+      <div class="min-w-0"><p class="truncate text-sm font-semibold text-gray-900">Barbearia do Zé</p><p class="truncate text-xs text-gray-500">/agendar/barbearia-do-ze</p></div>
+    </header>
+
+    <main class="mx-auto w-full max-w-3xl px-4 py-8 lg:px-8">
+      <!-- breadcrumb -->
+      <nav class="mb-4 flex items-center gap-1.5 text-xs text-gray-500">
+        <a href="profissionais.html" class="hover:text-gray-700">Profissionais</a>
+        <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+        <span class="text-gray-700">Maria Silva</span>
+      </nav>
+
+      <!-- cabeçalho do profissional -->
+      <div class="flex items-center gap-3">
+        <span class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-primary/10 text-base font-semibold text-primary" id="hdrAvatar">MS</span>
+        <div><h1 class="text-xl font-bold tracking-tight text-gray-900">Maria Silva</h1><p class="text-sm text-gray-500">Profissional · agenda ativa</p></div>
+      </div>
+
+      <!-- ABAS (habilitadas por modulos.agenda) -->
+      <div class="mt-6 border-b border-gray-200">
+        <nav class="-mb-px flex gap-6 text-sm">
+          <button onclick="tab('dados')" id="t-dados" class="border-b-2 border-transparent px-1 py-2.5 font-medium text-gray-500 hover:text-gray-800">Dados</button>
+          <button onclick="tab('perfil')" id="t-perfil" class="border-b-2 border-primary px-1 py-2.5 font-medium text-primary">Perfil</button>
+          <span class="cursor-not-allowed px-1 py-2.5 font-medium text-gray-300" title="Fase 3.2">Serviços</span>
+          <span class="cursor-not-allowed px-1 py-2.5 font-medium text-gray-300" title="Fase 3.3">Disponibilidade</span>
+        </nav>
+      </div>
+
+      <!-- Aba DADOS (placeholder — é o form atual da F2) -->
+      <section id="p-dados" class="mt-6 hidden">
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-500 shadow-sm">Form de <b>Dados básicos + faturamento</b> (já existente na F2). Fora do escopo do protótipo do Perfil.</div>
+      </section>
+
+      <!-- Aba PERFIL (F3.1) -->
+      <section id="p-perfil" class="mt-6 space-y-6">
+        <!-- FOTO -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 class="text-sm font-semibold text-gray-900">Foto do profissional</h2>
+          <p class="mt-0.5 text-sm text-gray-500">Aparece na sua página pública de agendamento. JPG, PNG ou WebP, até 2 MB.</p>
+          <div class="mt-4 flex items-center gap-5">
+            <span id="foto" class="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-full bg-gray-100 text-gray-400"><i data-lucide="user" class="h-8 w-8"></i></span>
+            <div class="flex flex-wrap gap-2">
+              <label class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <i data-lucide="upload" class="h-4 w-4"></i> Trocar foto
+                <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" onchange="preview(event)" />
+              </label>
+              <button type="button" id="rmFoto" onclick="removeFoto()" class="hidden inline-flex items-center gap-2 rounded-lg border border-danger/30 px-3 py-2 text-sm font-medium text-danger hover:bg-danger/5">
+                <i data-lucide="trash-2" class="h-4 w-4"></i> Remover
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BIO + REDES -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <form class="space-y-5" onsubmit="return false;">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Bio</label>
+              <textarea rows="3" maxlength="280" placeholder="Uma breve descrição que aparece no seu perfil público."
+                class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"></textarea>
+              <p class="mt-1 text-xs text-gray-400">Até 280 caracteres.</p>
+            </div>
+
+            <div>
+              <p class="mb-2 text-sm font-medium text-gray-700">Redes sociais <span class="font-normal text-gray-400">(opcionais)</span></p>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div class="flex items-center gap-2 rounded-lg border border-gray-300 px-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <i data-lucide="instagram" class="h-4 w-4 text-gray-400"></i>
+                  <input placeholder="instagram.com/seu-perfil" class="h-10 w-full text-sm placeholder:text-gray-400 focus:outline-none" />
+                </div>
+                <div class="flex items-center gap-2 rounded-lg border border-gray-300 px-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <i data-lucide="facebook" class="h-4 w-4 text-gray-400"></i>
+                  <input placeholder="facebook.com/seu-perfil" class="h-10 w-full text-sm placeholder:text-gray-400 focus:outline-none" />
+                </div>
+                <div class="flex items-center gap-2 rounded-lg border border-gray-300 px-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <i data-lucide="music-2" class="h-4 w-4 text-gray-400"></i>
+                  <input placeholder="tiktok.com/@seu-perfil" class="h-10 w-full text-sm placeholder:text-gray-400 focus:outline-none" />
+                </div>
+                <div class="flex items-center gap-2 rounded-lg border border-gray-300 px-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <i data-lucide="globe" class="h-4 w-4 text-gray-400"></i>
+                  <input placeholder="https://seu-site.com" class="h-10 w-full text-sm placeholder:text-gray-400 focus:outline-none" />
+                </div>
+              </div>
+              <p class="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500"><i data-lucide="phone" class="h-3.5 w-3.5"></i> O WhatsApp fica na aba <b>Dados</b> (é usado para confirmações).</p>
+            </div>
+
+            <div class="flex justify-end pt-1">
+              <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-hover">Salvar perfil</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+  function tab(which){
+    for (const t of ['dados','perfil']) {
+      document.getElementById('p-'+t).classList.toggle('hidden', t!==which);
+      const b = document.getElementById('t-'+t);
+      const on = t===which;
+      b.className = "border-b-2 px-1 py-2.5 font-medium " + (on ? "border-primary text-primary" : "border-transparent text-gray-500 hover:text-gray-800");
+    }
+  }
+  function preview(e){
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    const url = URL.createObjectURL(f);
+    const foto = document.getElementById('foto');
+    foto.innerHTML = '<img src="'+url+'" class="h-full w-full object-cover" />';
+    document.getElementById('rmFoto').classList.remove('hidden');
+  }
+  function removeFoto(){
+    document.getElementById('foto').innerHTML = '<i data-lucide="user" class="h-8 w-8"></i>';
+    document.getElementById('rmFoto').classList.add('hidden');
+    lucide.createIcons();
+  }
+</script>
+</body>
+</html>
