@@ -2,7 +2,7 @@
 
 ## Escopo
 - Capacidade de emitir cobranças sem necessidade de um agendamento prévio.
-- Gated: `modulos.cobranca: true`.
+- Habilitado por: `modulos.cobranca: true`.
 
 ## Implementação
 - **Nova Cobrança**: Botão no painel para criar cobrança direta.

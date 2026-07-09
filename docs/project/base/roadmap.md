@@ -75,5 +75,5 @@ Toda feature segue o ciclo: **Implementar → Testar Localmente → Deploy em Pr
 - Detalhes em: [docs/project/spec/F0012-marketing-pages.md](../spec/F0012-marketing-pages.md)
 
 ## Fase 13: Financeiro (Contas a Pagar/Receber)
-- Módulo gated (`modulos.financeiro`, item de menu próprio) com contas/caixas (≥1 por profissional), lançamentos a pagar/receber (previsto/pago/recebido), tipo de documento, categorias e tags, e relatório financeiro por conta/categoria/tag/profissional.
+- Módulo habilitado por (`modulos.financeiro`, item de menu próprio) com contas/caixas (≥1 por profissional), lançamentos a pagar/receber (previsto/pago/recebido), tipo de documento, categorias e tags, e relatório financeiro por conta/categoria/tag/profissional.
 - Detalhes em: [docs/project/spec/F0013-financial.md](../spec/F0013-financial.md)

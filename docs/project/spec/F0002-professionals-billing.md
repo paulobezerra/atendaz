@@ -53,7 +53,7 @@ Resolução de tenant: sessão → `googleId` → `business` (como no dashboard 
 
 Reuso: `validateAsaasKey` (`src/lib/asaas.ts`), `encrypt`/`decrypt` (`src/lib/crypto.ts`), `normalizeSlug`/`RESERVED_SLUGS`/`validateSlug` (`src/lib/slug.ts`), `POST /api/onboarding/validate-asaas` (já existe) para validação inline da chave.
 
-### 4. Billing Override (gated por módulo — Guardrail 2)
+### 4. Billing Override (habilitado por módulo — Guardrail 2)
 - A seção de faturamento **só existe** se `business.modulos.cobranca || business.modulos.nfse`.
   - Se ambos `false`: o formulário do profissional **não** tem seção de billing; a rota **ignora/rejeita** (400) qualquer `billingConfig` enviado.
 - Opções na UI: **"Usar faturamento padrão do negócio"** (`billingConfig = null`) **vs** **"Configurar faturamento próprio"**.
@@ -71,7 +71,7 @@ Reuso: `validateAsaasKey` (`src/lib/asaas.ts`), `encrypt`/`decrypt` (`src/lib/cr
 ## Regras de Negócio e Conflitos Identificados
 - **Invariante "≥ 1 profissional ativo"**: não é permitido desativar nem excluir o **último** profissional ativo do business. A API bloqueia (409) e a UI desabilita a ação com tooltip explicativo.
 - **`slugInterno`** é único **por business** (o mesmo slug pode existir em businesses diferentes), validado contra `RESERVED_SLUGS`. Gerado a partir do nome (debounce) e editável.
-- **Não gated por `agenda`**: o CRUD de profissionais existe em qualquer plano (é também identidade de faturamento). Apenas a **seção de billing** é gated por `cobranca|nfse`; recursos de agenda ficam no F3.
+- **Não exige o módulo `agenda`**: o CRUD de profissionais existe em qualquer plano (é também identidade de faturamento). Apenas a **seção de billing** é habilitado por `cobranca|nfse`; recursos de agenda ficam no F3.
 - **Segurança de chaves**: chave Asaas nunca trafega/persiste em texto plano e nunca é devolvida em GET (Guardrail 3). Para trocar, o usuário redigita.
 - **Isolamento total**: nenhuma rota retorna/edita profissional fora do `businessId` da sessão (Guardrail 1).
 
@@ -178,7 +178,7 @@ Sidebar colapsa em **bottom tab bar** (ícones + label) com os módulos ativos; 
 - [ ] **Isolamento de tenant**: business A não lê/edita/exclui `professional` de business B (espera 404).
 - [ ] **`slugInterno`**: único dentro do business; o mesmo slug permitido em businesses distintos; reservados rejeitados.
 - [ ] **Criptografia**: chave Asaas salva ≠ texto plano; GET nunca retorna a chave; `decrypt(encrypt(x)) === x`.
-- [ ] **Module gating**: com `cobranca` e `nfse` ambos `false`, `billingConfig` enviado é rejeitado (400) e a seção não é exigida.
+- [ ] **Habilitação por módulo**: com `cobranca` e `nfse` ambos `false`, `billingConfig` enviado é rejeitado (400) e a seção não é exigida.
 - [ ] **Validação de chave**: override com chave Asaas inválida é rejeitado.
 - [ ] **Invariante ≥ 1 ativo**: desativar/excluir o último ativo retorna 409.
 - [ ] **`audit_log`**: create/update/activate/deactivate/delete geram registro (sem chave no payload).

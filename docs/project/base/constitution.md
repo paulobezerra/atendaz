@@ -33,7 +33,7 @@ Cada `business` escolhe um plano no onboarding, que define os módulos habilitad
 - Arquitetura **modular e multi-tenant**; módulos independentes e habilitáveis por plano.
 - `professional` pode **herdar ou sobrescrever** o billing; toda decisão de cobrança passa por
   `resolveBillingConfig(professional, business)`.
-- Rota de módulo desativado retorna **404** (ver [gating em quality.md](../../p2s/quality.md#padrões-de-isolamento--gating)).
+- Rota de módulo desativado retorna **404** (ver [habilitação em quality.md](../../p2s/quality.md#padrões-de-isolamento--gating)).
 - Não armazenar dados clínicos/sensíveis desnecessários.
 - **Processamento síncrono** no MVP (sem mensageria/filas).
 
@@ -60,7 +60,7 @@ são do framework — ver [`quality.md`](../../p2s/quality.md#política-de-depen
 1. **Hierarquia & isolamento (multi-tenant).** Um Business **nunca** acessa dados de outro; **toda**
    query inclui `businessId`. Slugs de Business/Professional validados contra reservados e únicos no
    escopo. (Encarna [isolamento por dono](../../p2s/quality.md#padrões-de-isolamento--gating).)
-2. **Modularidade estrita (gated).** Nenhuma ação de Agenda/Cobrança/NFS-e roda sem checar
+2. **Modularidade estrita (habilitação por módulo).** Nenhuma ação de Agenda/Cobrança/NFS-e roda sem checar
    `business.modulos`; módulo desativado → **404** (não botão escondido). Onboarding pede só o que
    os módulos ativos exigem.
 3. **Faturamento & Asaas.** Toda lógica de cobrança/nota usa `resolveBillingConfig(professional,

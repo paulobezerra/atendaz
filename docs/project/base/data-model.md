@@ -127,7 +127,7 @@ Assinatura do negócio com a plataforma (Paulo).
 - `qtdAgendasAtivas`, `valorMensal`.
 - `asaasSubscriptionId`, `asaasPaymentIdAtual`.
 
-## account *(F0013 — gated `modulos.financeiro`)*
+## account *(F0013 — habilitado por `modulos.financeiro`)*
 Conta/caixa financeira do Tenant.
 - `businessId`, `nome`, `tipo` (CAIXA|BANCO|CARTEIRA), `saldoInicial`, `ativo`.
 - `professionalId` (nullable — conta de um profissional; null = conta geral do business).

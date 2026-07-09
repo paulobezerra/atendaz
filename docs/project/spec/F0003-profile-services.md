@@ -2,7 +2,7 @@
 
 ## Escopo
 - Configuração detalhada de cada profissional.
-- Gated: Apenas disponível se `modulos.agenda: true`.
+- Habilitado por: Apenas disponível se `modulos.agenda: true`.
 
 ## Implementação
 - **Perfil**: Bio, Foto (via Vercel Blob) e links de redes sociais.

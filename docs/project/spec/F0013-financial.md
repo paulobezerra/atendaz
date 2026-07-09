@@ -1,6 +1,6 @@
 # Especificação: F0013 — Financeiro (Contas a Pagar/Receber)
 
-> Módulo de **controle financeiro básico** do Tenant. **Gated** por `modulos.financeiro`
+> Módulo de **controle financeiro básico** do Tenant. **Habilitado** por `modulos.financeiro`
 > (item de menu **próprio** no App Shell — ver `docs/project/base/design-system.md`). Sobre a fundação de UX da
 > Fase 2.5 (shadcn/ui, react-hook-form + Zod, TanStack Query/Table — ver `docs/project/spec/F0002.5-ux-revamp.md`).
 
@@ -17,7 +17,7 @@
 **Fora deste módulo (básico):** conciliação bancária automática, fluxo de caixa
 projetado avançado, rateios complexos, integração contábil. Mantém-se simples.
 
-## Gating e Guardrails
+## Habilitação e Guardrails
 - **Módulo**: toda rota/tela exige `business.modulos.financeiro === true`; senão **404**
   (Guardrail 2). Novo flag em `plano.modulos` e `business.modulos` (ver `docs/project/base/data-model.md`).
 - **Isolamento (Guardrail 1)**: toda query escopada por `businessId`.

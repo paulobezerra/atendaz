@@ -6,13 +6,13 @@
 
 ## Implementação
 - **Página Pública** (`/agendar/{businessSlug}`):
-    - Gated: `modulos.agendaPublica: true`.
+    - Habilitado por: `modulos.agendaPublica: true`.
     - Seletor de profissionais (se houver mais de um).
     - Seleção de serviço e slot de horário.
     - Criar `appointment` com `origem: PUBLICO` e `status: PENDING_CONFIRMATION`.
     - Fornecer link `wa.me` para contato rápido.
 - **Criação Manual** (Painel):
-    - Gated: `modulos.agenda: true`.
+    - Habilitado por: `modulos.agenda: true`.
     - Profissional cria agendamento para cliente.
     - Criar `appointment` com `origem: MANUAL` e `status: CONFIRMED` automaticamente.
 - **404**: Se `agendaPublica` for false, a página pública não deve existir.

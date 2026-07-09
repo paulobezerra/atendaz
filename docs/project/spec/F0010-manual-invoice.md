@@ -2,7 +2,7 @@
 
 ## Escopo
 - Capacidade de emitir NFS-e de forma avulsa, sem cobrança atrelada no Asaas.
-- Gated: `modulos.nfse: true`.
+- Habilitado por: `modulos.nfse: true`.
 
 ## Implementação
 - **Botão "Emitir Nota"**: Disponível no painel.

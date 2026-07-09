@@ -3,7 +3,7 @@
 ## Escopo
 - Processamento de pagamentos confirmados via Asaas.
 - Emissão automática de nota fiscal de serviço.
-- Gated: `modulos.cobranca: true` AND `modulos.nfse: true`.
+- Habilitado por: `modulos.cobranca: true` AND `modulos.nfse: true`.
 
 ## Implementação
 - **Webhook**: Endpoint `POST /api/webhooks/asaas`.

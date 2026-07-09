@@ -2,7 +2,7 @@
 
 ## Escopo
 - Coleta de dados necessários para emissão de nota fiscal (CPF/CNPJ, endereço).
-- Gated: `modulos.cobranca: true` OU `modulos.nfse: true`.
+- Habilitado por: `modulos.cobranca: true` OU `modulos.nfse: true`.
 
 ## Implementação
 - **Página Pública**: `/completar-dados/{token}`.
