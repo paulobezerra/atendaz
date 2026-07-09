@@ -18,3 +18,7 @@ tsconfig.tsbuildinfo
 
 # Screenshots de review na raiz (mantidos localmente, fora do versionamento)
 /img*.png
+
+# Arquivos temporários de escrita do harness (.claude)
+.claude/**/*.tmp.*
+.claude/*.tmp.*

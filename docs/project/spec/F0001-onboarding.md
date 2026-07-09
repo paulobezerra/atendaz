@@ -13,7 +13,7 @@ plano/pagamento depois de experimentar. O onboarding **não** escolhe plano nem 
 **Novo fluxo (alvo da F0002.6):**
 1. **Único passo — Identidade**: nome fantasia, **endereço público (slug)**, **segmento**
    e **seu nome** (profissional inicial, pré-preenchido do Google). Termos com **tooltip**
-   de ajuda; campos com formato conhecido usam **máscara** (ver `docs/project/base/10`).
+   de ajuda; campos com formato conhecido usam **máscara** (ver `docs/project/base/design-system.md`).
 2. Ao concluir, cria: `business` (com **sistema completo habilitado** durante o trial —
    `modulos` todos `true`, `planoId: null`), o 1º `professional`, e
    `platform_subscription` com `status: TRIAL` e `planoId: null`. Redireciona ao Dashboard.
@@ -61,9 +61,9 @@ as partes que permanecem (login Google, identidade, criação de business/profes
 - Criar documento `platform_subscription` com `status: TRIAL` (30 dias) e `planoId: null`.
 - Redirecionar para o Dashboard.
 
-## UX (sobre o Design System — `docs/project/base/10`)
+## UX (sobre o Design System — `docs/project/base/design-system.md`)
 
-> Todas as telas abaixo usam o **padrão Split Layout** definido em `docs/project/base/10-design-system.md`.
+> Todas as telas abaixo usam o **padrão Split Layout** definido em `docs/project/base/design-system.md`.
 > Painel esquerdo: branding/stepper (indigo escuro). Painel direito: formulário (branco).
 > Em mobile (< lg): painel esquerdo colapsa em header compacto; form em tela cheia.
 

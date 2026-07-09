@@ -1,7 +1,7 @@
 # Especificação: F0013 — Financeiro (Contas a Pagar/Receber)
 
 > Módulo de **controle financeiro básico** do Tenant. **Gated** por `modulos.financeiro`
-> (item de menu **próprio** no App Shell — ver `docs/project/base/10`). Sobre a fundação de UX da
+> (item de menu **próprio** no App Shell — ver `docs/project/base/design-system.md`). Sobre a fundação de UX da
 > Fase 2.5 (shadcn/ui, react-hook-form + Zod, TanStack Query/Table — ver `docs/project/spec/F0002.5-ux-revamp.md`).
 
 ## Escopo
@@ -19,7 +19,7 @@ projetado avançado, rateios complexos, integração contábil. Mantém-se simpl
 
 ## Gating e Guardrails
 - **Módulo**: toda rota/tela exige `business.modulos.financeiro === true`; senão **404**
-  (Guardrail 2). Novo flag em `plano.modulos` e `business.modulos` (ver `docs/project/base/04`).
+  (Guardrail 2). Novo flag em `plano.modulos` e `business.modulos` (ver `docs/project/base/data-model.md`).
 - **Isolamento (Guardrail 1)**: toda query escopada por `businessId`.
 - **Auditoria**: toda escrita financeira (criar/baixar/cancelar lançamento, criar conta)
   grava em `audit_log` (Guardrail de idempotência/auditoria).
@@ -38,7 +38,7 @@ projetado avançado, rateios complexos, integração contábil. Mantém-se simpl
   `account`, opcionalmente a um `professional`, com `categoria` (lista controlada),
   `tags` (0..n) e `tipo de documento`.
 - Status: **PREVISTO** (previsão) → **PAGO/RECEBIDO** (baixa, com `dataPagamento`) →
-  ou **CANCELADO**. Valores e datas com máscara (ver `docs/project/base/10`).
+  ou **CANCELADO**. Valores e datas com máscara (ver `docs/project/base/design-system.md`).
 - **Integração opcional com Cobrança**: quando um `payment` (módulo `cobranca`) é
   **RECEBIDO**, pode-se gerar automaticamente um lançamento **a receber/recebido**
   (`origem: AUTOMATICA`, `paymentId` preenchido) — idempotente (nunca duplicar por
@@ -53,7 +53,7 @@ projetado avançado, rateios complexos, integração contábil. Mantém-se simpl
   status (previsto/realizado). Apresenta totais (a pagar, a receber, saldo) e
   agrupamentos. Listas/tabelas com **TanStack Table**; dados via **TanStack Query**.
 
-## UX (sobre `docs/project/base/10`)
+## UX (sobre `docs/project/base/design-system.md`)
 - **Menu próprio** "Financeiro" no App Shell (só aparece se `modulos.financeiro`).
 - Subnavegação: **Lançamentos** (lista filtrável + "Novo lançamento"), **Contas**,
   **Relatório**. Estados loading/empty/error completos; copy explicativa por tela.

@@ -11,7 +11,7 @@
 Decisão de UX (F0002.6): a escolha de plano **não** ocorre no onboarding. Acontece no
 **painel**, num **quadro comparativo lado a lado** (planos em colunas, funcionalidades em
 linhas com ✓/—), exibido na conversão (fim do trial / banner "Escolha seu plano") e numa
-página de **Cobrança/Plano** das Configurações. Sobre a fundação de `docs/project/base/10` (shadcn/ui).
+página de **Cobrança/Plano** das Configurações. Sobre a fundação de `docs/project/base/design-system.md` (shadcn/ui).
 
 - Nomes de módulo em **MAIÚSCULO**; **AGENDA** e **AGENDA PÚBLICA** sempre **separados**.
 - Preços e `modulos` vêm da coleção `plano` (nunca hard-coded). Cada coluna tem CTA "Escolher".

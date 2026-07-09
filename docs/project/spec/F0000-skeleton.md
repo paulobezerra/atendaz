@@ -13,7 +13,7 @@
 - **Configuração de Envs**: Configurar `MONGODB_URI` localmente e na Vercel.
 
 ### 2. Banco de Dados & Modelos Iniciais
-- Criar schema do `plano` conforme `docs/project/base/04-data-model.md`.
+- Criar schema do `plano` conforme `docs/project/base/data-model.md`.
 - Implementar utilitário de conexão com MongoDB (singleton para evitar múltiplas conexões em serverless).
 
 ### 3. Seed de Dados

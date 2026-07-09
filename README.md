@@ -31,11 +31,11 @@ Definições completas, portões e encadeamento: **[`docs/p2s/commands.md`](docs
 ## 📖 Documentação Importante
 
 - [Framework P2S (livro de regras)](docs/p2s/README.md)
-- [Roadmap de Implementação](docs/project/base/06-implementation-roadmap.md)
-- [Modelo de Dados](docs/project/base/04-data-model.md)
-- [Requisitos Técnicos](docs/project/base/03-technical-requirements.md)
-- [Guardrails](docs/project/base/07-guardrails.md)
-- [Design System & UX](docs/project/base/10-design-system.md)
+- [Constituição do Produto](docs/project/base/constitution.md) — domínio, arquitetura, stack, guardrails, escopo
+- [Modelo de Dados](docs/project/base/data-model.md) — com diagrama ER (Mermaid)
+- [Roadmap de Implementação](docs/project/base/roadmap.md)
+- [Design System & UX](docs/project/base/design-system.md)
+- [Manifesto da estrutura do produto (P2S)](docs/p2s/project-structure.md)
 
 ## 💎 Golden Stack (Estável — nunca beta/preview)
 **Regra dura (Guardrail 8)**: usar apenas releases **estáveis** (dist-tag `latest`), nunca `beta`, `preview`, `rc`, `alpha`, `canary` ou prerelease. **Beta/preview é pior que uma vulnerabilidade conhecida.** Preferir a linha estável mais recente, próxima de LTS.
@@ -54,7 +54,7 @@ Definições completas, portões e encadeamento: **[`docs/p2s/commands.md`](docs
 - **@testing-library/react** + **@testing-library/jest-dom** + **jest-environment-jsdom** (estáveis) — camada de teste de **componente/render** (`jsdom`), obrigatória para UI com lógica *(F0002.5)*
 
 ## 🧪 Modelo de Testes (três camadas)
-A Política de Testes canônica está em [`docs/p2s/quality.md`](docs/p2s/quality.md) (mapeada para o produto nos [Guardrails](docs/project/base/07-guardrails.md)). Em resumo:
+A Política de Testes canônica está em [`docs/p2s/quality.md`](docs/p2s/quality.md) (mapeada para o produto nos [Guardrails](docs/project/base/constitution.md)). Em resumo:
 1. **Integração/API** (Jest) — handlers de rota + lógica crítica (TDD nas áreas de risco).
 2. **Componente/Render** (Jest + React Testing Library, `jsdom`) — **todo componente de UI com lógica** monta sem lançar e exercita os ramos interativos. Roda junto no `npm test`.
 3. **E2E** (Cypress) — contrato público no Preview/Prod; fluxos autenticados críticos quando viável.

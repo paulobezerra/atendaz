@@ -46,9 +46,9 @@ Next.js App Router (`src/app`). API routes only so far; all under `src/app/api/`
 2. **Tenant / Business** — the paying company (barbershop, clinic). Owns the data.
 3. **Cliente** — the Tenant's end customer (patient).
 
-The `Plano` defines which **modules** (`agenda`, `agendaPublica`, `cobranca`, `nfse`) a Business gets; a Business copies `modulos` from its Plano on signup. The full data model (business, professional, service, appointment, payment, invoice, etc.) lives in `docs/project/base/04-data-model.md` and should be treated as the source of truth before adding models.
+The `Plano` defines which **modules** (`agenda`, `agendaPublica`, `cobranca`, `nfse`) a Business gets; a Business copies `modulos` from its Plano on signup. The full data model (business, professional, service, appointment, payment, invoice, etc.) lives in `docs/project/base/data-model.md` and should be treated as the source of truth before adding models.
 
-## Non-negotiable guardrails (`docs/project/base/07-guardrails.md`)
+## Non-negotiable guardrails (`docs/project/base/constitution.md`)
 
 These shape most feature code — read the full file before implementing, but the load-bearing ones:
 
@@ -63,10 +63,10 @@ These shape most feature code — read the full file before implementing, but th
 
 ## Documentation-driven workflow (P2S)
 
-This repo runs on **P2S (Prototype-to-Spec)** — a personal, tech/agent-agnostic framework whose rulebook lives in [`docs/p2s/`](docs/p2s/) (read `docs/p2s/README.md` first). Product-specific data lives in `docs/project/`: `base/` (`01`–`10` vision, architecture, data model, guardrails, design system…), `spec/F{ID}-*.md` per-feature specs, and `plans/{ID}-*.md` execution plans (`plans/archive/` once done). `docs/project/base/06-implementation-roadmap.md` is the ordered phase list and marks `[CONCLUÍDO]` features.
+This repo runs on **P2S (Prototype-to-Spec)** — a personal, tech/agent-agnostic framework whose rulebook lives in [`docs/p2s/`](docs/p2s/) (read `docs/p2s/README.md` first). Product-specific data lives in `docs/project/`: `base/` — a fixed manifest of `constitution.md` (domain, architecture, stack, guardrails, scope), `data-model.md` (with a Mermaid ER diagram), `roadmap.md`, `environment.md`, `design-system.md` (see `docs/p2s/project-structure.md`) — plus `spec/F{ID}-*.md` per-feature specs and `plans/{ID}-*.md` execution plans (`plans/archive/` once done). `docs/project/base/roadmap.md` is the ordered phase list and marks `[CONCLUÍDO]` features.
 
 The workflow is **seven prefixed commands** — `p2s-doc`, `p2s-discovery`, `p2s-spec`, `p2s-plan`, `p2s-code`, `p2s-test`, `p2s-done` — surfaced as slash commands / skills (thin redirects in `.claude/commands/`); their rules live **only** in `docs/p2s/commands.md`, never in the command files. Load-bearing constraints: every boundary (UX, API, persisted-data shape, external integrations) is prototyped and approved **before** code, and an **approved prototype becomes the spec** (`docs/p2s/principles.md` §2); `p2s-plan` creates the feature branch and must not modify code; `p2s-code` only runs on that branch after re-validating the DOR; `p2s-done` is the only command that touches `master` and requires production-verified evidence; features are built strictly in roadmap order; behavior/architecture changes go into the spec/docs before code.
 
 ## Environment variables
 
-Defined in `docs/project/base/05-environment-variables.md` with a per-phase requirement table. Phase 0 needs only `MONGODB_URI`. Later phases add Google OAuth + `AUTH_SECRET` (F1), `CRYPTO_MASTER_KEY` + `ASAAS_BASE_URL` (F1), `RESEND_API_KEY`/`EMAIL_FROM` (F5), `PLATFORM_ASAAS_API_KEY` (F11). Local config goes in `.env.local`; production in the Vercel panel.
+Defined in `docs/project/base/environment.md` with a per-phase requirement table. Phase 0 needs only `MONGODB_URI`. Later phases add Google OAuth + `AUTH_SECRET` (F1), `CRYPTO_MASTER_KEY` + `ASAAS_BASE_URL` (F1), `RESEND_API_KEY`/`EMAIL_FROM` (F5), `PLATFORM_ASAAS_API_KEY` (F11). Local config goes in `.env.local`; production in the Vercel panel.

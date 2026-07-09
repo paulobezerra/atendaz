@@ -1,6 +1,6 @@
 # [CONCLUÍDO] Especificação: F0002 — Profissionais e Billing Override
 
-> **Status:** F2 concluída e **em produção** (validada via `/p2s-done 2` — `/p2s-test prod` 9/9). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/project/base/10-design-system.md`).
+> **Status:** F2 concluída e **em produção** (validada via `/p2s-done 2` — `/p2s-test prod` 9/9). É a **primeira feature interna** (pós-onboarding) — inaugura a área autenticada do painel sobre o padrão **App Shell** (`docs/project/base/design-system.md`).
 
 ## Escopo
 - Gestão (CRUD) de múltiplos `professional` (agendas/identidades) dentro de um `business`.
@@ -8,20 +8,20 @@
 - Função central de resolução de billing: `resolveBillingConfig(professional, business)`.
 - Fundação visual da área logada: **App Shell** (sidebar no desktop, bottom tab bar no mobile), reusável por F3+.
 
-### Conceitos (hierarquia — ver `docs/project/base/04-data-model.md`)
+### Conceitos (hierarquia — ver `docs/project/base/data-model.md`)
 - Atua na camada **Tenant (Business)**. Toda leitura/escrita é escopada por `businessId` (Guardrail 1).
 - `professional` é, ao mesmo tempo, a **unidade de agenda** (F3/F4) e a **identidade de faturamento** (CPF/CNPJ + Asaas). Por isso **todo plano** tem ≥ 1 profissional — inclusive planos sem agenda (ex.: "Cobrança + Nota"), onde o profissional é apenas a identidade fiscal/financeira.
 
 ## DOR (Definition of Ready)
-- [ ] Spec validada contra Guardrails (`docs/project/base/07`) e Modelo de Dados (`docs/project/base/04`).
-- [ ] App Shell formalizado em `docs/project/base/10-design-system.md`.
+- [ ] Spec validada contra Guardrails (`docs/project/base/constitution.md`) e Modelo de Dados (`docs/project/base/data-model.md`).
+- [ ] App Shell formalizado em `docs/project/base/design-system.md`.
 - [ ] Plano de execução detalhado em `docs/project/plans/archive/02-professionals-billing.md`.
 - [ ] Variáveis de ambiente já disponíveis desde F1: `CRYPTO_MASTER_KEY`, `ASAAS_BASE_URL` (nenhuma env nova nesta fase).
 - [ ] Golden Stack confirmada (Node 24, Next estável, React 19, NextAuth v4) e `npm audit --omit=dev` = 0.
 
 ## Implementação Detalhada
 
-### 1. Modelo (reuso de `docs/project/base/04` — `professional`)
+### 1. Modelo (reuso de `docs/project/base/data-model.md` — `professional`)
 Campos relevantes desta fase: `businessId`, `nome`, `slugInterno` (único **no escopo do business**), `whatsapp`, `bio`, `ativo`, e `billingConfig` (nullable; `null` = herda do business):
 ```
 billingConfig {
@@ -75,9 +75,9 @@ Reuso: `validateAsaasKey` (`src/lib/asaas.ts`), `encrypt`/`decrypt` (`src/lib/cr
 - **Segurança de chaves**: chave Asaas nunca trafega/persiste em texto plano e nunca é devolvida em GET (Guardrail 3). Para trocar, o usuário redigita.
 - **Isolamento total**: nenhuma rota retorna/edita profissional fora do `businessId` da sessão (Guardrail 1).
 
-## UX (sobre o Design System — `docs/project/base/10`)
+## UX (sobre o Design System — `docs/project/base/design-system.md`)
 
-> A área autenticada usa o padrão **App Shell** (`docs/project/base/10`): **sidebar** fixa no desktop (≥1024px) e **bottom tab bar** no mobile (<1024px). O Split Layout **não** se aplica aqui (é exclusivo de `/login` e `/onboarding`). A navegação mostra **apenas os módulos ativos** do business (progressive disclosure).
+> A área autenticada usa o padrão **App Shell** (`docs/project/base/design-system.md`): **sidebar** fixa no desktop (≥1024px) e **bottom tab bar** no mobile (<1024px). O Split Layout **não** se aplica aqui (é exclusivo de `/login` e `/onboarding`). A navegação mostra **apenas os módulos ativos** do business (progressive disclosure).
 
 ### Fluxos (jornada)
 1. Usuário autenticado com `onboardingStatus=COMPLETE` acessa `/dashboard` → App Shell. Item **Profissionais** na navegação.

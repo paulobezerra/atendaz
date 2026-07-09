@@ -1,5 +1,41 @@
 # Modelo de Dados — Coleções MongoDB
 
+> **Fronteira de dados persistidos** (P2S, pilar 2). O diagrama ER abaixo é a **visão navegável**
+> do modelo — renderiza inline (Mermaid) e é a referência aprovada; os detalhes de campo por
+> coleção seguem em cada seção.
+
+## Diagrama ER
+
+```mermaid
+erDiagram
+    plano ||--o{ business : "define módulos"
+    segmento ||--o{ business : classifica
+    segmento ||--o{ marketing_page : nicho
+    business ||--|{ professional : "tem >=1"
+    business ||--|| platform_subscription : assina
+    business ||--o{ client : possui
+    professional ||--o{ service : oferece
+    professional ||--o{ availability : "define horários"
+    business ||--o{ appointment : agenda
+    professional ||--o{ appointment : atende
+    client ||--o{ appointment : marca
+    service ||--o{ appointment : "é de"
+    business ||--o{ billing_plan : cobra
+    client ||--o{ billing_plan : assina
+    appointment ||--o{ payment : gera
+    billing_plan ||--o{ payment : gera
+    client ||--o{ payment : paga
+    payment ||--o| invoice : "emite nota"
+    business ||--o{ account : "caixa (F0013)"
+    professional ||--o{ account : "conta (F0013)"
+    account ||--o{ financial_entry : lança
+    payment ||--o| financial_entry : "gera auto"
+    financial_category ||--o{ financial_entry : classifica
+    document_type ||--o{ financial_entry : tipa
+    business ||--o{ audit_log : registra
+    business ||--o{ notification_log : registra
+```
+
 ## plano
 Configuração comercial (seed manual via Mongo).
 - `slug`, `nome`, `descricao`
