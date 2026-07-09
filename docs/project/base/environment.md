@@ -2,6 +2,8 @@
 
 Este documento descreve as variáveis necessárias para o funcionamento da plataforma. Certifique-se de preenchê-las no arquivo `.env.local` (desenvolvimento) e no painel da Vercel → **Settings → Environment Variables** (produção).
 
+> **Escopo por fase.** A lista cobre o **MVP completo** (F0–F11). Em produção hoje (**F0–F2.8**) o código só usa: `MONGODB_URI`, `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`, `AUTH_SECRET`, `CRYPTO_MASTER_KEY`, `ASAAS_BASE_URL`. As demais (Resend/e-mail, webhooks, `PLATFORM_ASAAS_API_KEY`, cron, Blob) só passam a ser exigidas quando suas fases forem implementadas — ver a tabela por fase abaixo.
+
 > Para cada variável, a linha **Onde obter** indica a origem. Variáveis "gerar local" são criadas por você no terminal; não precisam de serviço externo.
 
 ## Autenticação (Google + NextAuth)

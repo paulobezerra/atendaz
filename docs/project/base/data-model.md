@@ -3,6 +3,11 @@
 > **Fronteira de dados persistidos** (P2S, pilar 2). O diagrama ER abaixo é a **visão navegável**
 > do modelo — renderiza inline (Mermaid) e é a referência aprovada; os detalhes de campo por
 > coleção seguem em cada seção.
+>
+> **Estado de implementação:** este é o modelo-alvo **completo**. Em produção hoje (F0–F2.8) existem
+> em `src/models/`: `plano`, `segmento`, `business`, `professional`, `platform_subscription`,
+> `audit_log`. As demais coleções chegam nas fases indicadas nos títulos (`*(FXXXX)*`) — ver
+> [`roadmap.md`](roadmap.md).
 
 ## Diagrama ER
 
@@ -39,7 +44,7 @@ erDiagram
 ## plano
 Configuração comercial (seed manual via Mongo).
 - `slug`, `nome`, `descricao`
-- `modulos`: `{ agenda: boolean, agendaPublica: boolean, cobranca: boolean, nfse: boolean, financeiro: boolean }`
+- `modulos`: `{ agenda: boolean, agendaPublica: boolean, cobranca: boolean, nfse: boolean }` — o flag `financeiro` chega na **F0013** (**ainda não** no schema `IModulos`; ver `roadmap.md`)
 - `precoBase`: Cobre a 1ª agenda.
 - `precoPorAgendaAdicional`: R$ por professional além do 1º (0 se sem agenda).
 - `ativo`: boolean.

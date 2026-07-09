@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-**Atendaz** — a modular multi-tenant SaaS for appointment scheduling + automated billing (via Asaas) + Brazilian electronic invoices (NFS-e). The codebase is currently at **Phase 0 (skeleton)**; most features described in `docs/project/` are specced but not yet built. Docs and code are in Portuguese.
+**Atendaz** — a modular multi-tenant SaaS for appointment scheduling + automated billing (via Asaas) + Brazilian electronic invoices (NFS-e). **F0–F2.8 are built and in production** (Google auth, onboarding, professionals + billing override, shadcn UX foundation, settings + payment-method connection); later phases (F3+ scheduling, standalone billing, NFS-e, financial) are specced in `docs/project/` but not yet built — see `docs/project/base/roadmap.md`. Models in `src/models/` today: Business, Professional, Plano, PlatformSubscription, Segmento, AuditLog. Docs and code are in Portuguese.
 
 ## Commands
 
