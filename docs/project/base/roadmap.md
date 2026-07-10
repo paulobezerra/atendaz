@@ -40,9 +40,9 @@ Configuração da agenda do profissional. Todas as fatias são **habilitadas por
 (404 se off) e vivem em **abas sob o profissional** (`/dashboard/profissionais/[id]`:
 Perfil · Serviços · Disponibilidade). As specs são produzidas via `p2s-spec` (ainda não criadas).
 
-### Fase 3.1: Perfil do profissional
+### [CONCLUÍDO] Fase 3.1: Perfil do profissional
 - Bio, redes sociais e **foto** — upload via **Vercel Blob** (nova integração + env `BLOB_READ_WRITE_TOKEN`). Aba "Perfil".
-- Spec a produzir: `docs/project/spec/F0003.1-perfil.md` (via `p2s-spec 3.1`).
+- Spec: [`docs/project/spec/F0003.1-perfil.md`](../spec/F0003.1-perfil.md) — entregue e validada em produção.
 
 ### Fase 3.2: Serviços
 - CRUD de `service` (nome, duração em min, valor, `ativo`). Model novo. Aba "Serviços".
