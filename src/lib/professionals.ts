@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { getSession } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Business, { IBillingConfig, IModulos } from "@/models/Business";
-import type { IProfessional } from "@/models/Professional";
+import Professional, { type IProfessional } from "@/models/Professional";
 import { validateAsaasKey } from "@/lib/asaas";
 import { encrypt, decrypt } from "@/lib/crypto";
 import type { ProfessionalInput } from "@/lib/schemas/professional";
@@ -26,6 +27,22 @@ export async function requireBusiness() {
     throw new HttpError(404, "Negócio não encontrado.");
   }
   return business;
+}
+
+/**
+ * Busca um profissional garantindo o escopo do tenant: 404 se o id for inválido
+ * ou se o profissional for de outro business (nunca vaza existência — Guardrail 1).
+ */
+export async function findOwnedProfessional(
+  businessId: mongoose.Types.ObjectId,
+  id: string
+) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new HttpError(404, "Profissional não encontrado.");
+  }
+  const prof = await Professional.findOne({ _id: id, businessId });
+  if (!prof) throw new HttpError(404, "Profissional não encontrado.");
+  return prof;
 }
 
 type OwnBillingConfig = IBillingConfig & { cpfCnpj?: string };
@@ -101,6 +118,8 @@ export function serializeProfessional(prof: IProfessional) {
     slugInterno: prof.slugInterno,
     whatsapp: prof.whatsapp ?? null,
     bio: prof.bio ?? null,
+    fotoUrl: prof.fotoUrl ?? null,
+    redesSociais: prof.redesSociais ?? null,
     ativo: prof.ativo,
     billingMode: cfg?.asaasApiKeyEncrypted ? "own" : "inherit",
     temAsaasProprio: Boolean(cfg?.asaasApiKeyEncrypted),

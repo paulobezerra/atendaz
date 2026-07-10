@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import Business from "@/models/Business";
 import Professional from "@/models/Professional";
 import { serializeProfessional } from "@/lib/professionals";
-import ProfessionalForm from "../ProfessionalForm";
+import ProfessionalTabs from "./ProfessionalTabs";
 
 export const dynamic = "force-dynamic";
 
@@ -27,10 +27,11 @@ export default async function EditarProfissionalPage({
   if (!prof) notFound();
 
   return (
-    <ProfessionalForm
+    <ProfessionalTabs
       initial={serializeProfessional(prof)}
       billingEnabled={business.modulos.cobranca || business.modulos.nfse}
       nfseEnabled={business.modulos.nfse}
+      agendaEnabled={business.modulos.agenda}
     />
   );
 }

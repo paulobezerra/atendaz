@@ -42,7 +42,9 @@ Este documento descreve as variáveis necessárias para o funcionamento da plata
 ## Infraestrutura e Serviços
 - `CRON_SECRET`: Token para proteger rotas de tarefas agendadas (Cron Jobs).
   - **Onde obter**: gerar local — `openssl rand -base64 32`.
-- `BLOB_READ_WRITE_TOKEN`: Token para o Vercel Blob Storage (fotos de perfil).
+- `BLOB_READ_WRITE_TOKEN`: Token do Vercel Blob Storage (fotos de perfil). **Crie o store como
+  Público** — as fotos aparecem na página pública de agendamento, e o código usa `put({access:'public'})`;
+  um store **Privado** quebra o upload (a Vercel não deixa trocar o acesso depois — recrie Público).
   - **Onde obter**: **Vercel → Storage → Blob** → criar store → copiar o token gerado.
 - `RESEND_API_KEY`: Chave de API do Resend para envio de e-mails transacionais.
   - **Onde obter**: [resend.com](https://resend.com) → **API Keys** → *Create*.

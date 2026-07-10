@@ -8,6 +8,7 @@ import {
   requireBusiness,
   buildBillingConfig,
   serializeProfessional,
+  findOwnedProfessional,
   HttpError,
 } from "@/lib/professionals";
 
@@ -24,16 +25,6 @@ function handleError(e: unknown) {
   return NextResponse.json({ error: "Falha inesperada." }, { status: 500 });
 }
 
-/** Busca o profissional garantindo o escopo do tenant (404 se de outro business). */
-async function findOwned(businessId: mongoose.Types.ObjectId, id: string) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new HttpError(404, "Profissional não encontrado.");
-  }
-  const prof = await Professional.findOne({ _id: id, businessId });
-  if (!prof) throw new HttpError(404, "Profissional não encontrado.");
-  return prof;
-}
-
 async function countActive(businessId: mongoose.Types.ObjectId, exceptId?: string) {
   const query: Record<string, unknown> = { businessId, ativo: true };
   if (exceptId) query._id = { $ne: exceptId };
@@ -44,7 +35,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   try {
     const business = await requireBusiness();
     const { id } = await params;
-    const prof = await findOwned(business._id, id);
+    const prof = await findOwnedProfessional(business._id, id);
     return NextResponse.json(serializeProfessional(prof));
   } catch (e) {
     return handleError(e);
@@ -55,7 +46,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   try {
     const business = await requireBusiness();
     const { id } = await params;
-    const prof = await findOwned(business._id, id);
+    const prof = await findOwnedProfessional(business._id, id);
 
     let body: unknown;
     try {
@@ -74,7 +65,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     if (data.nome !== undefined) prof.nome = data.nome;
     if (data.whatsapp !== undefined) prof.whatsapp = data.whatsapp;
+
+    // Perfil (F3.1) — bio e redes só existem com o módulo agenda (habilitação → 404).
+    const mexeNoPerfil = data.bio !== undefined || data.redesSociais !== undefined;
+    if (mexeNoPerfil && !business.modulos.agenda) {
+      return NextResponse.json({ error: "Recurso não disponível." }, { status: 404 });
+    }
     if (data.bio !== undefined) prof.bio = data.bio;
+    if (data.redesSociais !== undefined) {
+      prof.redesSociais = data.redesSociais;
+      prof.markModified("redesSociais");
+    }
 
     if (data.slugInterno !== undefined) {
       const slugCheck = validateSlug(data.slugInterno);
@@ -126,7 +127,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       entidadeId: String(prof._id),
       acao: data.ativo === false ? "deactivate" : data.ativo === true ? "activate" : "update",
       businessId: String(business._id),
-      payloadResumido: { nome: prof.nome, ativo: prof.ativo, billingMode: prof.billingConfig ? "own" : "inherit" },
+      payloadResumido: { nome: prof.nome, ativo: prof.ativo, billingMode: prof.billingConfig ? "own" : "inherit", perfilAlterado: mexeNoPerfil },
     });
 
     return NextResponse.json(serializeProfessional(prof));
@@ -139,7 +140,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   try {
     const business = await requireBusiness();
     const { id } = await params;
-    const prof = await findOwned(business._id, id);
+    const prof = await findOwnedProfessional(business._id, id);
 
     if (prof.ativo) {
       const others = await countActive(business._id, String(prof._id));
